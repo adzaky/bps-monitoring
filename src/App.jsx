@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import AppLayout from "./components/AppLayout";
 import Dashboard from "./pages/dashboard";
 import KonsultasiStatistik from "./pages/konsultasi-statistik";
+import Login from "./pages/login";
 
 export default function App() {
   const router = createBrowserRouter([
@@ -19,6 +20,10 @@ export default function App() {
           Component: KonsultasiStatistik,
         },
       ],
+    },
+    {
+      path: "/login",
+      Component: Login,
     },
   ]);
 
