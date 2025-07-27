@@ -2,8 +2,11 @@ import React from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { Navigate, Outlet } from "react-router";
+import { useLoaderData } from "react-router";
 
-export default function AppLayout({ isAuthenticated }) {
+export default function AppLayout() {
+  const { isAuthenticated } = useLoaderData();
+
   return !isAuthenticated ? (
     <Navigate to="/login" />
   ) : (
