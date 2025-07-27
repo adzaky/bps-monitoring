@@ -5,7 +5,8 @@ import supabase from "./lib/supabase";
 import Dashboard from "./pages/dashboard";
 import KonsultasiStatistik from "./pages/konsultasi-statistik";
 import Login from "./pages/login";
-import supabase from "./lib/supabase";
+
+import { consultationData } from "./constants";
 
 export default function App() {
   const getSession = async () => {
@@ -32,6 +33,10 @@ export default function App() {
         {
           path: "konsultasi-statistik",
           Component: KonsultasiStatistik,
+          loader: () => {
+            return consultationData;
+          },
+        },
         },
       ],
     },
