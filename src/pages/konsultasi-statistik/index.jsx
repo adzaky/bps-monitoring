@@ -1,13 +1,14 @@
 import React from "react";
+import { useLoaderData } from "react-router";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { consultationData } from "@/constants";
 import ConsultationTable from "@/components/ConsultationTable";
 
 export default function KonsultasiStatistik() {
   const [activeTab, setActiveTab] = React.useState("all");
 
+  const { consultationData } = useLoaderData();
   const data = consultationData.sort((a, b) => new Date(b.tanggal_permintaan) - new Date(a.tanggal_permintaan));
 
   const groupDataByType = (data) => {
