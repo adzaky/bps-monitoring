@@ -3,10 +3,11 @@ import { createBrowserRouter, redirect, RouterProvider } from "react-router";
 import AppLayout from "./components/AppLayout";
 import supabase from "./lib/supabase";
 import Dashboard from "./pages/dashboard";
-import KonsultasiStatistik from "./pages/konsultasi-statistik";
 import Login from "./pages/login";
+import KonsultasiStatistik from "./pages/konsultasi-statistik";
+import LayananPerpustakaan from "./pages/layanan-perpustakaan";
 
-import { consultationData } from "./constants";
+import { consultationData, libraryServiceData } from "./constants";
 
 export default function App() {
   const getSession = async () => {
@@ -37,6 +38,12 @@ export default function App() {
             return { consultationData };
           },
         },
+        {
+          path: "layanan-perpustakaan",
+          Component: LayananPerpustakaan,
+          loader: () => {
+            return { libraryServiceData };
+          },
         },
       ],
     },
