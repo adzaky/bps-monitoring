@@ -5,9 +5,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { useNavigate } from "react-router";
 
 export default function LoginForm({ className }) {
   const [isLoading, setIsLoading] = React.useState(false);
+
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -26,8 +29,7 @@ export default function LoginForm({ className }) {
 
       const user = data.user;
       if (user) {
-        localStorage.setItem("bps_user", JSON.stringify(user));
-        window.location.href = "/";
+        navigate("/");
       }
     } catch (err) {
       console.error("Failed Login", err);
@@ -37,7 +39,7 @@ export default function LoginForm({ className }) {
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)}>
+    <div className={cn("flex min-w-2xl flex-col gap-6", className)}>
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Selamat Datang Kembali</CardTitle>

@@ -1,14 +1,15 @@
 import React from "react";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
-import { Outlet } from "react-router";
+import { Navigate, Outlet } from "react-router";
 
-export default function AppLayout() {
-  return (
+export default function AppLayout({ isAuthenticated }) {
+  return !isAuthenticated ? (
+    <Navigate to="/login" />
+  ) : (
     <SidebarProvider>
       <AppSidebar />
       <main className="w-full overflow-scroll p-3">
-        {/* <SidebarTrigger className="-ml-1" /> */}
         <Outlet />
       </main>
     </SidebarProvider>

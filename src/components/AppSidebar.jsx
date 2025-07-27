@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/sidebar";
 import { NavLink } from "react-router";
 import { Button } from "./ui/button";
+import supabase from "@/lib/supabase";
+import { useNavigate } from "react-router";
 
 const SIDEBAR_NAV = [
   {
@@ -28,7 +30,27 @@ const SIDEBAR_NAV = [
 ];
 
 export function AppSidebar({ ...props }) {
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  const navigate = useNavigate();
   const { pathname } = window.location;
+
+  const handleLogout = async () => {
+    setIsLoading(true);
+
+    try {
+      const { error } = await supabase.auth.signOut();
+
+      if (error) throw error;
+
+      localStorage.removeItem("bps_user");
+      navigate("/login");
+    } catch (err) {
+      console.error("Failed Logout", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -58,7 +80,7 @@ export function AppSidebar({ ...props }) {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <Button>Keluar</Button>
+        <Button onClick={handleLogout}>{!isLoading ? "Keluar" : "Loading..."}</Button>
       </SidebarFooter>
     </Sidebar>
   );
