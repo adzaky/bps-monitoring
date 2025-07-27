@@ -25,6 +25,10 @@ const SIDEBAR_NAV = [
         title: "Konsultasi Statistik",
         url: "/konsultasi-statistik",
       },
+      {
+        title: "Layanan Perpustakaan",
+        url: "/layanan-perpustakaan",
+      },
     ],
   },
 ];
