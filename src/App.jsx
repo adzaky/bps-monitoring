@@ -34,7 +34,7 @@ export default function App() {
           path: "konsultasi-statistik",
           Component: KonsultasiStatistik,
           loader: () => {
-            return consultationData;
+            return { consultationData };
           },
         },
         },
