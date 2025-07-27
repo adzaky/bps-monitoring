@@ -4,12 +4,29 @@ import AppLayout from "./components/AppLayout";
 import Dashboard from "./pages/dashboard";
 import KonsultasiStatistik from "./pages/konsultasi-statistik";
 import Login from "./pages/login";
+import supabase from "./lib/supabase";
 
 export default function App() {
+  const [session, setSession] = React.useState(null);
+
+  React.useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const isAuthenticated = !!session;
+
   const router = createBrowserRouter([
     {
       path: "/",
-      Component: AppLayout,
+      element: <AppLayout isAuthenticated={isAuthenticated} />,
       children: [
         {
           index: true,

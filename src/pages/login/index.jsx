@@ -2,5 +2,9 @@ import LoginForm from "@/components/LoginForm";
 import React from "react";
 
 export default function Login() {
-  return <LoginForm />;
+  return (
+    <main className="mx-auto flex min-h-screen w-full items-center justify-center p-4">
+      <LoginForm />
+    </main>
+  );
 }
