@@ -1,13 +1,14 @@
 import React from "react";
 import { createBrowserRouter, redirect, RouterProvider } from "react-router";
 import AppLayout from "./components/AppLayout";
+import { api } from "./lib/api";
 import supabase from "./lib/supabase";
 import Dashboard from "./pages/dashboard";
 import Login from "./pages/login";
 import KonsultasiStatistik from "./pages/konsultasi-statistik";
 import LayananPerpustakaan from "./pages/layanan-perpustakaan";
 
-import { consultationData, libraryServiceData } from "./constants";
+import { consultationData } from "./constants";
 
 export default function App() {
   const getSession = async () => {
@@ -41,7 +42,8 @@ export default function App() {
         {
           path: "layanan-perpustakaan",
           Component: LayananPerpustakaan,
-          loader: () => {
+          loader: async () => {
+            const { data: libraryServiceData } = await api.libraryService.getLibraryServiceData();
             return { libraryServiceData };
           },
         },
