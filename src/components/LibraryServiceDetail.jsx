@@ -10,14 +10,14 @@ import { Calendar, User, Mail, Phone, GraduationCap, Briefcase, BookOpen, Clock,
 export default function LibraryServiceDetail({ serviceRecord, isOpen, onClose }) {
   if (!serviceRecord) return null;
 
-  const visitDate = new Date(serviceRecord.visit_date_time);
+  const visitDate = new Date(serviceRecord.visit_datetime);
 
   const calculateAge = (birthYear) => {
     const currentYear = new Date().getFullYear();
     return currentYear - Number.parseInt(birthYear);
   };
 
-  const age = calculateAge(serviceRecord.birth_year);
+  const age = calculateAge(serviceRecord.birthyear);
 
   const getGenderBadge = (gender) => {
     return gender === "L" ? (
@@ -103,7 +103,7 @@ export default function LibraryServiceDetail({ serviceRecord, isOpen, onClose })
                 <div className="space-y-2">
                   <Label className="text-muted-foreground text-sm font-medium">Tahun Lahir / Usia</Label>
                   <p className="font-medium">
-                    {serviceRecord.birth_year} <span className="text-muted-foreground">({age} tahun)</span>
+                    {serviceRecord.birthyear} <span className="text-muted-foreground">({age} tahun)</span>
                   </p>
                 </div>
               </div>

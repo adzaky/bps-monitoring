@@ -93,7 +93,7 @@ export default function LibraryServiceTable({ data }) {
                     <div>
                       <p className="font-medium">{record.name}</p>
                       <p className="text-muted-foreground text-xs">
-                        {record.birth_year} ({new Date().getFullYear() - Number.parseInt(record.birth_year)} tahun)
+                        {record.birthyear} ({new Date().getFullYear() - Number.parseInt(record.birthyear)} tahun)
                       </p>
                     </div>
                   </div>
@@ -125,10 +125,10 @@ export default function LibraryServiceTable({ data }) {
                     <Calendar className="text-muted-foreground h-4 w-4" />
                     <div>
                       <p className="text-sm font-medium">
-                        {new Date(record.visit_date_time).toLocaleDateString("id-ID")}
+                        {new Date(record.visit_datetime).toLocaleDateString("id-ID")}
                       </p>
                       <p className="text-muted-foreground text-xs">
-                        {new Date(record.visit_date_time).toLocaleTimeString("id-ID", {
+                        {new Date(record.visit_datetime).toLocaleTimeString("id-ID", {
                           hour: "2-digit",
                           minute: "2-digit",
                         })}

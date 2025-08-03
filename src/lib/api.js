@@ -1,5 +1,9 @@
+import supabase from "./supabase";
+
 export const api = {
-  consultationData: {
-    getConsultationData: async () => {},
+  libraryService: {
+    getLibraryServiceData: async () => {
+      return await supabase.from("pst_customer").select();
+    },
   },
 };
