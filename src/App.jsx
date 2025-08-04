@@ -1,14 +1,14 @@
 import React from "react";
 import { createBrowserRouter, redirect, RouterProvider } from "react-router";
 import AppLayout from "./components/AppLayout";
-import { api } from "./lib/api";
+import { api } from "./services/api";
 import supabase from "./lib/supabase";
 import Dashboard from "./pages/dashboard";
 import Login from "./pages/login";
 import KonsultasiStatistik from "./pages/konsultasi-statistik";
 import LayananPerpustakaan from "./pages/layanan-perpustakaan";
 
-import { consultationData } from "./constants";
+import { consultationData } from "./constants/data";
 
 export default function App() {
   const getSession = async () => {

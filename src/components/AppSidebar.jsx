@@ -16,18 +16,33 @@ import { NavLink } from "react-router";
 import { Button } from "./ui/button";
 import supabase from "@/lib/supabase";
 import { useNavigate } from "react-router";
+import { BarChartIcon } from "lucide-react";
+import { Library } from "lucide-react";
+import { LayoutDashboard } from "lucide-react";
 
 const SIDEBAR_NAV = [
   {
-    label: "Produk Layanan",
+    title: "Dashboard",
     items: [
       {
-        title: "Konsultasi Statistik",
+        label: "Dashboard",
+        url: "/",
+        icon: LayoutDashboard,
+      },
+    ],
+  },
+  {
+    title: "Produk Layanan",
+    items: [
+      {
+        label: "Konsultasi Statistik",
         url: "/konsultasi-statistik",
+        icon: BarChartIcon,
       },
       {
-        title: "Layanan Perpustakaan",
+        label: "Layanan Perpustakaan",
         url: "/layanan-perpustakaan",
+        icon: Library,
       },
     ],
   },
@@ -63,18 +78,21 @@ export function AppSidebar({ ...props }) {
       </SidebarHeader>
       <SidebarContent>
         {SIDEBAR_NAV.map((nav) => (
-          <SidebarGroup key={nav.label}>
-            <SidebarGroupLabel>{nav.label}</SidebarGroupLabel>
+          <SidebarGroup key={nav.title}>
+            <SidebarGroupLabel>{nav.title}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {nav.items.map((item) => (
                   <SidebarMenuItem key={item.url}>
                     <SidebarMenuButton
                       asChild
-                      isActive={pathname.includes(item.url)}
+                      isActive={pathname === item.url}
                       className="hover:bg-slate-500 hover:text-white data-[active=true]:bg-slate-600 data-[active=true]:text-white"
                     >
-                      <NavLink to={item.url}>{item.title}</NavLink>
+                      <NavLink to={item.url}>
+                        <item.icon className="size-4" />
+                        <span>{item.label}</span>
+                      </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
