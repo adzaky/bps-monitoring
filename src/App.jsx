@@ -5,10 +5,8 @@ import { api } from "./services/api";
 import supabase from "./lib/supabase";
 import Dashboard from "./pages/dashboard";
 import Login from "./pages/login";
-import KonsultasiStatistik from "./pages/konsultasi-statistik";
 import LayananPerpustakaan from "./pages/layanan-perpustakaan";
 
-import { consultationData } from "./constants/data";
 import RekomendasiStatistik from "./pages/rekomendasi-statistik";
 
 export default function App() {
@@ -32,13 +30,6 @@ export default function App() {
         {
           index: true,
           Component: Dashboard,
-        },
-        {
-          path: "konsultasi-statistik",
-          Component: KonsultasiStatistik,
-          loader: () => {
-            return { consultationData };
-          },
         },
         {
           path: "layanan-perpustakaan",
