@@ -19,6 +19,7 @@ import { useNavigate } from "react-router";
 import { BarChartIcon } from "lucide-react";
 import { Library } from "lucide-react";
 import { LayoutDashboard } from "lucide-react";
+import { Award } from "lucide-react";
 
 const SIDEBAR_NAV = [
   {
@@ -43,6 +44,11 @@ const SIDEBAR_NAV = [
         label: "Layanan Perpustakaan",
         url: "/layanan-perpustakaan",
         icon: Library,
+      },
+      {
+        label: "Rekomendasi Statistik",
+        url: "/rekomendasi-statistik",
+        icon: Award,
       },
     ],
   },

@@ -6,4 +6,9 @@ export const api = {
       return await supabase.from("pst_customer").select();
     },
   },
+  romantikService: {
+    getRomantikStatisticalActivities: async () => {
+      return await supabase.from("romantik_statistical").select();
+    },
+  },
 };

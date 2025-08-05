@@ -9,6 +9,7 @@ import KonsultasiStatistik from "./pages/konsultasi-statistik";
 import LayananPerpustakaan from "./pages/layanan-perpustakaan";
 
 import { consultationData } from "./constants/data";
+import RekomendasiStatistik from "./pages/rekomendasi-statistik";
 
 export default function App() {
   const getSession = async () => {
@@ -45,6 +46,14 @@ export default function App() {
           loader: async () => {
             const { data: libraryServiceData } = await api.libraryService.getLibraryServiceData();
             return { libraryServiceData };
+          },
+        },
+        {
+          path: "rekomendasi-statistik",
+          Component: RekomendasiStatistik,
+          loader: async () => {
+            const { data: romantikServiceData } = await api.romantikService.getRomantikStatisticalActivities();
+            return { romantikServiceData };
           },
         },
       ],
