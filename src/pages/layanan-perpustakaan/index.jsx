@@ -137,13 +137,6 @@ export default function LibraryService() {
             </Select>
           </div>
 
-          {/* Hasil Filter */}
-          <div className="mb-4">
-            <p className="text-muted-foreground text-sm">
-              Menampilkan {filteredData.length} dari {totalVisitors} data pengunjung
-            </p>
-          </div>
-
           {/* Tabel Data */}
           <LibraryServiceTable data={filteredData} />
         </CardContent>

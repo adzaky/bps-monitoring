@@ -1,12 +1,9 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Calendar, Eye, Mail, User } from "lucide-react";
+import { DataTable } from "@/components/ui/data-table";
+import { Calendar, Eye, Mail, User, Phone, Briefcase, BookOpen } from "lucide-react";
 import LibraryServiceDetail from "./LibraryServiceDetail";
-import { Phone } from "lucide-react";
-import { Briefcase } from "lucide-react";
-import { BookOpen } from "lucide-react";
 
 export default function LibraryServiceTable({ data }) {
   const [selectedLibraryService, setSelectedLibraryService] = React.useState(null);
@@ -61,106 +58,130 @@ export default function LibraryServiceTable({ data }) {
     );
   };
 
-  return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Nama</TableHead>
-            <TableHead>Gender</TableHead>
-            <TableHead>Kontak</TableHead>
-            <TableHead>Pendidikan</TableHead>
-            <TableHead>Pekerjaan</TableHead>
-            <TableHead>Waktu Kunjungan</TableHead>
-            <TableHead>Media Layanan</TableHead>
-            <TableHead>Akses Buku</TableHead>
-            <TableHead>Aksi</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={9} className="text-muted-foreground py-8 text-center">
-                Tidak ada data yang ditemukan
-              </TableCell>
-            </TableRow>
-          ) : (
-            data.map((record, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <User className="text-muted-foreground h-4 w-4" />
-                    <div>
-                      <p className="font-medium">{record.name}</p>
-                      <p className="text-muted-foreground text-xs">
-                        {record.birthyear} ({new Date().getFullYear() - Number.parseInt(record.birthyear)} tahun)
-                      </p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>{getGenderBadge(record.gender)}</TableCell>
-                <TableCell>
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-1">
-                      <Mail className="text-muted-foreground h-3 w-3" />
-                      <span className="text-xs">{record.email}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Phone className="text-muted-foreground h-3 w-3" />
-                      <span className="text-xs">{record.phone}</span>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>{getEducationBadge(record.education)}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Briefcase className="text-muted-foreground h-4 w-4" />
-                    <span className="text-sm">
-                      {record.job || <span className="text-muted-foreground italic">-</span>}
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="text-muted-foreground h-4 w-4" />
-                    <div>
-                      <p className="text-sm font-medium">
-                        {new Date(record.visit_datetime).toLocaleDateString("id-ID")}
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        {new Date(record.visit_datetime).toLocaleTimeString("id-ID", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>{getServiceMediaBadge(record.service_media)}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <BookOpen className="text-muted-foreground h-4 w-4" />
-                    <span className="text-sm">
-                      {record.book_access_count === "-" ? (
-                        <span className="text-muted-foreground">-</span>
-                      ) : (
-                        <span className="font-medium text-green-600">{record.book_access_count}</span>
-                      )}
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Button variant="outline" size="sm" onClick={() => handleViewDetail(record)}>
-                    <Eye className="mr-2 h-4 w-4" />
-                    Detail
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
+  const columns = [
+    {
+      accessorKey: "name",
+      header: "Nama",
+      cell: ({ row }) => {
+        const record = row.original;
+        return (
+          <div className="flex items-center gap-2">
+            <User className="text-muted-foreground h-4 w-4" />
+            <div>
+              <p className="font-medium">{record.name}</p>
+              <p className="text-muted-foreground text-xs">
+                {record.birthyear} ({new Date().getFullYear() - Number.parseInt(record.birthyear)} tahun)
+              </p>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "gender",
+      header: "Jenis Kelamin",
+      cell: ({ row }) => getGenderBadge(row.original.gender),
+    },
+    {
+      accessorKey: "contact",
+      header: "Kontak",
+      cell: ({ row }) => {
+        const record = row.original;
+        return (
+          <div className="space-y-1">
+            <div className="flex items-center gap-1">
+              <Mail className="text-muted-foreground h-3 w-3" />
+              <span className="text-xs">{record.email}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Phone className="text-muted-foreground h-3 w-3" />
+              <span className="text-xs">{record.phone}</span>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "education",
+      header: "Pendidikan",
+      cell: ({ row }) => getEducationBadge(row.original.education),
+    },
+    {
+      accessorKey: "job",
+      header: "Pekerjaan",
+      cell: ({ row }) => {
+        const record = row.original;
+        return (
+          <div className="flex items-center gap-2">
+            <Briefcase className="text-muted-foreground h-4 w-4" />
+            <span className="text-sm">{record.job || <span className="text-muted-foreground italic">-</span>}</span>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "visit_datetime",
+      header: "Waktu Kunjungan",
+      cell: ({ row }) => {
+        const record = row.original;
+        return (
+          <div className="flex items-center gap-2">
+            <Calendar className="text-muted-foreground h-4 w-4" />
+            <div>
+              <p className="text-sm font-medium">{new Date(record.visit_datetime).toLocaleDateString("id-ID")}</p>
+              <p className="text-muted-foreground text-xs">
+                {new Date(record.visit_datetime).toLocaleTimeString("id-ID", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </p>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "service_media",
+      header: "Media Layanan",
+      cell: ({ row }) => getServiceMediaBadge(row.original.service_media),
+    },
+    {
+      accessorKey: "book_access_count",
+      header: "Akses Buku",
+      cell: ({ row }) => {
+        const record = row.original;
+        return (
+          <div className="flex items-center gap-2">
+            <BookOpen className="text-muted-foreground h-4 w-4" />
+            <span className="text-sm">
+              {record.book_access_count === "-" ? (
+                <span className="text-muted-foreground">-</span>
+              ) : (
+                <span className="font-medium text-green-600">{record.book_access_count}</span>
+              )}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: "Aksi",
+      cell: ({ row }) => {
+        const record = row.original;
+        return (
+          <Button variant="outline" size="sm" onClick={() => handleViewDetail(record)}>
+            <Eye className="mr-2 h-4 w-4" />
+            Detail
+          </Button>
+        );
+      },
+    },
+  ];
 
+  return (
+    <div>
+      <DataTable columns={columns} data={data} />
       <LibraryServiceDetail serviceRecord={selectedLibraryService} isOpen={isDetailOpen} onClose={handleCloseDetail} />
     </div>
   );

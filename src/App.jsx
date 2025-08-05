@@ -8,6 +8,9 @@ import Login from "./pages/login";
 import LayananPerpustakaan from "./pages/layanan-perpustakaan";
 
 import RekomendasiStatistik from "./pages/rekomendasi-statistik";
+import TransaksiStatistik from "./pages/transaksi-statistik";
+
+import { statisticalTransactions } from "./constants/data";
 
 export default function App() {
   const getSession = async () => {
@@ -30,6 +33,19 @@ export default function App() {
         {
           index: true,
           Component: Dashboard,
+          loader: async () => {
+            const { data: libraryServiceData } = await api.libraryService.getLibraryServiceData();
+            const { data: romantikServiceData } = await api.romantikService.getRomantikStatisticalActivities();
+
+            return { statisticalTransactions, libraryServiceData, romantikServiceData };
+          },
+        },
+        {
+          path: "transaksi-statistik",
+          Component: TransaksiStatistik,
+          loader: async () => {
+            return { statisticalTransactions };
+          },
         },
         {
           path: "layanan-perpustakaan",

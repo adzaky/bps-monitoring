@@ -17,6 +17,7 @@ import { Button } from "./ui/button";
 import supabase from "@/lib/supabase";
 import { useNavigate } from "react-router";
 import { Award, LayoutDashboard, Library } from "lucide-react";
+import { BarChart2 } from "lucide-react";
 
 const SIDEBAR_NAV = [
   {
@@ -32,6 +33,11 @@ const SIDEBAR_NAV = [
   {
     title: "Produk Layanan",
     items: [
+      {
+        label: "Transaksi Statistik",
+        url: "/transaksi-statistik",
+        icon: BarChart2,
+      },
       {
         label: "Layanan Perpustakaan",
         url: "/layanan-perpustakaan",

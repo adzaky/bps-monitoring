@@ -1,15 +1,134 @@
 import React from "react";
-import { WorkflowCard } from "@/components/WorkflowCard";
+import { useLoaderData } from "react-router";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { WorkflowCard } from "@/components/WorkflowCard";
 import { WORKFLOWS } from "@/constants/workflow";
+import { postJsonToGoogleAppScript } from "@/services/sheet";
+import { formatDateToDDMMYYYY } from "@/lib/utils";
 
 export default function Dashboard() {
+  const [isLoading, setIsLoading] = React.useState(false);
+  const { statisticalTransactions, libraryServiceData, romantikServiceData } = useLoaderData();
+
+  const handleExportData = async () => {
+    setIsLoading(true);
+
+    try {
+      let data = [];
+      let counter = 1;
+
+      // Helper function to generate random 5-digit number
+      const generateRandomId = () => Math.floor(10000 + Math.random() * 90000);
+
+      // Add statistical transactions data
+      if (statisticalTransactions && statisticalTransactions.length > 0) {
+        const statisticalData = statisticalTransactions.map((transaction) => {
+          const isOnlineService = !!transaction.detail.online_service_detail;
+          const serviceType = isOnlineService ? "Produk Statistik Berbayar" : "Konsultasi";
+          const keterangan = isOnlineService
+            ? "Data Mikro"
+            : transaction.detail.onsite_visit_detail?.need_type || "Konsultasi";
+
+          // Parse status to get target achievement
+          const parseStatus = (status) => {
+            if (!status) return { statusText: "Belum selesai", rating: 0 };
+            const parts = status.split(": ");
+            if (parts.length === 2) {
+              const statusText = parts[0];
+              const rating = parseInt(parts[1]);
+              return { statusText, rating };
+            }
+            return { statusText: status, rating: 0 };
+          };
+
+          const { rating } = parseStatus(transaction.status);
+          const capaian = rating >= 4 ? "Sesuai Target" : "Tidak Sesuai Target";
+
+          return {
+            no: counter++,
+            id_transaksi: `BPS-7200-SILASTIK-${generateRandomId()}`,
+            nama_pengguna: transaction.customer_name,
+            jenis_layanan: serviceType,
+            keterangan: keterangan,
+            tanggal_permintaan: formatDateToDDMMYYYY(transaction.request_date),
+            tanggal_selesai: formatDateToDDMMYYYY(transaction.detail.completion_date),
+            capaian: capaian,
+            petugas: transaction.main_operator,
+          };
+        });
+        data = [...data, ...statisticalData];
+      }
+
+      // Add library service data
+      if (libraryServiceData && libraryServiceData.length > 0) {
+        const libraryData = libraryServiceData.map((record) => {
+          const visitDate = new Date(record.visit_datetime || record.visit_date_time);
+          return {
+            no: counter++,
+            id_transaksi: `BPS-7200-PST-${generateRandomId()}`,
+            nama_pengguna: record.name,
+            jenis_layanan: "Layanan Perpustakaan",
+            keterangan: record.service_media === "Digilib" ? "Digital" : "Tercetak",
+            tanggal_permintaan: formatDateToDDMMYYYY(visitDate.toISOString()),
+            tanggal_selesai: formatDateToDDMMYYYY(visitDate.toISOString()),
+            capaian: "Sesuai Target",
+            petugas: "Petugas Perpustakaan",
+          };
+        });
+        data = [...data, ...libraryData];
+      }
+
+      // Add romantik service data
+      if (romantikServiceData && romantikServiceData.length > 0) {
+        const romantikData = romantikServiceData.map((activity) => {
+          const getCapaian = (submissionStatus, recommendationStatus) => {
+            if (submissionStatus === "selesai" && recommendationStatus === "layak") {
+              return "Sesuai Target";
+            } else if (submissionStatus === "revisi" || recommendationStatus === "perlu perbaikan") {
+              return "Perlu Perbaikan";
+            } else {
+              return "Dalam Proses";
+            }
+          };
+
+          return {
+            no: counter++,
+            id_transaksi: `BPS-7200-ROMANTIK-${generateRandomId()}`,
+            nama_pengguna: activity.organizer,
+            jenis_layanan: "Rekomendasi Kegiatan Statistik",
+            keterangan: activity.activity_title?.substring(0, 50) + (activity.activity_title?.length > 50 ? "..." : ""),
+            tanggal_permintaan: formatDateToDDMMYYYY(activity.submission_date),
+            tanggal_selesai: formatDateToDDMMYYYY(activity.completion_date),
+            capaian: getCapaian(activity.submission_status, activity.recommendation_status),
+            petugas: "Tim Evaluasi",
+          };
+        });
+        data = [...data, ...romantikData];
+      }
+
+      console.log("Exported data:", data);
+      await postJsonToGoogleAppScript(
+        "https://script.google.com/macros/s/AKfycbzYEoC76kQg8XzUboMVl8lmZ2ejjymNworYpNNU2znHZxaJBb28BlEIqMPUSSa8lwS-Zw/exec",
+        data
+      );
+    } catch (err) {
+      console.error("Error exporting data:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="mx-auto w-full space-y-6">
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">Kelola dan pantau semua transaksi layanan</p>
       </div>
+
+      <Button onClick={handleExportData} disabled={isLoading} className="w-full">
+        {isLoading ? "Exporting..." : "Export Recapitulation Data to Spreadsheet"}
+      </Button>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
         {WORKFLOWS.map((workflow) => (
