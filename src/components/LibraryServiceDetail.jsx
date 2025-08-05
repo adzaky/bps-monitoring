@@ -26,7 +26,7 @@ export default function LibraryServiceDetail({ serviceRecord, isOpen, onClose })
       </Badge>
     ) : (
       <Badge variant="outline" className="bg-pink-50 text-pink-700">
-      Perempuan
+        Perempuan
       </Badge>
     );
   };
@@ -70,9 +70,6 @@ export default function LibraryServiceDetail({ serviceRecord, isOpen, onClose })
               <BookOpen className="h-5 w-5" />
               Detail Layanan Perpustakaan
             </div>
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              <X className="h-4 w-4" />
-            </Button>
           </DialogTitle>
           <DialogDescription>Informasi lengkap pengunjung perpustakaan</DialogDescription>
         </DialogHeader>
