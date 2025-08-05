@@ -108,7 +108,9 @@ export function AppSidebar({ ...props }) {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <Button onClick={handleLogout}>{!isLoading ? "Keluar" : "Loading..."}</Button>
+        <Button variant="destructive" onClick={handleLogout}>
+          {!isLoading ? "Keluar" : "Loading..."}
+        </Button>
       </SidebarFooter>
     </Sidebar>
   );
