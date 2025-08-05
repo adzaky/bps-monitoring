@@ -156,13 +156,6 @@ export default function RekomendasiStatistik() {
             </Select>
           </div>
 
-          {/* Hasil Filter */}
-          <div className="mb-4">
-            <p className="text-muted-foreground text-sm">
-              Menampilkan {filteredData.length} dari {totalActivities} kegiatan
-            </p>
-          </div>
-
           <RomantikServiceTable data={filteredData} />
         </CardContent>
       </Card>
