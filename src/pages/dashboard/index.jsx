@@ -18,7 +18,6 @@ export default function Dashboard() {
       let data = [];
       let counter = 1;
 
-      // Helper function to generate random 5-digit number
       const generateRandomId = () => Math.floor(10000 + Math.random() * 90000);
 
       // Add statistical transactions data
@@ -51,7 +50,7 @@ export default function Dashboard() {
             nama_pengguna: transaction.customer_name,
             jenis_layanan: serviceType,
             keterangan: keterangan,
-            tanggal_permintaan: formatDateToDDMMYYYY(transaction.request_date),
+            tanggal_permintaan: formatDateToDDMMYYYY(transaction.request_date || transaction.detail.request_date),
             tanggal_selesai: formatDateToDDMMYYYY(transaction.detail.completion_date),
             capaian: capaian,
             petugas: transaction.main_operator,
@@ -63,15 +62,15 @@ export default function Dashboard() {
       // Add library service data
       if (libraryServiceData && libraryServiceData.length > 0) {
         const libraryData = libraryServiceData.map((record) => {
-          const visitDate = new Date(record.visit_datetime || record.visit_date_time);
+          const visitDate = record.visit_datetime || record.visit_date_time;
           return {
             no: counter++,
             id_transaksi: `BPS-7200-PST-${generateRandomId()}`,
             nama_pengguna: record.name,
             jenis_layanan: "Layanan Perpustakaan",
             keterangan: record.service_media === "Digilib" ? "Digital" : "Tercetak",
-            tanggal_permintaan: formatDateToDDMMYYYY(visitDate.toISOString()),
-            tanggal_selesai: formatDateToDDMMYYYY(visitDate.toISOString()),
+            tanggal_permintaan: formatDateToDDMMYYYY(visitDate),
+            tanggal_selesai: formatDateToDDMMYYYY(visitDate),
             capaian: "Sesuai Target",
             petugas: "Petugas Perpustakaan",
           };
