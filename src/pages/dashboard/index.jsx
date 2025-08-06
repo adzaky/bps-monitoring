@@ -23,26 +23,30 @@ export default function Dashboard() {
       // Add statistical transactions data
       if (statisticalTransactions && statisticalTransactions.length > 0) {
         const statisticalData = statisticalTransactions.map((transaction) => {
-          const isOnlineService = !!transaction.detail.online_service_detail;
-          const serviceType = isOnlineService ? "Produk Statistik Berbayar" : "Konsultasi";
-          const keterangan = isOnlineService
-            ? "Data Mikro"
-            : transaction.detail.onsite_visit_detail?.need_type || "Konsultasi";
+          const mapServiceType = (needType) => {
+            if (!needType) return "";
 
-          // Parse status to get target achievement
-          const parseStatus = (status) => {
-            if (!status) return { statusText: "Belum selesai", rating: 0 };
-            const parts = status.split(": ");
-            if (parts.length === 2) {
-              const statusText = parts[0];
-              const rating = parseInt(parts[1]);
-              return { statusText, rating };
+            if (needType.includes("Kunjungan langsung")) {
+              return needType.includes("Permintaan Data") ? "Produk Statistik Berbayar" : "Konsultasi Langsung";
             }
-            return { statusText: status, rating: 0 };
+            if (needType.includes("Layanan Online")) {
+              return needType.includes("Permintaan Data") ? "Produk Statistik Berbayar" : "Konsultasi Online";
+            }
+
+            return "";
           };
 
-          const { rating } = parseStatus(transaction.status);
-          const capaian = rating >= 4 ? "Sesuai Target" : "Tidak Sesuai Target";
+          const mapKeterangan = (topic) => {
+            if (!topic) return "";
+            if (topic.includes("Data Mikro")) return "Data Mikro";
+            return "";
+          };
+
+          const serviceType = mapServiceType(
+            transaction.need_type || transaction.detail.onsite_visit_detail?.need_type
+          );
+          const keterangan = mapKeterangan(transaction.detail?.online_service_detail?.topic || "");
+          const requestDate = transaction.request_date || transaction.detail.request_date;
 
           return {
             no: counter++,
@@ -50,9 +54,9 @@ export default function Dashboard() {
             nama_pengguna: transaction.customer_name,
             jenis_layanan: serviceType,
             keterangan: keterangan,
-            tanggal_permintaan: formatDateToDDMMYYYY(transaction.request_date || transaction.detail.request_date),
+            tanggal_permintaan: formatDateToDDMMYYYY(requestDate),
             tanggal_selesai: formatDateToDDMMYYYY(transaction.detail.completion_date),
-            capaian: capaian,
+            capaian: "",
             petugas: transaction.main_operator,
           };
         });
@@ -67,12 +71,12 @@ export default function Dashboard() {
             no: counter++,
             id_transaksi: `BPS-7200-PST-${generateRandomId()}`,
             nama_pengguna: record.name,
-            jenis_layanan: "Layanan Perpustakaan",
+            jenis_layanan: "Perpustakaan",
             keterangan: record.service_media === "Digilib" ? "Digital" : "Tercetak",
             tanggal_permintaan: formatDateToDDMMYYYY(visitDate),
             tanggal_selesai: formatDateToDDMMYYYY(visitDate),
-            capaian: "Sesuai Target",
-            petugas: "Petugas Perpustakaan",
+            capaian: "",
+            petugas: "",
           };
         });
         data = [...data, ...libraryData];
@@ -81,26 +85,16 @@ export default function Dashboard() {
       // Add romantik service data
       if (romantikServiceData && romantikServiceData.length > 0) {
         const romantikData = romantikServiceData.map((activity) => {
-          const getCapaian = (submissionStatus, recommendationStatus) => {
-            if (submissionStatus === "selesai" && recommendationStatus === "layak") {
-              return "Sesuai Target";
-            } else if (submissionStatus === "revisi" || recommendationStatus === "perlu perbaikan") {
-              return "Perlu Perbaikan";
-            } else {
-              return "Dalam Proses";
-            }
-          };
-
           return {
             no: counter++,
             id_transaksi: `BPS-7200-ROMANTIK-${generateRandomId()}`,
             nama_pengguna: activity.organizer,
-            jenis_layanan: "Rekomendasi Kegiatan Statistik",
+            jenis_layanan: "Rekomendasi Statistik",
             keterangan: activity.activity_title?.substring(0, 50) + (activity.activity_title?.length > 50 ? "..." : ""),
             tanggal_permintaan: formatDateToDDMMYYYY(activity.submission_date),
             tanggal_selesai: formatDateToDDMMYYYY(activity.completion_date),
-            capaian: getCapaian(activity.submission_status, activity.recommendation_status),
-            petugas: "Tim Evaluasi",
+            capaian: "",
+            petugas: "Ince Mariyani S.E., M.M.",
           };
         });
         data = [...data, ...romantikData];
