@@ -82,7 +82,7 @@ export default function Dashboard() {
             tanggal_permintaan: formattedRequestDate,
             tanggal_selesai: formattedCompletionDate,
             capaian: calculateCapaian(jenisLayanan, formattedRequestDate, formattedCompletionDate),
-            petugas: "",
+            petugas: "Ince Mariyani S.E., M.M.",
           };
         });
         data = [...data, ...libraryData];
@@ -104,7 +104,7 @@ export default function Dashboard() {
             tanggal_permintaan: formattedRequestDate,
             tanggal_selesai: formattedCompletionDate,
             capaian: calculateCapaian(jenisLayanan, formattedRequestDate, formattedCompletionDate),
-            petugas: "Ince Mariyani S.E., M.M.",
+            petugas: activity.processed_by || "-",
           };
         });
         data = [...data, ...romantikData];
