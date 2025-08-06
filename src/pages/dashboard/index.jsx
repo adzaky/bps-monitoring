@@ -108,7 +108,7 @@ export default function Dashboard() {
 
       console.log("Exported data:", data);
       await postJsonToGoogleAppScript(
-        "https://script.google.com/macros/s/AKfycbzYEoC76kQg8XzUboMVl8lmZ2ejjymNworYpNNU2znHZxaJBb28BlEIqMPUSSa8lwS-Zw/exec",
+        "https://script.google.com/macros/s/AKfycbw6YazEmRwCDWmW4_qCnNikeEVQHRjxz7RXwVjOkApKSTdjn8QqYoGuAN-kPTAYdT4mdg/exec",
         data
       );
     } catch (err) {
