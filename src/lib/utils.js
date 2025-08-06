@@ -3,9 +3,11 @@ import { twMerge } from "tailwind-merge";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 
-dayjs.extend(customParseFormat);
 dayjs.locale("id");
+dayjs.extend(customParseFormat);
+dayjs.extend(isSameOrBefore);
 
 export function formatDateToDDMMYYYY(dateString) {
   if (!dateString || dateString === "-" || dateString.toString().trim() === "") {
@@ -47,6 +49,75 @@ export function formatDateToDDMMYYYY(dateString) {
     throw new Error(`Invalid date string: ${cleanedInput} to ${fallback}`);
   }
   return fallback.format("DD/MM/YYYY");
+}
+
+export function calculateCapaian(serviceType, requestDate, completionDate) {
+  if (!serviceType || !requestDate || !completionDate) {
+    return "";
+  }
+
+  // Parse dates using dayjs with DD/MM/YYYY format
+  const startDate = dayjs(requestDate, "DD/MM/YYYY");
+  const endDate = dayjs(completionDate, "DD/MM/YYYY");
+
+  try {
+    // Validate dates
+    if (!startDate.isValid() || !endDate.isValid()) {
+      return "";
+    }
+
+    // Calculate working days (NETWORKDAYS equivalent)
+    const calculateNetworkDays = (start, end) => {
+      let workingDays = 0;
+      let current = start.clone();
+
+      while (current.isSameOrBefore(end, "day")) {
+        const dayOfWeek = current.day(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+          // Exclude Sunday (0) and Saturday (6)
+          workingDays++;
+        }
+        current = current.add(1, "day");
+      }
+
+      return workingDays;
+    };
+
+    // Calculate actual differences
+    const daysDifference = endDate.diff(startDate, "day");
+    const networkDays = calculateNetworkDays(startDate, endDate);
+
+    let isTargetMet = false;
+
+    switch (serviceType) {
+      case "Perpustakaan":
+        // Must be completed on the same day (G3 - F3 = 0)
+        isTargetMet = daysDifference === 0;
+        break;
+      case "Rekomendasi Statistik":
+        // ≤ 14 working days
+        isTargetMet = networkDays <= 14;
+        break;
+      case "Konsultasi Online":
+        // ≤ 3 working days
+        isTargetMet = networkDays <= 3;
+        break;
+      case "Konsultasi Langsung":
+        // ≤ 1 working day
+        isTargetMet = networkDays <= 1;
+        break;
+      case "Produk Statistik Berbayar":
+        // ≤ 10 working days
+        isTargetMet = networkDays <= 10;
+        break;
+      default:
+        return "";
+    }
+
+    return isTargetMet ? "Sesuai Target" : "Tidak Sesuai Target";
+  } catch (err) {
+    console.error(`Error calculating capaian for ${serviceType} - ${requestDate} - ${completionDate} :`, err);
+  }
 }
 
 export function cn(...inputs) {
