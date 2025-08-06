@@ -115,20 +115,18 @@ export default function RomantikServiceTable({ data }) {
       cell: ({ row }) => {
         const activity = row.original;
         return (
-          <div className="max-w-xs">
-            <div className="flex items-start gap-2">
-              <FileText className="text-muted-foreground mt-1 h-4 w-4 flex-shrink-0" />
-              <div>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <p className="line-clamp-2 font-medium whitespace-normal">{activity.activity_title}</p>
-                  </TooltipTrigger>
-                  <TooltipContent side="top">
-                    <span className="block whitespace-pre-wrap">{activity.activity_title}</span>
-                  </TooltipContent>
-                </Tooltip>
-                <p className="text-muted-foreground mt-1 text-xs">Diajukan: {formatDate(activity.submission_date)}</p>
-              </div>
+          <div className="flex items-start gap-2">
+            <FileText className="text-muted-foreground mt-1 h-4 w-4 shrink-0" />
+            <div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <p className="line-clamp-2 font-medium whitespace-normal">{activity.activity_title}</p>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <span className="block whitespace-pre-wrap">{activity.activity_title}</span>
+                </TooltipContent>
+              </Tooltip>
+              <p className="text-muted-foreground mt-1 text-xs">Diajukan: {formatDate(activity.submission_date)}</p>
             </div>
           </div>
         );
@@ -140,19 +138,45 @@ export default function RomantikServiceTable({ data }) {
       cell: ({ row }) => {
         const activity = row.original;
         return (
-          <div className="max-w-xs">
-            <div className="flex items-center gap-2">
-              <Building className="text-muted-foreground h-4 w-4" />
-              <p className="line-clamp-2 text-sm whitespace-normal">{activity.organizer}</p>
+          <div className="flex items-center gap-2">
+            <Building className="text-muted-foreground h-4 w-4 shrink-0" />
+            <div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <p className="line-clamp-2 font-medium whitespace-normal">{activity.organizer}</p>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <span className="block whitespace-pre-wrap">{activity.organizer}</span>
+                </TooltipContent>
+              </Tooltip>
+              {activity.submitted_by && <p className="text-muted-foreground text-xs">Oleh: {activity.submitted_by}</p>}
             </div>
           </div>
         );
       },
     },
     {
+      accessorKey: "transaction_number",
+      header: "No. Transaksi",
+      cell: ({ row }) => {
+        const activity = row.original;
+        return activity.transaction_number ? (
+          <Badge variant="outline" className="font-mono text-xs">
+            {activity.transaction_number}
+          </Badge>
+        ) : (
+          <span className="text-muted-foreground text-xs">-</span>
+        );
+      },
+    },
+    {
       accessorKey: "activity_year",
       header: "Tahun",
-      cell: ({ row }) => <Badge variant="outline">{row.original.activity_year}</Badge>,
+      cell: ({ row }) => (
+        <Badge variant="outline" className="text-blue-600">
+          {row.original.activity_year}
+        </Badge>
+      ),
     },
     {
       accessorKey: "submission_status",

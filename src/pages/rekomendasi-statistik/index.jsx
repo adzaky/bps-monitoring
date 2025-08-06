@@ -17,7 +17,12 @@ export default function RekomendasiStatistik() {
   const filteredData = romantikServiceData.filter((activity) => {
     const matchesSearch =
       activity.activity_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      activity.organizer.toLowerCase().includes(searchTerm.toLowerCase());
+      activity.organizer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (activity.submitted_by && activity.submitted_by.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (activity.processed_by && activity.processed_by.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (activity.transaction_number && activity.transaction_number.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (activity.recommendation_number &&
+        activity.recommendation_number.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchesYear = filterYear === "all" || activity.activity_year === filterYear;
     const matchesSubmissionStatus =
@@ -109,7 +114,7 @@ export default function RekomendasiStatistik() {
               <div className="relative">
                 <Search className="text-muted-foreground absolute top-3 left-3 h-4 w-4" />
                 <Input
-                  placeholder="Cari judul kegiatan atau penyelenggara..."
+                  placeholder="Cari judul, penyelenggara, nomor transaksi, nomor rekomendasi..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"

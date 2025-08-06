@@ -165,6 +165,14 @@ export default function RomantikServiceDetail({ activity, isOpen, onClose }) {
                   <Label className="text-muted-foreground text-sm font-medium">Tahun Kegiatan</Label>
                   <p className="font-medium text-blue-600">{activity.activity_year}</p>
                 </div>
+                <div className="space-y-2">
+                  <Label className="text-muted-foreground text-sm font-medium">Nomor Transaksi</Label>
+                  <p className="font-medium">{activity.transaction_number || "-"}</p>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-muted-foreground text-sm font-medium">Nomor Rekomendasi</Label>
+                  <p className="font-medium">{activity.recommendation_number || "-"}</p>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -190,6 +198,28 @@ export default function RomantikServiceDetail({ activity, isOpen, onClose }) {
                 <div className="space-y-2">
                   <Label className="text-muted-foreground text-sm font-medium">Rating</Label>
                   <div>{getRatingBadge(activity.rating)}</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Informasi Pengajuan dan Pemrosesan */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Building className="h-5 w-5" />
+                Informasi Pengajuan dan Pemrosesan
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label className="text-muted-foreground text-sm font-medium">Diajukan Oleh</Label>
+                  <p className="font-medium">{activity.submitted_by || "-"}</p>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-muted-foreground text-sm font-medium">Diproses Oleh</Label>
+                  <p className="font-medium">{activity.processed_by || "-"}</p>
                 </div>
               </div>
             </CardContent>
@@ -265,34 +295,6 @@ export default function RomantikServiceDetail({ activity, isOpen, onClose }) {
                   <Download className="mr-2 h-4 w-4" />
                   Download
                 </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Informasi Sistem */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Informasi Sistem</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label className="text-muted-foreground text-sm font-medium">ID Kegiatan</Label>
-                  <p className="rounded bg-gray-100 p-2 font-mono text-sm">{activity.id}</p>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-muted-foreground text-sm font-medium">Dibuat Pada</Label>
-                  <p className="font-medium">
-                    {new Date(activity.created_at).toLocaleDateString("id-ID", {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </p>
-                </div>
               </div>
             </CardContent>
           </Card>
