@@ -1,6 +1,7 @@
 import React from "react";
 import { useLoaderData } from "react-router";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { useRecapData } from "@/hooks/use-recap-data";
 import { postJsonToGoogleAppScript } from "@/services/sheet";
@@ -13,29 +14,43 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 export default function Dashboard() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [activeChart, setActiveChart] = React.useState("targetMetPercentage");
+  const [selectedServiceType, setSelectedServiceType] = React.useState("all");
   const { statisticalTransactions, libraryServiceData, romantikServiceData } = useLoaderData();
   const { data } = useRecapData(statisticalTransactions, libraryServiceData, romantikServiceData);
 
+  // Get unique service types
+  const serviceTypes = React.useMemo(() => {
+    if (!data || data.length === 0) return [];
+    const types = [...new Set(data.map((item) => item.jenis_layanan))];
+    return types.filter(Boolean).sort();
+  }, [data]);
+
+  // Filter data based on selected service type
+  const filteredData = React.useMemo(() => {
+    if (!data || selectedServiceType === "all") return data || [];
+    return data.filter((item) => item.jenis_layanan === selectedServiceType);
+  }, [data, selectedServiceType]);
+
   // Calculate summary metrics
   const summaryMetrics = React.useMemo(() => {
-    if (!data || data.length === 0)
+    if (!filteredData || filteredData.length === 0)
       return { total: 0, sesuaiTarget: 0, tidakSesuaiTarget: 0, persentaseSesuaiTarget: 0 };
 
-    const total = data.length;
-    const sesuaiTarget = data.filter((item) => item.capaian === "Sesuai Target").length;
+    const total = filteredData.length;
+    const sesuaiTarget = filteredData.filter((item) => item.capaian === "Sesuai Target").length;
     const tidakSesuaiTarget = total - sesuaiTarget;
     const persentaseSesuaiTarget = total > 0 ? Math.round((sesuaiTarget / total) * 100) : 0;
 
     return { total, sesuaiTarget, tidakSesuaiTarget, persentaseSesuaiTarget };
-  }, [data]);
+  }, [filteredData]);
 
   const chartData = React.useMemo(() => {
-    if (!data || data.length === 0) return [];
+    if (!filteredData || filteredData.length === 0) return [];
 
     // Group by month from tanggal_permintaan
     const monthlyData = {};
 
-    data.forEach((item) => {
+    filteredData.forEach((item) => {
       if (!item.tanggal_permintaan) return;
 
       const [, month, year] = item.tanggal_permintaan.split("/");
@@ -68,7 +83,7 @@ export default function Dashboard() {
         targetMetPercentage: item.total > 0 ? Math.round((item.targetMet / item.total) * 100) : 0,
         targetNotMetPercentage: item.total > 0 ? Math.round((item.targetNotMet / item.total) * 100) : 0,
       }));
-  }, [data]);
+  }, [filteredData]);
 
   const handleExportData = async () => {
     setIsLoading(true);
@@ -89,23 +104,23 @@ export default function Dashboard() {
   const chartConfig = {
     targetMetPercentage: {
       label: "Sesuai Target (%)",
-      color: "var(--chart-1)",
+      color: "#34C759", // green
     },
     targetNotMetPercentage: {
       label: "Tidak Sesuai Target (%)",
-      color: "var(--chart-2)",
+      color: "#F56565", // red
     },
     targetMet: {
       label: "Jumlah Sesuai Target",
-      color: "var(--chart-3)",
+      color: "#718096", // blue
     },
     targetNotMet: {
       label: "Jumlah Tidak Sesuai Target",
-      color: "var(--chart-4)",
+      color: "#F7DC6F", // yellow
     },
     total: {
       label: "Total Transaksi",
-      color: "var(--chart-5)",
+      color: "#90CDF4", // teal
     },
   };
 
@@ -116,10 +131,39 @@ export default function Dashboard() {
         <p className="text-muted-foreground">Kelola dan pantau semua transaksi layanan</p>
       </div>
 
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <label htmlFor="service-type" className="text-md font-bold">
+              Jenis Layanan:
+            </label>
+            <Select value={selectedServiceType} onValueChange={setSelectedServiceType}>
+              <SelectTrigger id="service-type" className="w-[280px]">
+                <SelectValue placeholder="Pilih jenis layanan" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Semua</SelectItem>
+                {serviceTypes.map((type) => (
+                  <SelectItem key={type} value={type}>
+                    {type}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="text-md">
+          Menampilkan data untuk:{" "}
+          <span className="font-bold">{selectedServiceType === "all" ? "Semua Layanan" : selectedServiceType}</span>
+        </div>
+      </div>
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <h3 className="text-sm font-medium">Total Transaksi Statistik</h3>
+            <h3 className="text-sm font-medium">
+              {selectedServiceType === "all" ? "Total Transaksi" : `Total ${selectedServiceType}`}
+            </h3>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -137,7 +181,11 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{summaryMetrics.total}</div>
-            <p className="text-muted-foreground text-xs">Total transaksi statistik tercatat</p>
+            <p className="text-muted-foreground text-xs">
+              {selectedServiceType === "all"
+                ? "Total transaksi semua layanan"
+                : `Total transaksi ${selectedServiceType.toLowerCase()}`}
+            </p>
           </CardContent>
         </Card>
 
@@ -211,9 +259,15 @@ export default function Dashboard() {
       <Card>
         <CardHeader>
           <div className="flex flex-col space-y-2">
-            <h3 className="text-lg font-medium">Grafik Capaian Transaksi Statistik Bulanan</h3>
+            <h3 className="text-lg font-medium">
+              {selectedServiceType === "all"
+                ? "Grafik Capaian Transaksi Bulanan - Semua Layanan"
+                : `Grafik Capaian Transaksi Bulanan - ${selectedServiceType}`}
+            </h3>
             <p className="text-muted-foreground text-sm">
-              Statistik pencapaian target layanan transaksi statistik per bulan
+              {selectedServiceType === "all"
+                ? "Statistik pencapaian target semua jenis layanan per bulan"
+                : `Statistik pencapaian target layanan ${selectedServiceType.toLowerCase()} per bulan`}
             </p>
           </div>
         </CardHeader>
