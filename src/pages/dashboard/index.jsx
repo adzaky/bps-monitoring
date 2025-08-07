@@ -8,7 +8,7 @@ import { postJsonToGoogleAppScript } from "@/services/sheet";
 import RecapDataTable from "@/components/RecapDataTable";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
+import { CartesianGrid, Area, AreaChart, XAxis } from "recharts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Dashboard() {
@@ -281,7 +281,7 @@ export default function Dashboard() {
 
             <TabsContent value="targetMetPercentage" className="mt-4">
               <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
-                <LineChart
+                <AreaChart
                   accessibilityLayer
                   data={chartData}
                   margin={{
@@ -315,25 +315,25 @@ export default function Dashboard() {
                             year: "numeric",
                           });
                         }}
-                        formatter={(value) => [`${value}%`, "Sesuai Target"]}
+                        formatter={(value) => [`${value}% `, "Sesuai Target"]}
                       />
                     }
                   />
-                  <Line
+                  <Area
                     dataKey="targetMetPercentage"
                     type="monotone"
                     stroke={chartConfig.targetMetPercentage.color}
+                    fill={chartConfig.targetMetPercentage.color}
+                    fillOpacity={0.4}
                     strokeWidth={2}
-                    dot={{ r: 4 }}
-                    activeDot={{ r: 6 }}
                   />
-                </LineChart>
+                </AreaChart>
               </ChartContainer>
             </TabsContent>
 
             <TabsContent value="targetMet" className="mt-4">
               <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
-                <LineChart
+                <AreaChart
                   accessibilityLayer
                   data={chartData}
                   margin={{
@@ -367,25 +367,25 @@ export default function Dashboard() {
                             year: "numeric",
                           });
                         }}
-                        formatter={(value) => [`${value} transaksi`, "Sesuai Target"]}
+                        formatter={(value) => [`${value} Transaksi `, "Sesuai Target"]}
                       />
                     }
                   />
-                  <Line
+                  <Area
                     dataKey="targetMet"
                     type="monotone"
                     stroke={chartConfig.targetMet.color}
+                    fill={chartConfig.targetMet.color}
+                    fillOpacity={0.4}
                     strokeWidth={2}
-                    dot={{ r: 4 }}
-                    activeDot={{ r: 6 }}
                   />
-                </LineChart>
+                </AreaChart>
               </ChartContainer>
             </TabsContent>
 
             <TabsContent value="total" className="mt-4">
               <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
-                <LineChart
+                <AreaChart
                   accessibilityLayer
                   data={chartData}
                   margin={{
@@ -419,19 +419,19 @@ export default function Dashboard() {
                             year: "numeric",
                           });
                         }}
-                        formatter={(value) => [`${value} transaksi`, "Total"]}
+                        formatter={(value) => [`${value} Transaksi `, "Total"]}
                       />
                     }
                   />
-                  <Line
+                  <Area
                     dataKey="total"
                     type="monotone"
                     stroke={chartConfig.total.color}
+                    fill={chartConfig.total.color}
+                    fillOpacity={0.4}
                     strokeWidth={2}
-                    dot={{ r: 4 }}
-                    activeDot={{ r: 6 }}
                   />
-                </LineChart>
+                </AreaChart>
               </ChartContainer>
             </TabsContent>
           </Tabs>
