@@ -33,7 +33,7 @@ export default function Dashboard() {
 
     const total = filteredData.length;
     const sesuaiTarget = filteredData.filter((item) => item.capaian === "Sesuai Target").length;
-    const tidakSesuaiTarget = total - sesuaiTarget;
+    const tidakSesuaiTarget = filteredData.filter((item) => item.capaian === "Tidak Sesuai Target").length;
     const persentaseSesuaiTarget = total > 0 ? Math.round((sesuaiTarget / total) * 100) : 0;
 
     return { total, sesuaiTarget, tidakSesuaiTarget, persentaseSesuaiTarget };
