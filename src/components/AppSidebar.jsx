@@ -16,8 +16,7 @@ import { NavLink } from "react-router";
 import { Button } from "./ui/button";
 import supabase from "@/lib/supabase";
 import { useNavigate } from "react-router";
-import { Award, LayoutDashboard, Library } from "lucide-react";
-import { BarChart2 } from "lucide-react";
+import { Award, BarChart2, Import, LayoutDashboard, Library } from "lucide-react";
 
 const SIDEBAR_NAV = [
   {
@@ -47,6 +46,16 @@ const SIDEBAR_NAV = [
         label: "Rekomendasi Statistik",
         url: "/rekomendasi-statistik",
         icon: Award,
+      },
+    ],
+  },
+  {
+    title: "Utilitas Sistem",
+    items: [
+      {
+        label: "Ekstraksi Data",
+        url: "/ekstraksi-data",
+        icon: Import,
       },
     ],
   },

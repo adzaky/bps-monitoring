@@ -6,9 +6,9 @@ import supabase from "./lib/supabase";
 import Dashboard from "./pages/dashboard";
 import Login from "./pages/login";
 import LayananPerpustakaan from "./pages/layanan-perpustakaan";
-
 import RekomendasiStatistik from "./pages/rekomendasi-statistik";
 import TransaksiStatistik from "./pages/transaksi-statistik";
+import EkstraksiData from "./pages/ekstraksi-data";
 
 import { statisticalTransactions } from "./constants/data";
 
@@ -62,6 +62,10 @@ export default function App() {
             const { data: romantikServiceData } = await api.romantikService.getRomantikStatisticalActivities();
             return { romantikServiceData };
           },
+        },
+        {
+          path: "ekstraksi-data",
+          Component: EkstraksiData,
         },
       ],
     },
