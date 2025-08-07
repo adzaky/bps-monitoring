@@ -1,15 +1,17 @@
 import { useState } from "react";
-import { Search, X } from "lucide-react";
+import { FileText, Import, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DateRangePicker } from "@/components/ui/date-range";
 import { postJsonToGoogleAppScript } from "@/services/sheet";
-import { Import } from "lucide-react";
+import { exportPdfFromJson, exportToExcel } from "@/lib/utils";
 
 export default function RecapDataTable({ data }) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isExportingToSpreadsheet, setIsExportingToSpreadsheet] = useState(false);
+  const [isExportingToXlsx, setIsExportingToXlsx] = useState(false);
+  const [isExportingToPdf, setIsExportingToPdf] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [dateRange, setDateRange] = useState({
     from: new Date(new Date().getFullYear(), 0, 1),
@@ -21,17 +23,42 @@ export default function RecapDataTable({ data }) {
     petugas: "",
   });
 
-  const handleExportData = async () => {
-    setIsLoading(true);
-
+  const handleExportData = async (type) => {
     try {
-      console.log("Exported data:", filteredData);
-      const res = await postJsonToGoogleAppScript(filteredData);
-      alert(`Data exported successfully to ${res.url}`);
+      switch (type) {
+        case "spreadsheet":
+          setIsExportingToSpreadsheet(true);
+          await postJsonToGoogleAppScript(filteredData).then((res) =>
+            alert(`Data exported successfully to ${res.url}`)
+          );
+          break;
+        case "xlsx":
+          setIsExportingToXlsx(true);
+          await exportToExcel(filteredData, "Rekap Transaksi Layanan BPS.xlsx", "Transaksi Layanan");
+          break;
+        case "pdf":
+          setIsExportingToPdf(true);
+          await exportPdfFromJson(filteredData, "Laporan Transaksi Layanan BPS", "Rekap Transaksi Layanan BPS.pdf", [
+            "No",
+            "ID Transaksi",
+            "Nama Pengguna",
+            "Jenis Layanan",
+            "Keterangan",
+            "Tanggal Permintaan",
+            "Tanggal Selesai",
+            "Capaian",
+            "Petugas",
+          ]);
+          break;
+        default:
+          break;
+      }
     } catch (err) {
       console.error("Error exporting data:", err);
     } finally {
-      setIsLoading(false);
+      setIsExportingToSpreadsheet(false);
+      setIsExportingToXlsx(false);
+      setIsExportingToPdf(false);
     }
   };
 
@@ -255,9 +282,17 @@ export default function RecapDataTable({ data }) {
             </Button>
           </div>
 
-          <Button onClick={handleExportData} disabled={isLoading}>
-            <Import /> {isLoading ? "Exporting..." : "Spreadsheet"}
-          </Button>
+          <div className="space-x-2">
+            <Button onClick={() => handleExportData("spreadsheet")} disabled={isExportingToSpreadsheet}>
+              <Import /> {isExportingToSpreadsheet ? "Exporting..." : "Spreadsheet"}
+            </Button>
+            <Button onClick={() => handleExportData("xlsx")} disabled={isExportingToXlsx}>
+              <FileText /> {isExportingToXlsx ? "Exporting..." : "Excel"}
+            </Button>
+            <Button onClick={() => handleExportData("pdf")} disabled={isExportingToPdf}>
+              <FileText /> {isExportingToPdf ? "Exporting..." : "PDF"}
+            </Button>
+          </div>
         </div>
       </div>
 
