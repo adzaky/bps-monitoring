@@ -11,6 +11,7 @@ import TransaksiStatistik from "./pages/transaksi-statistik";
 import EkstraksiData from "./pages/ekstraksi-data";
 
 import { statisticalTransactions } from "./constants/data";
+import RekapData from "./pages/rekap-data";
 
 export default function App() {
   const getSession = async () => {
@@ -61,6 +62,16 @@ export default function App() {
           loader: async () => {
             const { data: romantikServiceData } = await api.romantikService.getRomantikStatisticalActivities();
             return { romantikServiceData };
+          },
+        },
+        {
+          path: "rekap-data",
+          Component: RekapData,
+          loader: async () => {
+            const { data: libraryServiceData } = await api.libraryService.getLibraryServiceData();
+            const { data: romantikServiceData } = await api.romantikService.getRomantikStatisticalActivities();
+
+            return { statisticalTransactions, libraryServiceData, romantikServiceData };
           },
         },
         {

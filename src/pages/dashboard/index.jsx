@@ -1,18 +1,13 @@
 import React from "react";
 import { useLoaderData } from "react-router";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-import { useRecapData } from "@/hooks/use-recap-data";
-import { postJsonToGoogleAppScript } from "@/services/sheet";
-import RecapDataTable from "@/components/RecapDataTable";
+import { CartesianGrid, Area, AreaChart, XAxis } from "recharts";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { CartesianGrid, Area, AreaChart, XAxis } from "recharts";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useRecapData } from "@/hooks/use-recap-data";
 
 export default function Dashboard() {
-  const [isLoading, setIsLoading] = React.useState(false);
   const [activeChart, setActiveChart] = React.useState("targetMetPercentage");
   const [selectedServiceType, setSelectedServiceType] = React.useState("all");
   const { statisticalTransactions, libraryServiceData, romantikServiceData } = useLoaderData();
@@ -84,22 +79,6 @@ export default function Dashboard() {
         targetNotMetPercentage: item.total > 0 ? Math.round((item.targetNotMet / item.total) * 100) : 0,
       }));
   }, [filteredData]);
-
-  const handleExportData = async () => {
-    setIsLoading(true);
-
-    try {
-      console.log("Exported data:", data);
-      await postJsonToGoogleAppScript(
-        "https://script.google.com/macros/s/AKfycbw6YazEmRwCDWmW4_qCnNikeEVQHRjxz7RXwVjOkApKSTdjn8QqYoGuAN-kPTAYdT4mdg/exec",
-        data
-      );
-    } catch (err) {
-      console.error("Error exporting data:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const chartConfig = {
     targetMetPercentage: {
@@ -437,14 +416,6 @@ export default function Dashboard() {
           </Tabs>
         </CardContent>
       </Card>
-
-      <Button onClick={handleExportData} disabled={isLoading} className="w-full">
-        {isLoading ? "Exporting..." : "Export Recapitulation Data to Spreadsheet"}
-      </Button>
-
-      <div>
-        <RecapDataTable data={data} />
-      </div>
     </div>
   );
 }
