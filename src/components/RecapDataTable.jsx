@@ -4,12 +4,17 @@ import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DateRangePicker } from "@/components/ui/date-range";
 import { postJsonToGoogleAppScript } from "@/services/sheet";
 import { Import } from "lucide-react";
 
 export default function RecapDataTable({ data }) {
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [dateRange, setDateRange] = useState({
+    from: new Date(new Date().getFullYear(), 0, 1),
+    to: new Date(),
+  });
   const [filters, setFilters] = useState({
     jenis_layanan: "",
     capaian: "",
@@ -40,11 +45,19 @@ export default function RecapDataTable({ data }) {
 
   const clearAllFilters = () => {
     setSearchTerm("");
+    setDateRange({
+      from: new Date(new Date().getFullYear(), 0, 1),
+      to: new Date(),
+    });
     setFilters({
       jenis_layanan: "",
       capaian: "",
       petugas: "",
     });
+  };
+
+  const handleDateRangeChange = (range) => {
+    setDateRange(range);
   };
 
   const handleFilterChange = (columnKey, value) => {
@@ -74,13 +87,30 @@ export default function RecapDataTable({ data }) {
         return value.includes(searchTerm.toLowerCase());
       });
 
+    // Date range filter
+    const matchesDateRange = (() => {
+      if (!dateRange?.from || !dateRange?.to || !item.tanggal_permintaan) {
+        return true;
+      }
+
+      const itemDate = new Date(item.tanggal_permintaan);
+      const fromDate = new Date(dateRange.from);
+      const toDate = new Date(dateRange.to);
+
+      // Set time to start/end of day for proper comparison
+      fromDate.setHours(0, 0, 0, 0);
+      toDate.setHours(23, 59, 59, 999);
+
+      return itemDate >= fromDate && itemDate <= toDate;
+    })();
+
     // Specific filters
     const matchesFilters = Object.keys(filters).every((key) => {
       if (!filters[key]) return true;
       return item[key] === filters[key];
     });
 
-    return matchesSearch && matchesFilters;
+    return matchesSearch && matchesDateRange && matchesFilters;
   });
 
   const columns = [
@@ -152,6 +182,12 @@ export default function RecapDataTable({ data }) {
         {/* Filters */}
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="flex items-center gap-4">
+            {/* Date Range Filter */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Tanggal Permintaan</label>
+              <DateRangePicker className="w-80" onChange={handleDateRangeChange} placeholder="Pilih Rentang Tanggal" />
+            </div>
+
             {/* Jenis Layanan Filter */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Jenis Layanan</label>
