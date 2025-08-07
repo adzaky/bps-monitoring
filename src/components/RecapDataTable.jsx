@@ -5,6 +5,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DateRangePicker } from "@/components/ui/date-range";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { postJsonToGoogleAppScript } from "@/services/sheet";
 import { exportPdfFromJson, exportToExcel } from "@/lib/utils";
 
@@ -188,6 +189,20 @@ export default function RecapDataTable({ data }) {
 
   return (
     <div className="space-y-4">
+      <Tabs
+        value={filters.jenis_layanan || "all"}
+        onValueChange={(value) => handleFilterChange("jenis_layanan", value === "all" ? "" : value)}
+        className="w-full"
+      >
+        <TabsList className="w-full">
+          <TabsTrigger value="all">Semua Jenis Layanan</TabsTrigger>
+          {getUniqueValues("jenis_layanan").map((value) => (
+            <TabsTrigger key={value} value={value}>
+              {value}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
       {/* Search and Filter Section */}
       <div className="space-y-4">
         {/* Global Search */}
@@ -204,34 +219,13 @@ export default function RecapDataTable({ data }) {
           </div>
         </div>
 
-        {/* Filters */}
+        {/* Other Filters */}
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="flex items-center gap-4">
             {/* Date Range Filter */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Tanggal Permintaan</label>
               <DateRangePicker className="w-80" onChange={handleDateRangeChange} placeholder="Pilih Rentang Tanggal" />
-            </div>
-
-            {/* Jenis Layanan Filter */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Jenis Layanan</label>
-              <Select
-                value={filters.jenis_layanan}
-                onValueChange={(value) => handleFilterChange("jenis_layanan", value === "all" ? "" : value)}
-              >
-                <SelectTrigger className="w-80">
-                  <SelectValue placeholder="Pilih Jenis Layanan" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Semua Jenis Layanan</SelectItem>
-                  {getUniqueValues("jenis_layanan").map((value) => (
-                    <SelectItem key={value} value={value}>
-                      {value}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
 
             {/* Capaian Filter */}
