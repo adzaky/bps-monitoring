@@ -1,16 +1,15 @@
-export async function postJsonToGoogleAppScript(url, data) {
+import supabase from "@/lib/supabase";
+
+export async function postJsonToGoogleAppScript(body) {
   try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      mode: "no-cors",
-      body: JSON.stringify(data),
+    const { data, error } = await supabase.functions.invoke("create-sheet-recap-data", {
+      body: { title: "Rekap Transaksi Layanan BPS", data: body },
     });
 
-    console.log("Response:", JSON.stringify(res));
-    return res;
+    if (error) throw error;
+
+    console.log(data);
+    return data;
   } catch (error) {
     console.error("Error posting JSON to Google App Script:", error);
     throw error;

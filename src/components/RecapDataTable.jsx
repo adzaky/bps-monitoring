@@ -26,10 +26,8 @@ export default function RecapDataTable({ data }) {
 
     try {
       console.log("Exported data:", data);
-      await postJsonToGoogleAppScript(
-        "https://script.google.com/macros/s/AKfycbw6YazEmRwCDWmW4_qCnNikeEVQHRjxz7RXwVjOkApKSTdjn8QqYoGuAN-kPTAYdT4mdg/exec",
-        data
-      );
+      const res = await postJsonToGoogleAppScript(data);
+      alert(`Data exported successfully to ${res.url}`);
     } catch (err) {
       console.error("Error exporting data:", err);
     } finally {
