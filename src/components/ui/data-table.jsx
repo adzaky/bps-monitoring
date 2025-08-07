@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-r
 import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function DataTable({ columns, data }) {
   const table = useReactTable({
@@ -13,7 +14,24 @@ export function DataTable({ columns, data }) {
 
   const Pagination = ({ table }) => (
     <div className="flex items-center justify-between px-2">
-      <div className="text-muted-foreground flex-1 text-sm">
+      <Select
+        value={`${table.getState().pagination.pageSize}`}
+        onValueChange={(value) => {
+          table.setPageSize(Number(value));
+        }}
+      >
+        <SelectTrigger className="h-8 w-[70px]">
+          <SelectValue placeholder={table.getState().pagination.pageSize} />
+        </SelectTrigger>
+        <SelectContent side="top">
+          {[10, 20, 25, 30, 40, 50].map((pageSize) => (
+            <SelectItem key={pageSize} value={`${pageSize}`}>
+              {pageSize}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <div className="text-muted-foreground ml-2 flex-1 text-sm">
         Menampilkan {table.getState().pagination.pageSize} dari {table.getFilteredRowModel().rows.length} baris data.
       </div>
       <div className="flex items-center space-x-6 lg:space-x-8">
