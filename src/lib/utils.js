@@ -4,6 +4,9 @@ import dayjs from "dayjs";
 import "dayjs/locale/id";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import { autoTable } from "jspdf-autotable";
 
 dayjs.locale("id");
 dayjs.extend(customParseFormat);
@@ -118,6 +121,30 @@ export function calculateCapaian(serviceType, requestDate, completionDate) {
   } catch (err) {
     console.error(`Error calculating capaian for ${serviceType} - ${requestDate} - ${completionDate} :`, err);
   }
+}
+
+export function exportToExcel(data, fileName = "data.xlsx", sheetName = "Sheet1") {
+  if (!data) return;
+
+  const ws = XLSX.utils.json_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, sheetName);
+
+  XLSX.writeFile(wb, fileName);
+}
+
+export function exportPdfFromJson(data, title, fileName, headers = [""]) {
+  if (!data) return;
+
+  const doc = new jsPDF();
+  doc.text(title, 14, 10);
+
+  autoTable(doc, {
+    head: headers.length ? [headers] : [Object.keys(data[0])],
+    body: data.map((row) => Object.values(row)),
+  });
+
+  doc.save(fileName);
 }
 
 export function cn(...inputs) {
