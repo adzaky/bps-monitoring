@@ -25,8 +25,8 @@ export default function RecapDataTable({ data }) {
     setIsLoading(true);
 
     try {
-      console.log("Exported data:", data);
-      const res = await postJsonToGoogleAppScript(data);
+      console.log("Exported data:", filteredData);
+      const res = await postJsonToGoogleAppScript(filteredData);
       alert(`Data exported successfully to ${res.url}`);
     } catch (err) {
       console.error("Error exporting data:", err);
