@@ -1,7 +1,17 @@
 import { calculateCapaian, formatDateToDDMMYYYY } from "@/lib/utils";
 
 export function useRecapData(statisticalTransactions, libraryServiceData, romantikServiceData) {
-  const generateRandomId = () => Math.floor(10000 + Math.random() * 90000);
+  const generateId = (data) => {
+    const dataString = JSON.stringify(data);
+    let hash = 0;
+    for (let i = 0; i < dataString.length; i++) {
+      const char = dataString.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash = hash & hash;
+    }
+    return (Math.abs(hash) % 90000) + 10000;
+  };
+
   let data = [];
   let counter = 1;
 
@@ -33,7 +43,7 @@ export function useRecapData(statisticalTransactions, libraryServiceData, romant
 
       return {
         no: counter++,
-        id_transaksi: `BPS-7200-SILASTIK-${generateRandomId()}`,
+        id_transaksi: `BPS-7200-SILASTIK-${generateId(transaction)}`,
         nama_pengguna: transaction.customer_name,
         jenis_layanan: serviceType,
         keterangan,
@@ -57,7 +67,7 @@ export function useRecapData(statisticalTransactions, libraryServiceData, romant
 
       return {
         no: counter++,
-        id_transaksi: `BPS-7200-PST-${generateRandomId()}`,
+        id_transaksi: `BPS-7200-PST-${generateId(record)}`,
         nama_pengguna: record.name,
         jenis_layanan: jenisLayanan,
         keterangan: record.service_media === "Digilib" ? "Digital" : "Tercetak",
@@ -80,7 +90,7 @@ export function useRecapData(statisticalTransactions, libraryServiceData, romant
 
       return {
         no: counter++,
-        id_transaksi: `BPS-7200-ROMANTIK-${generateRandomId()}`,
+        id_transaksi: `BPS-7200-ROMANTIK-${generateId(activity)}`,
         nama_pengguna: activity.organizer,
         jenis_layanan: jenisLayanan,
         keterangan: activity.activity_title?.substring(0, 50) + (activity.activity_title?.length > 50 ? "..." : ""),
