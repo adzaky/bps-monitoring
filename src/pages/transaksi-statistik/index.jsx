@@ -17,30 +17,32 @@ export default function TransaksiStatistik() {
   const { statisticalTransactions } = useLoaderData();
   const filteredData = statisticalTransactions.filter((visit) => {
     const { statusText } = statisticalTransactions.reduce((acc, visit) => {
-      const parts = visit.status.split(": ");
+      const parts = visit.status?.split(": ") || [];
       acc[visit.status] = { statusText: parts[0] || "", rating: parts[1] || "0" };
       return acc;
-    }, {})[visit.status];
+    }, {})[visit.status] || { statusText: "" };
+
     const matchesSearch =
-      visit.customer_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      visit.detail.customer_detail.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      visit.transaction_id.toLowerCase().includes(searchTerm.toLowerCase());
+      (visit.customer_name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (visit.detail?.customer_detail?.email?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (visit.transaction_id?.toLowerCase() || "").includes(searchTerm.toLowerCase());
 
     const matchesStatus = filterStatus === "all" || statusText.toLowerCase() === filterStatus.toLowerCase();
-    const matchesNeedType = filterNeedType === "all" || visit.need_type.includes(filterNeedType);
-    const matchesOperator = filterOperator === "all" || visit.main_operator.includes(filterOperator);
+    const matchesNeedType = filterNeedType === "all" || (visit.need_type && visit.need_type.includes(filterNeedType));
+    const matchesOperator =
+      filterOperator === "all" || (visit.main_operator && visit.main_operator.includes(filterOperator));
 
     return matchesSearch && matchesStatus && matchesNeedType && matchesOperator;
   });
 
   // Statistik
   const totalVisits = statisticalTransactions.length;
-  const completedVisits = statisticalTransactions.filter((v) => v.status.toLowerCase().includes("selesai")).length;
-  const canceledVisits = statisticalTransactions.filter((v) => v.status.toLowerCase().includes("batal")).length;
+  const completedVisits = statisticalTransactions.filter((v) => v.status?.toLowerCase().includes("selesai")).length;
+  const canceledVisits = statisticalTransactions.filter((v) => v.status?.toLowerCase().includes("batal")).length;
 
   // Get unique operators and need types
   const uniqueOperators = [...new Set(statisticalTransactions.map((v) => v.main_operator).filter(Boolean))];
-  const uniqueNeedTypes = [...new Set(statisticalTransactions.map((v) => v.need_type))].sort((a, b) =>
+  const uniqueNeedTypes = [...new Set(statisticalTransactions.map((v) => v.need_type).filter(Boolean))].sort((a, b) =>
     a.localeCompare(b)
   );
 
