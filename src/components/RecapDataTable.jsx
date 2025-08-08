@@ -25,21 +25,24 @@ export default function RecapDataTable({ data }) {
   });
 
   const handleExportData = async (type) => {
+    const exportData = filteredData.map((item, index) => ({
+      ...item,
+      no: index + 1,
+    }));
+
     try {
       switch (type) {
         case "spreadsheet":
           setIsExportingToSpreadsheet(true);
-          await postJsonToGoogleAppScript(filteredData).then((res) =>
-            alert(`Data exported successfully to ${res.url}`)
-          );
+          await postJsonToGoogleAppScript(exportData).then((res) => alert(`Data exported successfully to ${res.url}`));
           break;
         case "xlsx":
           setIsExportingToXlsx(true);
-          await exportToExcel(filteredData, "Rekap Transaksi Layanan BPS.xlsx", "Transaksi Layanan");
+          exportToExcel(exportData, "Rekap Transaksi Layanan BPS.xlsx", "Transaksi Layanan");
           break;
         case "pdf":
           setIsExportingToPdf(true);
-          await exportPdfFromJson(filteredData, "Laporan Transaksi Layanan BPS", "Rekap Transaksi Layanan BPS.pdf", [
+          exportPdfFromJson(exportData, "Laporan Transaksi Layanan BPS", "Rekap Transaksi Layanan BPS.pdf", [
             "No",
             "ID Transaksi",
             "Nama Pengguna",
