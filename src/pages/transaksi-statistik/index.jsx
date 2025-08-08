@@ -3,6 +3,7 @@ import { useLoaderData } from "react-router";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { List, Search, CheckCircle, XOctagon } from "lucide-react";
 import StatisticalTransactionTable from "@/components/StatisticalTransactionTable";
 
@@ -95,7 +96,24 @@ export default function TransaksiStatistik() {
           <CardDescription>Data transaksi statistik pelanggan</CardDescription>
         </CardHeader>
         <CardContent>
-          {/* Filter dan Search */}
+          {/* Tab Filter Keperluan */}
+          <div className="mb-6 overflow-auto">
+            <h3 className="mb-3 text-sm font-medium">Jenis Keperluan</h3>
+            <Tabs value={filterNeedType} onValueChange={setFilterNeedType}>
+              <TabsList className="min-w-full">
+                <TabsTrigger value="all" className="text-xs whitespace-nowrap">
+                  Semua
+                </TabsTrigger>
+                {uniqueNeedTypes.map((type) => (
+                  <TabsTrigger key={type} value={type} className="text-xs whitespace-nowrap">
+                    {type}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          </div>
+
+          {/* Filter dan Search Lainnya */}
           <div className="mb-6 flex flex-col gap-4 md:flex-row">
             <div className="flex-1">
               <div className="relative">
@@ -117,20 +135,6 @@ export default function TransaksiStatistik() {
                 <SelectItem value="all">Semua Status</SelectItem>
                 <SelectItem value="selesai">Selesai</SelectItem>
                 <SelectItem value="batal">Batal</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={filterNeedType} onValueChange={setFilterNeedType}>
-              <SelectTrigger className="w-full md:w-80">
-                <SelectValue placeholder="Jenis Keperluan" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Semua Keperluan</SelectItem>
-                {uniqueNeedTypes.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
-                  </SelectItem>
-                ))}
               </SelectContent>
             </Select>
 

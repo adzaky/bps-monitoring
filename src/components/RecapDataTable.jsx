@@ -202,20 +202,22 @@ export default function RecapDataTable({ data }) {
 
   return (
     <div className="space-y-4">
-      <Tabs
-        value={filters.jenis_layanan || "all"}
-        onValueChange={(value) => handleFilterChange("jenis_layanan", value === "all" ? "" : value)}
-        className="w-full"
-      >
-        <TabsList className="w-full">
-          <TabsTrigger value="all">Semua Jenis Layanan</TabsTrigger>
-          {getUniqueValues("jenis_layanan").map((value) => (
-            <TabsTrigger key={value} value={value}>
-              {value}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
+      <div className="overflow-auto">
+        <Tabs
+          value={filters.jenis_layanan || "all"}
+          onValueChange={(value) => handleFilterChange("jenis_layanan", value === "all" ? "" : value)}
+        >
+          <TabsList className="min-w-full">
+            <TabsTrigger value="all">Semua Jenis Layanan</TabsTrigger>
+            {getUniqueValues("jenis_layanan").map((value) => (
+              <TabsTrigger key={value} value={value}>
+                {value}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      </div>
+
       {/* Search and Filter Section */}
       <div className="space-y-4">
         {/* Global Search */}
@@ -302,7 +304,6 @@ export default function RecapDataTable({ data }) {
           </div>
         </div>
       </div>
-
       {/* Data Table */}
       <DataTable columns={columns} data={filteredData} />
     </div>
