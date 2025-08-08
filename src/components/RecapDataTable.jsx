@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import { FileText, Import, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
@@ -34,7 +35,16 @@ export default function RecapDataTable({ data }) {
       switch (type) {
         case "spreadsheet":
           setIsExportingToSpreadsheet(true);
-          await postJsonToGoogleAppScript(exportData).then((res) => alert(`Data exported successfully to ${res.url}`));
+          await postJsonToGoogleAppScript(exportData).then((res) =>
+            toast(
+              <div className="grid gap-1">
+                <span className="font-semibold">Data berhasil diekspor ke Google Sheets!</span>
+                <a href={res.url} target="_blank" className="text-sm text-blue-600 underline">
+                  {res.url}
+                </a>
+              </div>
+            )
+          );
           break;
         case "xlsx":
           setIsExportingToXlsx(true);
