@@ -48,8 +48,10 @@ export function useRecapData(statisticalTransactions, libraryServiceData, romant
         jenis_layanan: serviceType,
         keterangan,
         tanggal_permintaan: formattedRequestDate,
-        tanggal_selesai: formattedCompletionDate,
-        capaian: calculateCapaian(serviceType, formattedRequestDate, formattedCompletionDate),
+        tanggal_selesai: transaction.status.toLowerCase().includes("batal") ? "" : formattedCompletionDate,
+        capaian: transaction.status.toLowerCase().includes("batal")
+          ? "Tidak Sesuai Target"
+          : calculateCapaian(serviceType, formattedRequestDate, formattedCompletionDate),
         petugas: transaction.main_operator,
       };
     });
