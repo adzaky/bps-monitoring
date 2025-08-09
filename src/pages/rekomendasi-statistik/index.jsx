@@ -5,8 +5,17 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Activity, Star, CheckCircle, Award } from "lucide-react";
 import RomantikServiceTable from "@/components/RomantikServiceTable";
+import { postJsonToGoogleAppScript } from "@/services/sheet";
+import { toast } from "sonner";
+import { exportPdfFromJson, exportToExcel } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Import } from "lucide-react";
+import { FileText } from "lucide-react";
 
 export default function RekomendasiStatistik() {
+  const [isExportingToSpreadsheet, setIsExportingToSpreadsheet] = useState(false);
+  const [isExportingToXlsx, setIsExportingToXlsx] = useState(false);
+  const [isExportingToPdf, setIsExportingToPdf] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterYear, setFilterYear] = useState("all");
   const [filterSubmissionStatus, setFilterSubmissionStatus] = useState("all");
@@ -32,6 +41,75 @@ export default function RekomendasiStatistik() {
 
     return matchesSearch && matchesYear && matchesSubmissionStatus && matchesRecommendationStatus;
   });
+
+  const handleExportData = async (type) => {
+    const exportData = filteredData.map((item, index) => ({
+      no: index + 1,
+      activity_title: item.activity_title,
+      organizer: item.organizer,
+      activity_year: item.activity_year,
+      submitted_by: item.submitted_by,
+      revision_date: item.revision_date ? item.revision_date : "-",
+      completion_date: item.completion_date ? item.completion_date : "-",
+      examination_process: item.examination_process ? item.examination_process : "-",
+      rating: item.rating > 0 ? item.rating : "-",
+      commitment_letter: item.commitment_letter ? item.commitment_letter : "-",
+    }));
+
+    try {
+      switch (type) {
+        case "spreadsheet":
+          setIsExportingToSpreadsheet(true);
+          await postJsonToGoogleAppScript(exportData).then((res) =>
+            toast(
+              <div className="grid gap-1">
+                <span className="font-semibold">Data berhasil diekspor ke Google Sheets!</span>
+                <a href={res.url} target="_blank" className="text-sm text-blue-600 underline">
+                  {res.url}
+                </a>
+              </div>
+            )
+          );
+          break;
+        case "xlsx":
+          setIsExportingToXlsx(true);
+          exportToExcel(exportData, "Laporan Rekomendasi Statistik.xlsx", "Rekomendasi Statistik");
+          break;
+        case "pdf":
+          setIsExportingToPdf(true);
+          exportPdfFromJson(
+            exportData,
+            "Laporan Rekomendasi Statistik",
+            "Laporan Rekomendasi Statistik.pdf",
+            [
+              "No",
+              "Judul Kegiatan",
+              "Penyelenggara",
+              "Tahun Kegiatan",
+              "Tgl. Pengajuan",
+              "Tgl. Perbaikan Terakhir",
+              "Tgl. Selesai",
+              "Proses Pemeriksaan",
+              "Rating",
+              "Surat Komitmen",
+            ],
+            {
+              columnWidths: [10, 40, 40, 15, 30, 30, 30, 30, 20, 30],
+              orientation: "landscape",
+            }
+          );
+          break;
+        default:
+          break;
+      }
+    } catch (err) {
+      console.error("Error exporting data:", err);
+    } finally {
+      setIsExportingToSpreadsheet(false);
+      setIsExportingToXlsx(false);
+      setIsExportingToPdf(false);
+    }
+  };
 
   // Statistik
   const totalActivities = romantikServiceData.length;
@@ -107,9 +185,9 @@ export default function RekomendasiStatistik() {
           <CardTitle>Daftar Kegiatan Statistik</CardTitle>
           <CardDescription>Rekomendasi kegiatan statistik dari berbagai instansi</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           {/* Filter dan Search */}
-          <div className="mb-6 flex flex-col gap-4 md:flex-row">
+          <div className="flex flex-col gap-4 md:flex-row">
             <div className="flex-1">
               <div className="relative">
                 <Search className="text-muted-foreground absolute top-3 left-3 h-4 w-4" />
@@ -159,6 +237,18 @@ export default function RekomendasiStatistik() {
                 <SelectItem value="dalam review">Dalam Review</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="space-x-2">
+            <Button onClick={() => handleExportData("spreadsheet")} disabled={isExportingToSpreadsheet}>
+              <Import /> {isExportingToSpreadsheet ? "Exporting..." : "Spreadsheet"}
+            </Button>
+            <Button onClick={() => handleExportData("xlsx")} disabled={isExportingToXlsx}>
+              <FileText /> {isExportingToXlsx ? "Exporting..." : "Excel"}
+            </Button>
+            <Button onClick={() => handleExportData("pdf")} disabled={isExportingToPdf}>
+              <FileText /> {isExportingToPdf ? "Exporting..." : "PDF"}
+            </Button>
           </div>
 
           <RomantikServiceTable data={filteredData} />

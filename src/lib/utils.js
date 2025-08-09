@@ -133,15 +133,23 @@ export function exportToExcel(data, fileName = "data.xlsx", sheetName = "Sheet1"
   XLSX.writeFile(wb, fileName);
 }
 
-export function exportPdfFromJson(data, title, fileName, headers = [""]) {
+export function exportPdfFromJson(data, title, fileName, headers = [""], options = {}) {
   if (!data) return;
+  const { columnWidths = [], orientation = "portrait" } = options;
 
-  const doc = new jsPDF();
+  const doc = new jsPDF({ orientation });
   doc.text(title, 14, 10);
 
   autoTable(doc, {
     head: headers.length ? [headers] : [Object.keys(data[0])],
     body: data.map((row) => Object.values(row)),
+    columnStyles:
+      columnWidths.length > 0
+        ? columnWidths.reduce((acc, width, index) => {
+            acc[index] = { cellWidth: width };
+            return acc;
+          }, {})
+        : "auto",
   });
 
   doc.save(fileName);

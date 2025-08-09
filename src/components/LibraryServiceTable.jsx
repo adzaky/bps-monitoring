@@ -1,13 +1,13 @@
-import React from "react";
+import { useState } from "react";
+import { Briefcase, BookOpen, Calendar, Eye, Mail, Phone, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
-import { Calendar, Eye, Mail, User, Phone, Briefcase, BookOpen } from "lucide-react";
 import LibraryServiceDetail from "./LibraryServiceDetail";
 
 export default function LibraryServiceTable({ data }) {
-  const [selectedLibraryService, setSelectedLibraryService] = React.useState(null);
-  const [isDetailOpen, setIsDetailOpen] = React.useState(false);
+  const [selectedLibraryService, setSelectedLibraryService] = useState(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   const handleViewDetail = (record) => {
     setSelectedLibraryService(record);
@@ -59,6 +59,11 @@ export default function LibraryServiceTable({ data }) {
   };
 
   const columns = [
+    {
+      accessorKey: "no",
+      header: "No",
+      cell: ({ row }) => row.index + 1,
+    },
     {
       accessorKey: "name",
       header: "Nama",
@@ -157,7 +162,7 @@ export default function LibraryServiceTable({ data }) {
               {record.book_access_count === "-" ? (
                 <span className="text-muted-foreground">-</span>
               ) : (
-                <span className="font-medium text-green-600">{record.book_access_count}</span>
+                <span className="font-medium text-green-600">{record.book_access_count.split("(Lihat)")[0]}</span>
               )}
             </span>
           </div>
