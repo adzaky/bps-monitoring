@@ -1,17 +1,22 @@
-"use client";
-
-import React from "react";
+import { useState } from "react";
 import { useLoaderData } from "react-router";
+import { BookOpen, FileText, GraduationCap, Import, Search, Users } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, BookOpen, Users, GraduationCap } from "lucide-react";
+import { exportPdfFromJson, exportToExcel } from "@/lib/utils";
+import { postJsonToGoogleAppScript } from "@/services/sheet";
 import LibraryServiceTable from "@/components/LibraryServiceTable";
 
 export default function LibraryService() {
-  const [searchTerm, setSearchTerm] = React.useState("");
-  const [filterMedia, setFilterMedia] = React.useState("all");
-  const [filterEducation, setFilterEducation] = React.useState("all");
+  const [isExportingToSpreadsheet, setIsExportingToSpreadsheet] = useState(false);
+  const [isExportingToXlsx, setIsExportingToXlsx] = useState(false);
+  const [isExportingToPdf, setIsExportingToPdf] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterMedia, setFilterMedia] = useState("all");
+  const [filterEducation, setFilterEducation] = useState("all");
 
   const { libraryServiceData } = useLoaderData();
   const filteredData = libraryServiceData
@@ -27,6 +32,76 @@ export default function LibraryService() {
       return matchesSearch && matchesMedia && matchesEducation;
     })
     .sort((a, b) => (new Date(b.visit_date_time) < new Date(a.visit_date_time) ? -1 : 1));
+
+  const handleExportData = async (type) => {
+    const exportData = filteredData.map((item, index) => ({
+      no: index + 1,
+      name: item.name,
+      gender: item.gender === "L" ? "Laki-laki" : "Perempuan",
+      birthyear: item.birthyear,
+      email: item.email,
+      phone: item.phone,
+      education: item.education,
+      job: item.job || "-",
+      visit_datetime: item.visit_datetime,
+      service_media: item.service_media,
+      book_access_count: item.book_access_count === "-" ? "-" : item.book_access_count.split("(Lihat)")[0],
+    }));
+
+    try {
+      switch (type) {
+        case "spreadsheet":
+          setIsExportingToSpreadsheet(true);
+          await postJsonToGoogleAppScript(exportData).then((res) =>
+            toast(
+              <div className="grid gap-1">
+                <span className="font-semibold">Data berhasil diekspor ke Google Sheets!</span>
+                <a href={res.url} target="_blank" className="text-sm text-blue-600 underline">
+                  {res.url}
+                </a>
+              </div>
+            )
+          );
+          break;
+        case "xlsx":
+          setIsExportingToXlsx(true);
+          exportToExcel(exportData, "Laporan Layanan Perpustakaan.xlsx", "Layanan Perpustakaan");
+          break;
+        case "pdf":
+          setIsExportingToPdf(true);
+          exportPdfFromJson(
+            exportData,
+            "Laporan Layanan Perpustakaan",
+            "Laporan Layanan Perpustakaan.pdf",
+            [
+              "No",
+              "Nama Pengguna",
+              "Jenis Kelamin",
+              "Tahun Lahir",
+              "Email",
+              "Telepon",
+              "Pendidikan",
+              "Pekerjaan",
+              "Waktu Kunjungan",
+              "Media Layanan",
+              "Jumlah Akses Buku",
+            ],
+            {
+              orientation: "landscape",
+            }
+          );
+          break;
+        default:
+          break;
+      }
+    } catch (err) {
+      console.error("Error exporting data:", err);
+    } finally {
+      setIsExportingToSpreadsheet(false);
+      setIsExportingToXlsx(false);
+      setIsExportingToPdf(false);
+    }
+  };
 
   // Statistik
   const totalVisitors = libraryServiceData.length;
@@ -97,9 +172,9 @@ export default function LibraryService() {
           <CardTitle>Daftar Pelayanan Perpustakaan</CardTitle>
           <CardDescription>Data pengunjung dan layanan yang digunakan</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           {/* Filter dan Search */}
-          <div className="mb-6 flex flex-col gap-4 md:flex-row">
+          <div className="flex flex-wrap gap-4">
             <div className="flex-1">
               <div className="relative">
                 <Search className="text-muted-foreground absolute top-3 left-3 h-4 w-4" />
@@ -137,8 +212,20 @@ export default function LibraryService() {
             </Select>
           </div>
 
+          <div className="space-x-2">
+            <Button onClick={() => handleExportData("spreadsheet")} disabled={isExportingToSpreadsheet}>
+              <Import /> {isExportingToSpreadsheet ? "Exporting..." : "Spreadsheet"}
+            </Button>
+            <Button onClick={() => handleExportData("xlsx")} disabled={isExportingToXlsx}>
+              <FileText /> {isExportingToXlsx ? "Exporting..." : "Excel"}
+            </Button>
+            <Button onClick={() => handleExportData("pdf")} disabled={isExportingToPdf}>
+              <FileText /> {isExportingToPdf ? "Exporting..." : "PDF"}
+            </Button>
+          </div>
+
           {/* Tabel Data */}
-          <LibraryServiceTable data={filteredData} />
+          <LibraryServiceTable data={libraryServiceData} />
         </CardContent>
       </Card>
     </div>
