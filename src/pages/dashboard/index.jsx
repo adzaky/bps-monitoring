@@ -122,6 +122,8 @@ export default function Dashboard() {
       targetMetPercentage: item.targetMetPercentage,
     }));
 
+    const title = `Kepatuhan Target Bulanan - ${selectedServiceType === "all" ? "Semua Layanan" : selectedServiceType}`;
+
     try {
       switch (type) {
         case "spreadsheet":
@@ -139,14 +141,14 @@ export default function Dashboard() {
           break;
         case "xlsx":
           setIsExportingToXlsx(true);
-          exportToExcel(exportData, "Laporan Kepatugan Target Bulanan.xlsx", "Kepatugan Target Bulanan");
+          exportToExcel(exportData, `Laporan ${title}.xlsx`, `${title}`);
           break;
         case "pdf":
           setIsExportingToPdf(true);
           exportPdfFromJson(
             exportData,
-            "Laporan Kepatugan Target Bulanan",
-            "Laporan Kepatugan Target Bulanan.pdf",
+            `Laporan ${title}`,
+            `Laporan ${title}.pdf`,
             ["No", "Bulan", "Total Transaksi", "Sesuai Target", "Tidak Sesuai Target", "Persentase (%)"],
             {
               orientation: "landscape",
