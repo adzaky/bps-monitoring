@@ -11,4 +11,9 @@ export const api = {
       return await supabase.from("romantik_statistical").select();
     },
   },
+  silastikService: {
+    getStatisticalTransactions: async () => {
+      return await supabase.from("silastik_transaction").select();
+    },
+  },
 };

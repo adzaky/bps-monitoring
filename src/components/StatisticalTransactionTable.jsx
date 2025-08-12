@@ -2,19 +2,7 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
-import {
-  AlertCircle,
-  Calendar,
-  CheckCircle,
-  Clock,
-  Eye,
-  Mail,
-  MapPin,
-  Phone,
-  Settings,
-  Star,
-  User,
-} from "lucide-react";
+import { AlertCircle, Calendar, CheckCircle, Eye, Mail, MapPin, Phone, Settings, Star, User } from "lucide-react";
 import StatisticalTransactionDetail from "./StatisticalTransactionDetail";
 
 export default function StatisticalTransactionTable({ data }) {
@@ -80,21 +68,44 @@ export default function StatisticalTransactionTable({ data }) {
     return <Badge variant="outline">{needType}</Badge>;
   };
 
-  const parsePhoneGender = (phoneGender) => {
-    if (!phoneGender) return { phone: "", gender: "" };
-    const parts = phoneGender.split("/");
+  const parsePhoneGender = (customerDetails) => {
+    if (!customerDetails) return { phone: "", gender: "" };
+    if (customerDetails.phone_gender && customerDetails.phone_gender.includes("/")) {
+      const parts = customerDetails.phone_gender.split("/");
+      return {
+        phone: parts[0] || "",
+        gender: parts[1] || "",
+      };
+    } else if (customerDetails.age_gender && customerDetails.age_gender.includes("/")) {
+      return {
+        phone: customerDetails.country_phone.split("/")[1] || "",
+        gender: customerDetails.age_gender.split("/")[1] || "",
+      };
+    }
     return {
-      phone: parts[0] || "",
-      gender: parts[1] || "",
+      phone: "",
+      gender: "",
     };
   };
 
-  const parseAgeEducation = (ageEducation) => {
-    if (!ageEducation) return { age: "", education: "" };
-    const parts = ageEducation.split("/");
+  const parseAgeEducation = (customerDetails) => {
+    if (!customerDetails) return { age: "", education: "" };
+    if (customerDetails.age_education && customerDetails.age_education.includes("/")) {
+      const parts = customerDetails.age_education.split("/");
+      return {
+        age: parts[0] || "",
+        education: parts[1] || "",
+      };
+    } else if (customerDetails.age_gender && customerDetails.age_gender.includes("/")) {
+      const parts = customerDetails.age_gender.split("/");
+      return {
+        age: parts[0].split(" ")[0] || "",
+        education: "",
+      };
+    }
     return {
-      age: parts[0] || "",
-      education: parts[1] || "",
+      age: "",
+      education: "",
     };
   };
 
@@ -162,8 +173,8 @@ export default function StatisticalTransactionTable({ data }) {
       header: "Pelanggan",
       cell: ({ row }) => {
         const transaction = row.original;
-        const { gender } = parsePhoneGender(transaction.detail.customer_detail.phone_gender);
-        const { age } = parseAgeEducation(transaction.detail.customer_detail.age_education);
+        const { gender } = parsePhoneGender(transaction.detail.customer_details);
+        const { age } = parseAgeEducation(transaction.detail.customer_details);
 
         return (
           <div className="flex items-center gap-2">
@@ -172,7 +183,7 @@ export default function StatisticalTransactionTable({ data }) {
               <p className="font-medium">{transaction.customer_name}</p>
               <div className="mt-1 flex items-center gap-1">
                 {getGenderBadge(gender)}
-                <span className="text-muted-foreground text-xs">{age ? `${age} tahun` : "-"}</span>
+                <span className="text-muted-foreground text-xs">{age ? `${age} Tahun` : "-"}</span>
               </div>
             </div>
           </div>
@@ -189,13 +200,13 @@ export default function StatisticalTransactionTable({ data }) {
       header: "Kontak",
       cell: ({ row }) => {
         const transaction = row.original;
-        const { phone } = parsePhoneGender(transaction.detail.customer_detail.phone_gender);
+        const { phone } = parsePhoneGender(transaction.detail.customer_details);
 
         return (
           <div className="space-y-1">
             <div className="flex items-center gap-1">
               <Mail className="text-muted-foreground h-3 w-3" />
-              <span className="text-xs">{transaction.detail.customer_detail.email || "-"}</span>
+              <span className="text-xs">{transaction.detail.customer_details?.email || "-"}</span>
             </div>
             <div className="flex items-center gap-1">
               <Phone className="text-muted-foreground h-3 w-3" />

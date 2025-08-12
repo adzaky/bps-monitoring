@@ -33,7 +33,7 @@ export default function TransaksiStatistik() {
 
     const matchesSearch =
       (visit.customer_name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-      (visit.detail?.customer_detail?.email?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (visit.detail?.customer_details?.email?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
       (visit.transaction_id?.toLowerCase() || "").includes(searchTerm.toLowerCase());
 
     const matchesStatus = filterStatus === "all" || statusText.toLowerCase() === filterStatus.toLowerCase();
@@ -49,7 +49,7 @@ export default function TransaksiStatistik() {
       no: index + 1,
       customer_name: item.customer_name,
       transaction_id: item.transaction_id,
-      contact: `${item.detail?.customer_detail?.email ?? ""} - ${item.detail?.customer_detail?.phone ?? ""}`,
+      contact: `${item.detail?.customer_details?.email ?? ""} - ${item.detail?.customer_details?.phone ?? ""}`,
       need_type: item.need_type,
       request_date: item.request_date,
       completion_date: item.detail?.completion_date,

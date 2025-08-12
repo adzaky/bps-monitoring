@@ -9,8 +9,6 @@ import LayananPerpustakaan from "./pages/layanan-perpustakaan";
 import RekomendasiStatistik from "./pages/rekomendasi-statistik";
 import TransaksiStatistik from "./pages/transaksi-statistik";
 import EkstraksiData from "./pages/ekstraksi-data";
-
-import { statisticalTransactions } from "./constants/data";
 import RekapData from "./pages/rekap-data";
 
 export default function App() {
@@ -37,6 +35,7 @@ export default function App() {
           loader: async () => {
             const { data: libraryServiceData } = await api.libraryService.getLibraryServiceData();
             const { data: romantikServiceData } = await api.romantikService.getRomantikStatisticalActivities();
+            const { data: statisticalTransactions } = await api.silastikService.getStatisticalTransactions();
 
             return { statisticalTransactions, libraryServiceData, romantikServiceData };
           },
@@ -45,6 +44,7 @@ export default function App() {
           path: "transaksi-statistik",
           Component: TransaksiStatistik,
           loader: async () => {
+            const { data: statisticalTransactions } = await api.silastikService.getStatisticalTransactions();
             return { statisticalTransactions };
           },
         },
@@ -70,6 +70,7 @@ export default function App() {
           loader: async () => {
             const { data: libraryServiceData } = await api.libraryService.getLibraryServiceData();
             const { data: romantikServiceData } = await api.romantikService.getRomantikStatisticalActivities();
+            const { data: statisticalTransactions } = await api.silastikService.getStatisticalTransactions();
 
             return { statisticalTransactions, libraryServiceData, romantikServiceData };
           },

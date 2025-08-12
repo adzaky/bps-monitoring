@@ -23,10 +23,49 @@ export function formatDateToDDMMYYYY(dateString) {
     cleanedInput = cleanedInput.split(" - ")[0].trim();
   }
 
+  const monthMapping = {
+    Jan: "01",
+    Feb: "02",
+    Mar: "03",
+    Apr: "04",
+    Mei: "05",
+    Jun: "06",
+    Jul: "07",
+    Agu: "08",
+    Sep: "09",
+    Okt: "10",
+    Nov: "11",
+    Des: "12",
+  };
+
+  const indonesianDateMatch = cleanedInput.match(/^(\d{1,2})\s+(\w{3})\s+(\d{4})$/);
+  if (indonesianDateMatch) {
+    const [, day, month, year] = indonesianDateMatch;
+    if (monthMapping[month]) {
+      const standardDate = `${year}-${monthMapping[month]}-${day.padStart(2, "0")}`;
+      const parsed = dayjs(standardDate, "YYYY-MM-DD");
+      if (parsed.isValid()) {
+        return parsed.format("DD/MM/YYYY");
+      }
+    }
+  }
+
   if (/^\d{1,2} \w+ \d{2}$/.test(cleanedInput)) {
     const parts = cleanedInput.split(" ");
     parts[2] = "20" + parts[2];
     cleanedInput = parts.join(" ");
+
+    const indonesianDate2DigitMatch = cleanedInput.match(/^(\d{1,2})\s+(\w{3})\s+(\d{4})$/);
+    if (indonesianDate2DigitMatch) {
+      const [, day, month, year] = indonesianDate2DigitMatch;
+      if (monthMapping[month]) {
+        const standardDate = `${year}-${monthMapping[month]}-${day.padStart(2, "0")}`;
+        const parsed = dayjs(standardDate, "YYYY-MM-DD");
+        if (parsed.isValid()) {
+          return parsed.format("DD/MM/YYYY");
+        }
+      }
+    }
   }
 
   const formats = [

@@ -366,7 +366,7 @@ export const statisticalTransactions = [
         average_rating: "4.80",
       },
       completion_date: "26 Jun 25 - 11:03:08 WIB",
-      online_service_detail: {
+      online_service_details: {
         topic: "#40629 Data Mikro",
         request_deadline: "26 Jun 25/11 Jul 25",
         location_status: "Ladu DN",
@@ -417,7 +417,7 @@ export const statisticalTransactions = [
         average_rating: "0.00",
       },
       completion_date: "23 Jun 25 - 15:25:47 WIB",
-      online_service_detail: {
+      online_service_details: {
         topic: "#40540 Konsultasi",
         request_deadline: "23 Jun 25 / 01 Jul 25",
         tag: "Iklim, Potensi Desa",
@@ -819,7 +819,7 @@ export const statisticalTransactions = [
         average_rating: "4.00",
       },
       completion_date: "28 Mei 25 - 10:14:44 WIB",
-      online_service_detail: {
+      online_service_details: {
         topic: "#39959 Data Mikro",
         request_deadline: "28 Mei 25/17 Jun 25",
         location_status: "Ladu DN",
@@ -1295,7 +1295,7 @@ export const statisticalTransactions = [
         average_rating: "5.00",
       },
       completion_date: "30 Apr 25 - 17:51:02 WIB",
-      online_service_detail: {
+      online_service_details: {
         topic: "#39139 Data Mikro",
         request_deadline: "30 Apr 25/19 Mei 25",
         location_status: "Ladu DN",
@@ -1321,7 +1321,7 @@ export const statisticalTransactions = [
         average_rating: "5.00",
       },
       completion_date: "30 Apr 25 - 14:27:57 WIB",
-      online_service_detail: {
+      online_service_details: {
         topic: "#39133 Konsultasi",
         request_deadline: "30 Apr 25 / 08 Mei 25",
         tag: "Kependudukan, Pendidikan, Konsumsi dan Pengeluaran, Lainnya",
@@ -1749,7 +1749,7 @@ export const statisticalTransactions = [
         average_rating: "0.00",
       },
       completion_date: "10 Mar 25 - 13:18:53 WIB",
-      online_service_detail: {
+      online_service_details: {
         topic: "#38109 Konsultasi",
         request_deadline: "10 Mar 25 / 17 Mar 25",
         tag: "input_output",
@@ -1777,7 +1777,7 @@ export const statisticalTransactions = [
         average_rating: "0.00",
       },
       completion_date: "04 Mar 25 - 08:28:01 WIB",
-      online_service_detail: {
+      online_service_details: {
         topic: "#37928 Konsultasi",
         request_deadline: "04 Mar 25 / 11 Mar 25",
         tag: "Pemerintahan, Keuangan, Kemiskinan dan Ketimpangan, Produk Domestik Regional Bruto (Lapangan Usaha), Lainnya",
@@ -1805,7 +1805,7 @@ export const statisticalTransactions = [
         average_rating: "0.00",
       },
       completion_date: "04 Mar 25 - 08:21:19 WIB",
-      online_service_detail: {
+      online_service_details: {
         topic: "#37927 Konsultasi",
         request_deadline: "04 Mar 25 / -",
         tag: "Pemerintahan, Keuangan, Kemiskinan dan Ketimpangan, Produk Domestik Regional Bruto (Lapangan Usaha)",
@@ -2457,7 +2457,7 @@ export const statisticalTransactions = [
         average_rating: "5.00",
       },
       completion_date: "20 Jan 25 - 13:12:48 WIB",
-      online_service_detail: {
+      online_service_details: {
         topic: "#36809 Konsultasi",
         request_deadline: "20 Jan 25 / 30 Jan 25",
         tag: "Peternakan",
@@ -2478,7 +2478,7 @@ export const statisticalTransactions = [
     detail: {
       customer_detail: {},
       completion_date: "08 Jan 25 - 16:55:13 WIB",
-      online_service_detail: {},
+      online_service_details: {},
     },
   },
   {
