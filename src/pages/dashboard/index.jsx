@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useRecapData } from "@/hooks/use-recap-data";
 
 export default function Dashboard() {
@@ -414,6 +415,57 @@ export default function Dashboard() {
               </ChartContainer>
             </TabsContent>
           </Tabs>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="space-y-2">
+            <h3 className="text-lg font-medium">Kepatuhan Target Bulanan - Semua Layanan</h3>
+            <p className="text-muted-foreground text-sm">
+              Ringkasan capaian target per bulan untuk seluruh layanan yang ada
+            </p>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="font-semibold">Bulan</TableHead>
+                  <TableHead className="text-center font-semibold">Total Transaksi</TableHead>
+                  <TableHead className="text-center font-semibold">Sesuai Target</TableHead>
+                  <TableHead className="text-center font-semibold">Tidak Sesuai Target</TableHead>
+                  <TableHead className="text-center font-semibold">Persentase</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {chartData.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-muted-foreground py-8 text-center">
+                      Tidak ada data yang tersedia
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  chartData.map((row, index) => (
+                    <TableRow key={index}>
+                      <TableCell className="font-medium">{row.month}</TableCell>
+                      <TableCell className="text-center">{row.total}</TableCell>
+                      <TableCell className="text-center">
+                        <span className="font-medium text-green-600">{row.targetMet}</span>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <span className="font-medium text-red-600">{row.targetNotMet}</span>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <span className="font-medium">{row.targetMetPercentage}%</span>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>
