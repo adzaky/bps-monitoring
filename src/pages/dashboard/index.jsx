@@ -421,10 +421,10 @@ export default function Dashboard() {
       <Card>
         <CardHeader>
           <div className="space-y-2">
-            <h3 className="text-lg font-medium">Kepatuhan Target Bulanan - Semua Layanan</h3>
-            <p className="text-muted-foreground text-sm">
-              Ringkasan capaian target per bulan untuk seluruh layanan yang ada
-            </p>
+            <h3 className="text-lg font-medium">
+              Kepatuhan Target Bulanan - {selectedServiceType === "all" ? "Semua Layanan" : selectedServiceType}
+            </h3>
+            <p className="text-muted-foreground text-sm">Ringkasan capaian target per bulan</p>
           </div>
         </CardHeader>
         <CardContent>
