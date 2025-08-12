@@ -1,34 +1,42 @@
-import React from "react";
+import { useMemo, useState } from "react";
 import { useLoaderData } from "react-router";
+import { FileText, Import } from "lucide-react";
 import { CartesianGrid, Area, AreaChart, XAxis } from "recharts";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRecapData } from "@/hooks/use-recap-data";
+import { exportPdfFromJson, exportToExcel } from "@/lib/utils";
+import { postJsonToGoogleAppScript } from "@/services/sheet";
 
 export default function Dashboard() {
-  const [activeChart, setActiveChart] = React.useState("targetMetPercentage");
-  const [selectedServiceType, setSelectedServiceType] = React.useState("all");
+  const [isExportingToSpreadsheet, setIsExportingToSpreadsheet] = useState(false);
+  const [isExportingToXlsx, setIsExportingToXlsx] = useState(false);
+  const [isExportingToPdf, setIsExportingToPdf] = useState(false);
+  const [activeChart, setActiveChart] = useState("targetMetPercentage");
+  const [selectedServiceType, setSelectedServiceType] = useState("all");
   const { statisticalTransactions, libraryServiceData, romantikServiceData } = useLoaderData();
   const { data } = useRecapData(statisticalTransactions, libraryServiceData, romantikServiceData);
 
   // Get unique service types
-  const serviceTypes = React.useMemo(() => {
+  const serviceTypes = useMemo(() => {
     if (!data || data.length === 0) return [];
     const types = [...new Set(data.map((item) => item.jenis_layanan))];
     return types.filter(Boolean).sort();
   }, [data]);
 
   // Filter data based on selected service type
-  const filteredData = React.useMemo(() => {
+  const filteredData = useMemo(() => {
     if (!data || selectedServiceType === "all") return data || [];
     return data.filter((item) => item.jenis_layanan === selectedServiceType);
   }, [data, selectedServiceType]);
 
   // Calculate summary metrics
-  const summaryMetrics = React.useMemo(() => {
+  const summaryMetrics = useMemo(() => {
     if (!filteredData || filteredData.length === 0)
       return { total: 0, sesuaiTarget: 0, tidakSesuaiTarget: 0, persentaseSesuaiTarget: 0 };
 
@@ -40,7 +48,7 @@ export default function Dashboard() {
     return { total, sesuaiTarget, tidakSesuaiTarget, persentaseSesuaiTarget };
   }, [filteredData]);
 
-  const chartData = React.useMemo(() => {
+  const chartData = useMemo(() => {
     if (!filteredData || filteredData.length === 0) return [];
 
     // Group by month from tanggal_permintaan
@@ -102,6 +110,59 @@ export default function Dashboard() {
       label: "Total Transaksi",
       color: "#90CDF4", // teal
     },
+  };
+
+  const handleExportData = async (type) => {
+    const exportData = chartData.map((item, index) => ({
+      no: index + 1,
+      month: item.month,
+      total: item.total,
+      targetMet: item.targetMet,
+      targetNotMet: item.targetNotMet,
+      targetMetPercentage: item.targetMetPercentage,
+    }));
+
+    try {
+      switch (type) {
+        case "spreadsheet":
+          setIsExportingToSpreadsheet(true);
+          await postJsonToGoogleAppScript(exportData).then((res) =>
+            toast(
+              <div className="grid gap-1">
+                <span className="font-semibold">Data berhasil diekspor ke Google Sheets!</span>
+                <a href={res.url} target="_blank" className="text-sm text-blue-600 underline">
+                  {res.url}
+                </a>
+              </div>
+            )
+          );
+          break;
+        case "xlsx":
+          setIsExportingToXlsx(true);
+          exportToExcel(exportData, "Laporan Kepatugan Target Bulanan.xlsx", "Kepatugan Target Bulanan");
+          break;
+        case "pdf":
+          setIsExportingToPdf(true);
+          exportPdfFromJson(
+            exportData,
+            "Laporan Kepatugan Target Bulanan",
+            "Laporan Kepatugan Target Bulanan.pdf",
+            ["No", "Bulan", "Total Transaksi", "Sesuai Target", "Tidak Sesuai Target", "Persentase (%)"],
+            {
+              orientation: "landscape",
+            }
+          );
+          break;
+        default:
+          break;
+      }
+    } catch (err) {
+      console.error("Error exporting data:", err);
+    } finally {
+      setIsExportingToSpreadsheet(false);
+      setIsExportingToXlsx(false);
+      setIsExportingToPdf(false);
+    }
   };
 
   return (
@@ -425,6 +486,18 @@ export default function Dashboard() {
               Kepatuhan Target Bulanan - {selectedServiceType === "all" ? "Semua Layanan" : selectedServiceType}
             </h3>
             <p className="text-muted-foreground text-sm">Ringkasan capaian target per bulan</p>
+
+            <div className="space-x-2">
+              <Button onClick={() => handleExportData("spreadsheet")} disabled={isExportingToSpreadsheet}>
+                <Import /> {isExportingToSpreadsheet ? "Exporting..." : "Spreadsheet"}
+              </Button>
+              <Button onClick={() => handleExportData("xlsx")} disabled={isExportingToXlsx}>
+                <FileText /> {isExportingToXlsx ? "Exporting..." : "Excel"}
+              </Button>
+              <Button onClick={() => handleExportData("pdf")} disabled={isExportingToPdf}>
+                <FileText /> {isExportingToPdf ? "Exporting..." : "PDF"}
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
