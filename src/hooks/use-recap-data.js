@@ -36,7 +36,7 @@ export function useRecapData(statisticalTransactions, libraryServiceData, romant
       };
 
       const serviceType = mapServiceType(transaction.need_type || transaction.detail.onsite_visit_detail?.need_type);
-      const keterangan = mapKeterangan(transaction.detail?.online_service_detail?.topic || "");
+      const keterangan = mapKeterangan(transaction.detail?.online_service_details?.topic || "");
       const requestDate = transaction.request_date || transaction.detail.request_date;
       const formattedRequestDate = formatDateToDDMMYYYY(requestDate);
       const formattedCompletionDate = formatDateToDDMMYYYY(transaction.detail.completion_date);
