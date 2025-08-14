@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { formatDateToDDMMYYYY } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 import { Star } from "lucide-react";
 import {
   Calendar,
@@ -15,8 +15,6 @@ import {
   FileText,
   CheckCircle,
   AlertCircle,
-  Clock,
-  X,
   Settings,
   MapPin,
   Timer,
@@ -140,55 +138,6 @@ export default function StatisticalTransactionDetail({ transaction, isOpen, onCl
       statusText: parts[0] || "",
       rating: parts[1] || "0",
     };
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return "Belum Ditentukan";
-    try {
-      const months = [
-        "Januari",
-        "Februari",
-        "Maret",
-        "April",
-        "Mei",
-        "Juni",
-        "Juli",
-        "Agustus",
-        "September",
-        "Oktober",
-        "November",
-        "Desember",
-      ];
-      const monthsEng = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ];
-
-      // Remove time if present
-      let processedDate = dateString.split(" - ")[0];
-      months.forEach((month, index) => {
-        processedDate = processedDate.replace(month, monthsEng[index]);
-      });
-
-      return new Date(processedDate).toLocaleDateString("id-ID", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-    } catch {
-      return dateString;
-    }
   };
 
   const { phone, gender } = parsePhoneGender(transaction.detail.customer_details);
@@ -369,7 +318,7 @@ export default function StatisticalTransactionDetail({ transaction, isOpen, onCl
                   <Calendar className="h-6 w-6 text-blue-500" />
                   <div className="flex-1">
                     <Label className="text-muted-foreground text-sm font-medium">Tanggal Permintaan</Label>
-                    <p className="font-medium">{formatDate(transaction.request_date)}</p>
+                    <p className="font-medium">{formatDate.toDayDateID(transaction.request_date)}</p>
                   </div>
                 </div>
 
@@ -379,7 +328,7 @@ export default function StatisticalTransactionDetail({ transaction, isOpen, onCl
                     <Label className="text-muted-foreground text-sm font-medium">Tanggal Selesai</Label>
                     <p className="font-medium">
                       {transaction.detail.completion_date
-                        ? formatDate(transaction.detail.completion_date)
+                        ? formatDate.toDayDateID(transaction.detail.completion_date)
                         : "Belum Selesai"}
                     </p>
                   </div>
@@ -414,8 +363,8 @@ export default function StatisticalTransactionDetail({ transaction, isOpen, onCl
                       <p className="font-medium text-green-600">
                         {(() => {
                           try {
-                            const requestDate = formatDateToDDMMYYYY(transaction.request_date);
-                            const completionDate = formatDateToDDMMYYYY(transaction.detail.completion_date);
+                            const requestDate = formatDate.toDayDateID(transaction.request_date);
+                            const completionDate = formatDate.toDayDateID(transaction.detail.completion_date);
                             const diffTime = Math.abs(completionDate.getTime() - requestDate.getTime());
                             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                             return diffDays === 1 ? "Selesai dalam 1 hari" : `Selesai dalam ${diffDays} hari`;

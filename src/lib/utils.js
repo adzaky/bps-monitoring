@@ -12,9 +12,9 @@ dayjs.locale("id");
 dayjs.extend(customParseFormat);
 dayjs.extend(isSameOrBefore);
 
-export function formatDateToDDMMYYYY(dateString) {
+export function parseDate(dateString) {
   if (!dateString || dateString === "-" || dateString.toString().trim() === "") {
-    return "";
+    return null;
   }
 
   let cleanedInput = dateString.toString().trim();
@@ -45,7 +45,7 @@ export function formatDateToDDMMYYYY(dateString) {
       const standardDate = `${year}-${monthMapping[month]}-${day.padStart(2, "0")}`;
       const parsed = dayjs(standardDate, "YYYY-MM-DD");
       if (parsed.isValid()) {
-        return parsed.format("DD/MM/YYYY");
+        return parsed;
       }
     }
   }
@@ -62,7 +62,7 @@ export function formatDateToDDMMYYYY(dateString) {
         const standardDate = `${year}-${monthMapping[month]}-${day.padStart(2, "0")}`;
         const parsed = dayjs(standardDate, "YYYY-MM-DD");
         if (parsed.isValid()) {
-          return parsed.format("DD/MM/YYYY");
+          return parsed;
         }
       }
     }
@@ -82,16 +82,28 @@ export function formatDateToDDMMYYYY(dateString) {
   for (const format of formats) {
     const parsed = dayjs(cleanedInput, format, "id", true);
     if (parsed.isValid()) {
-      return parsed.format("DD/MM/YYYY");
+      return parsed;
     }
   }
 
   const fallback = dayjs(new Date(cleanedInput));
   if (!fallback.isValid()) {
-    throw new Error(`Invalid date string: ${cleanedInput} to ${fallback}`);
+    console.error(`Invalid date string: ${cleanedInput}`);
+    return null;
   }
-  return fallback.format("DD/MM/YYYY");
+  return fallback;
 }
+
+export const formatDate = {
+  toDDMMYYYY: (dateString) => {
+    const parsedDate = parseDate(dateString);
+    return parsedDate ? parsedDate.format("DD/MM/YYYY") : "";
+  },
+  toDayDateID: (dateString) => {
+    const parsedDate = parseDate(dateString);
+    return parsedDate ? parsedDate.format("dddd, D MMMM YYYY") : "";
+  },
+};
 
 export function calculateCapaian(serviceType, requestDate, completionDate) {
   if (!serviceType || !requestDate || !completionDate) {
