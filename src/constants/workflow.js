@@ -9,7 +9,7 @@ export const WORKFLOWS = [
     id: "romantik_scraper.yml",
     name: "BPS - Romantik Statistical Actvitites Scraper",
     description: "Otomasi pengambilan data kegiatan statistik Romantik BPS",
-    color: "",
+    color: "red",
   },
   {
     id: "silastik_scraper.yml",
