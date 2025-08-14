@@ -37,10 +37,6 @@ export default function EkstraksiData() {
             <span className="text-primary font-medium">2.</span>
             <span>Pantau pembaruan status dan progress secara real-time</span>
           </div>
-          <div className="flex items-start gap-2">
-            <span className="text-primary font-medium">3.</span>
-            <span>Ekspor data rekapitulasi ke spreadsheet</span>
-          </div>
         </CardContent>
       </Card>
     </div>
