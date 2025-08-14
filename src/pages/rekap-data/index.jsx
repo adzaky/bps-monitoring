@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { DateRangePicker } from "@/components/ui/date-range";
 import { Input } from "@/components/ui/input";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRecapData } from "@/hooks/use-recap-data";
@@ -168,14 +169,17 @@ export default function RekapData() {
         value={filters.jenis_layanan || "all"}
         onValueChange={(value) => handleFilterChange("jenis_layanan", value === "all" ? "" : value)}
       >
-        <TabsList className="w-full">
-          <TabsTrigger value="all">Semua Jenis Layanan</TabsTrigger>
-          {getUniqueValues("jenis_layanan").map((value) => (
-            <TabsTrigger key={value} value={value}>
-              {value}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+        <ScrollArea>
+          <TabsList className="mb-3 w-full">
+            <TabsTrigger value="all">Semua Jenis Layanan</TabsTrigger>
+            {getUniqueValues("jenis_layanan").map((value) => (
+              <TabsTrigger key={value} value={value}>
+                {value}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          <ScrollBar orientation="horizontal" className="[&>div]:bg-muted-foreground" />
+        </ScrollArea>
       </Tabs>
 
       {/* Search and Filter Section */}
@@ -196,7 +200,7 @@ export default function RekapData() {
 
         {/* Other Filters */}
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             {/* Date Range Filter */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Tanggal Permintaan</label>
