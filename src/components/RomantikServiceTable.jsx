@@ -217,7 +217,7 @@ export default function RomantikServiceTable({ data }) {
               <Eye className="mr-2 h-4 w-4" />
               Detail
             </Button>
-            {activity.commitment_letter && (
+            {activity.commitment_letter && activity.commitment_letter !== "-" && (
               <Button variant="ghost" size="sm" onClick={() => window.open(activity.commitment_letter, "_blank")}>
                 <Download className="h-4 w-4" />
               </Button>
