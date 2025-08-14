@@ -47,7 +47,7 @@ export default function AppLayout() {
             </BreadcrumbList>
           </Breadcrumb>
         </header>
-        <div className="space-y-4 p-3">
+        <div className="space-y-4 p-4">
           <Outlet />
         </div>
       </SidebarInset>
