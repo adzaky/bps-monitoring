@@ -47,9 +47,9 @@ export default function AppLayout() {
             </BreadcrumbList>
           </Breadcrumb>
         </header>
-        <main className="w-full space-y-4 overflow-scroll p-3">
+        <div className="space-y-4 p-3">
           <Outlet />
-        </main>
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );
