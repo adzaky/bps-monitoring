@@ -275,29 +275,31 @@ export default function RomantikServiceDetail({ activity, isOpen, onClose }) {
           </Card>
 
           {/* Dokumen */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <FileText className="h-5 w-5" />
-                Dokumen Terkait
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between rounded-lg border p-4">
-                <div className="flex items-center gap-3">
-                  <FileText className="h-8 w-8 text-red-500" />
-                  <div>
-                    <p className="font-medium">Surat Komitmen</p>
-                    <p className="text-muted-foreground text-sm">Dokumen komitmen kegiatan statistik</p>
+          {activity.commitment_letter && activity.commitment_letter !== "-" && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <FileText className="h-5 w-5" />
+                  Dokumen Terkait
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between rounded-lg border p-4">
+                  <div className="flex items-center gap-3">
+                    <FileText className="h-8 w-8 text-red-500" />
+                    <div>
+                      <p className="font-medium">Surat Komitmen</p>
+                      <p className="text-muted-foreground text-sm">Dokumen komitmen kegiatan statistik</p>
+                    </div>
                   </div>
+                  <Button variant="outline" onClick={handleDownloadCommitment}>
+                    <Download className="mr-2 h-4 w-4" />
+                    Download
+                  </Button>
                 </div>
-                <Button variant="outline" onClick={handleDownloadCommitment} disabled={!activity.commitment_letter}>
-                  <Download className="mr-2 h-4 w-4" />
-                  Download
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Summary */}
           <Card className="border-2 border-dashed">
