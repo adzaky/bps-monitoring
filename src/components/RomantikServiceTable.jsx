@@ -74,7 +74,7 @@ export default function RomantikServiceTable({ data }) {
     switch (status.toLowerCase()) {
       case "layak":
         return (
-          <Badge variant="secondary" className="bg-green-100 text-green-800">
+          <Badge variant="secondary" className="bg-purple-100 text-purple-800">
             <Award className="mr-1 h-3 w-3" />
             Layak
           </Badge>
