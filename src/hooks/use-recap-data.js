@@ -1,4 +1,4 @@
-import { calculateCapaian, formatDateToDDMMYYYY } from "@/lib/utils";
+import { calculateCapaian, formatDate } from "@/lib/utils";
 
 export function useRecapData(statisticalTransactions, libraryServiceData, romantikServiceData) {
   const generateId = (data) => {
@@ -38,8 +38,8 @@ export function useRecapData(statisticalTransactions, libraryServiceData, romant
       const serviceType = mapServiceType(transaction.need_type || transaction.detail.onsite_visit_detail?.need_type);
       const keterangan = mapKeterangan(transaction.detail?.online_service_details?.topic || "");
       const requestDate = transaction.request_date || transaction.detail.request_date;
-      const formattedRequestDate = formatDateToDDMMYYYY(requestDate);
-      const formattedCompletionDate = formatDateToDDMMYYYY(transaction.detail.completion_date);
+      const formattedRequestDate = formatDate.toDDMMYYYY(requestDate);
+      const formattedCompletionDate = formatDate.toDDMMYYYY(transaction.detail.completion_date);
 
       return {
         no: counter++,
@@ -63,8 +63,8 @@ export function useRecapData(statisticalTransactions, libraryServiceData, romant
   if (libraryServiceData && libraryServiceData.length > 0) {
     const libraryData = libraryServiceData.map((record) => {
       const visitDate = record.visit_datetime || record.visit_date_time;
-      const formattedRequestDate = formatDateToDDMMYYYY(visitDate);
-      const formattedCompletionDate = formatDateToDDMMYYYY(visitDate);
+      const formattedRequestDate = formatDate.toDDMMYYYY(visitDate);
+      const formattedCompletionDate = formatDate.toDDMMYYYY(visitDate);
       const jenisLayanan = "Perpustakaan";
 
       return {
@@ -87,8 +87,8 @@ export function useRecapData(statisticalTransactions, libraryServiceData, romant
   if (romantikServiceData && romantikServiceData.length > 0) {
     const romantikData = romantikServiceData.map((activity) => {
       const jenisLayanan = "Rekomendasi Statistik";
-      const formattedRequestDate = formatDateToDDMMYYYY(activity.submission_date);
-      const formattedCompletionDate = formatDateToDDMMYYYY(activity.completion_date);
+      const formattedRequestDate = formatDate.toDDMMYYYY(activity.submission_date);
+      const formattedCompletionDate = formatDate.toDDMMYYYY(activity.completion_date);
 
       return {
         no: counter++,
