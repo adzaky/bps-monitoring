@@ -1,8 +1,11 @@
 import React from "react";
 import { createBrowserRouter, redirect, RouterProvider } from "react-router";
 import AppLayout from "./components/AppLayout";
+import { LoadingScreen } from "./components/ui/loading-screen";
+import { useAppLoading } from "./hooks/use-app-loading";
 import { api } from "./services/api";
 import supabase from "./lib/supabase";
+
 import Dashboard from "./pages/dashboard";
 import Login from "./pages/login";
 import LayananPerpustakaan from "./pages/layanan-perpustakaan";
@@ -13,6 +16,8 @@ import RekapData from "./pages/rekap-data";
 import ProdukStatistik from "./pages/produk-statistik";
 
 export default function App() {
+  const { isLoading } = useAppLoading();
+
   const getSession = async () => {
     const {
       data: { session },
@@ -101,5 +106,13 @@ export default function App() {
     },
   ]);
 
-  return <RouterProvider router={router} />;
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  return (
+    <React.Suspense fallback={<LoadingScreen />}>
+      <RouterProvider router={router} />
+    </React.Suspense>
+  );
 }
