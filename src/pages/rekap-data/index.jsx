@@ -10,7 +10,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRecapData } from "@/hooks/use-recap-data";
-import { exportPdfFromJson, exportToExcel } from "@/lib/utils";
+import { exportPdfFromJson, exportRecapData } from "@/lib/utils";
 import { postJsonToGoogleAppScript } from "@/services/sheet";
 import RecapDataTable from "@/components/RecapDataTable";
 
@@ -55,7 +55,7 @@ export default function RekapData() {
           break;
         case "xlsx":
           setIsExportingToXlsx(true);
-          exportToExcel(exportData, "Rekap Transaksi Layanan BPS.xlsx", "Transaksi Layanan");
+          exportRecapData(exportData, new Date().getFullYear());
           break;
         case "pdf":
           setIsExportingToPdf(true);

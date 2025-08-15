@@ -7,6 +7,7 @@ import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import { autoTable } from "jspdf-autotable";
+import { toast } from "sonner";
 
 dayjs.locale("id");
 dayjs.extend(customParseFormat);
@@ -210,7 +211,7 @@ export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
-export function exportLKMonitoringXLSXFromTransactions(transactions, year = 2025) {
+export function exportLKMonitoring(data, year = 2025) {
   const months = [
     "Januari",
     "Februari",
@@ -255,7 +256,7 @@ export function exportLKMonitoringXLSXFromTransactions(transactions, year = 2025
     rekomendasi: { x: make12(), y: make12() },
   };
 
-  for (const tx of transactions || []) {
+  for (const tx of data || []) {
     const d = parseDMY(tx.tanggal_permintaan);
     if (!d || d.getFullYear() !== year) continue;
     const mIdx = d.getMonth();
@@ -375,4 +376,189 @@ export function exportLKMonitoringXLSXFromTransactions(transactions, year = 2025
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "LK Monitoring");
   XLSX.writeFile(wb, `LK Monitoring ${year}.xlsx`);
+}
+
+export function exportRecapData(data, year) {
+  const fileName = `Rekap Transaksi Layanan PST 7200 Tahun ${year}.xlsx`;
+  const dataSheetName = "Transaksi Layanan";
+  const monitoringSheetName = "LK Monitoring";
+
+  if (!data || data.length === 0) {
+    toast.error("Tidak ada data transaksi untuk diekspor");
+    return;
+  }
+
+  const wb = XLSX.utils.book_new();
+
+  // Sheet 1: Data Transaksi
+  const wsData = XLSX.utils.json_to_sheet(data);
+  XLSX.utils.book_append_sheet(wb, wsData, dataSheetName);
+
+  // Sheet 2: LK Monitoring
+  if (data && data.length > 0) {
+    const months = [
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember",
+    ];
+    const COLS = 15;
+
+    const padTo = (arr, len) => arr.concat(Array(Math.max(0, len - arr.length)).fill(""));
+    const parseDMY = (str) => {
+      if (!str || typeof str !== "string") return null;
+      const [d, m, y] = str.split("/").map(Number);
+      if (!d || !m || !y) return null;
+      return new Date(y, m - 1, d);
+    };
+
+    const mapJenis = (s) => {
+      if (!s) return null;
+      const t = s.toLowerCase();
+      if (t.includes("perpustakaan")) return "perpustakaan";
+      if (t.includes("konsultasi online")) return "konsultasi_online";
+      if (t.includes("konsultasi langsung")) return "konsultasi_langsung";
+      if (t.includes("produk statistik berbayar") || t.includes("penjualan")) return "produk_berbayar";
+      if (t.includes("rekomendasi")) return "rekomendasi";
+      return null;
+    };
+
+    const make12 = () => Array(12).fill(0);
+    const buckets = {
+      perpustakaan: { x: make12(), y: make12() },
+      konsultasi_online: { x: make12(), y: make12() },
+      konsultasi_langsung: { x: make12(), y: make12() },
+      produk_berbayar: { x: make12(), y: make12() },
+      rekomendasi: { x: make12(), y: make12() },
+    };
+
+    for (const tx of data) {
+      const d = parseDMY(tx.tanggal_permintaan);
+      if (!d || d.getFullYear() !== year) continue;
+      const mIdx = d.getMonth();
+      const key = mapJenis(tx.jenis_layanan);
+      if (!key || !buckets[key]) continue;
+
+      buckets[key].y[mIdx] += 1;
+      if ((tx.capaian || "").toLowerCase() === "sesuai target") {
+        buckets[key].x[mIdx] += 1;
+      }
+    }
+
+    const SERVICE_BLOCKS = [
+      {
+        title: "Pelayanan Perpustakaan",
+        xLabel: "x — Jumlah pelayanan perpustakaan yang terpenuhi secara mandiri setelah login pada aplikasi PST",
+        yLabel: "y — Jumlah pelayanan perpustakaan",
+        key: "perpustakaan",
+      },
+      {
+        title: "Konsultasi Statistik — Konsultasi Online",
+        xLabel: "x — Jumlah pelayanan konsultasi statistik yang dapat terpenuhi dalam waktu maksimal 3 hari kerja",
+        yLabel:
+          "y — Jumlah pelayanan konsultasi statistik dengan permintaan jelas dan persyaratan pelayanan telah lengkap",
+        key: "konsultasi_online",
+      },
+      {
+        title: "Konsultasi Statistik — Konsultasi Kunjungan Langsung",
+        xLabel: "x — Jumlah pelayanan konsultasi statistik yang dapat terpenuhi dalam waktu maksimal 1 hari kerja",
+        yLabel:
+          "y — Jumlah pelayanan konsultasi statistik dengan permintaan jelas dan persyaratan pelayanan telah lengkap",
+        key: "konsultasi_langsung",
+      },
+      {
+        title: "Penjualan Produk Statistik Berbayar",
+        xLabel:
+          "x — Jumlah pelayanan penjualan produk statistik (produk statistik berbayar) yang dapat terpenuhi dalam waktu maksimal 10 hari kerja",
+        yLabel:
+          "y — Jumlah pelayanan penjualan produk statistik (produk statistik berbayar) dengan permintaan jelas dan persyaratan pelayanan telah lengkap",
+        key: "produk_berbayar",
+      },
+      {
+        title: "Pelayanan Rekomendasi Kegiatan Statistik",
+        xLabel: "x — Jumlah pelayanan rekomendasi yang terpenuhi dalam waktu maksimal 14 hari",
+        yLabel: "y — Jumlah pelayanan rekomendasi dengan Formulir Rekomendasi Statistik Sektoral",
+        key: "rekomendasi",
+      },
+    ];
+
+    const header1 = [`Monitoring Capaian Sasaran Mutu Tahun ${year}`];
+    const header2 = [];
+    const header3 = ["No", "Indikator Pada Sasaran Mutu", "Target", "Capaian Kumulatif"];
+    const header4 = ["", "", "", ...months];
+
+    const wsData = [
+      padTo(header1, COLS),
+      padTo(header2, COLS),
+      padTo(header3, COLS),
+      padTo(header4, COLS),
+      padTo(["Produk Layanan"], COLS),
+    ];
+
+    let noCounter = 1;
+    let currentRow = wsData.length + 1;
+
+    for (const svc of SERVICE_BLOCKS) {
+      const bx = buckets[svc.key]?.x || make12();
+      const by = buckets[svc.key]?.y || make12();
+
+      const rowService = Array(COLS).fill("");
+      rowService[0] = noCounter++;
+      rowService[1] = svc.title;
+      rowService[2] = 100;
+
+      wsData.push(rowService);
+      const serviceRowIndex = currentRow;
+      currentRow++;
+
+      const rowX = Array(COLS).fill("");
+      rowX[1] = svc.xLabel;
+      bx.forEach((v, i) => (rowX[3 + i] = v ?? null));
+      wsData.push(rowX);
+      const rowXIndex = currentRow;
+      currentRow++;
+
+      const rowY = Array(COLS).fill("");
+      rowY[1] = svc.yLabel;
+      by.forEach((v, i) => (rowY[3 + i] = v ?? null));
+      wsData.push(rowY);
+      const rowYIndex = currentRow;
+      currentRow++;
+
+      // isi formula persentase capaian di baris jenis layanan (serviceRowIndex)
+      months.forEach((_, mi) => {
+        const colLetter = XLSX.utils.encode_col(3 + mi); // kolom ke-4..15
+        const formula = `IF(SUM($${colLetter}$${rowYIndex})=0,0,SUM($${colLetter}$${rowXIndex})/SUM($${colLetter}$${rowYIndex}))`;
+        wsData[serviceRowIndex - 1][3 + mi] = { f: formula, z: "0.00%" }; // z = format persen
+      });
+
+      wsData.push(Array(COLS).fill(""));
+      currentRow++;
+    }
+
+    const wsMonitoring = XLSX.utils.aoa_to_sheet(wsData);
+
+    wsMonitoring["!merges"] = [XLSX.utils.decode_range(`A1:O1`), XLSX.utils.decode_range(`D3:O3`)];
+    wsMonitoring["!cols"] = [
+      { wch: 5 },
+      { wch: 60 },
+      { wch: 10 },
+      ...Array(12)
+        .fill(0)
+        .map(() => ({ wch: 9 })),
+    ];
+    wsMonitoring["!freeze"] = { xSplit: 2, ySplit: 4 };
+
+    XLSX.utils.book_append_sheet(wb, wsMonitoring, monitoringSheetName);
+  }
+
+  XLSX.writeFile(wb, fileName);
 }
