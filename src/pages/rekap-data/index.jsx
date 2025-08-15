@@ -1,4 +1,5 @@
 import { useState } from "react";
+import dayjs from "dayjs";
 import { useLoaderData } from "react-router";
 import { FileText, Import, Search, X } from "lucide-react";
 import { toast } from "sonner";
@@ -137,8 +138,7 @@ export default function RekapData() {
       if (!dateRange?.from || !dateRange?.to || !item.tanggal_permintaan) {
         return true;
       }
-
-      const itemDate = new Date(item.tanggal_permintaan);
+      const itemDate = dayjs(item.tanggal_permintaan, "DD/MM/YYYY").toDate();
       const fromDate = new Date(dateRange.from);
       const toDate = new Date(dateRange.to);
 
