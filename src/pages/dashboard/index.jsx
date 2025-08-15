@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -174,26 +175,24 @@ export default function Dashboard() {
         <p className="text-muted-foreground">Kelola dan pantau semua transaksi layanan</p>
       </div>
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <label htmlFor="service-type" className="text-md font-bold">
-              Jenis Layanan:
-            </label>
-            <Select value={selectedServiceType} onValueChange={setSelectedServiceType}>
-              <SelectTrigger id="service-type" className="w-[280px]">
-                <SelectValue placeholder="Pilih jenis layanan" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Semua</SelectItem>
-                {serviceTypes.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center space-x-2">
+          <label htmlFor="service-type" className="text-md font-bold">
+            Jenis Layanan:
+          </label>
+          <Select value={selectedServiceType} onValueChange={setSelectedServiceType}>
+            <SelectTrigger id="service-type" className="w-[280px]">
+              <SelectValue placeholder="Pilih jenis layanan" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Semua</SelectItem>
+              {serviceTypes.map((type) => (
+                <SelectItem key={type} value={type}>
+                  {type}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="text-md">
           Menampilkan data untuk:{" "}
@@ -316,11 +315,14 @@ export default function Dashboard() {
         </CardHeader>
         <CardContent>
           <Tabs value={activeChart} onValueChange={setActiveChart} className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="targetMetPercentage">Persentase Sesuai Target</TabsTrigger>
-              <TabsTrigger value="targetMet">Jumlah Sesuai Target</TabsTrigger>
-              <TabsTrigger value="total">Total Transaksi</TabsTrigger>
-            </TabsList>
+            <ScrollArea>
+              <TabsList className="mb-3 w-full">
+                <TabsTrigger value="targetMetPercentage">Persentase Sesuai Target</TabsTrigger>
+                <TabsTrigger value="targetMet">Jumlah Sesuai Target</TabsTrigger>
+                <TabsTrigger value="total">Total Transaksi</TabsTrigger>
+              </TabsList>
+              <ScrollBar orientation="horizontal" className="[&>div]:bg-muted-foreground" />
+            </ScrollArea>
 
             <TabsContent value="targetMetPercentage" className="mt-4">
               <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
