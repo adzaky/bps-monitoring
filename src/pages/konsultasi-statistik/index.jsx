@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Import } from "lucide-react";
 import { FileText } from "lucide-react";
 
-export default function TransaksiStatistik() {
+export default function KonsultasiStatistik() {
   const [isExportingToSpreadsheet, setIsExportingToSpreadsheet] = useState(false);
   const [isExportingToXlsx, setIsExportingToXlsx] = useState(false);
   const [isExportingToPdf, setIsExportingToPdf] = useState(false);
@@ -23,9 +23,9 @@ export default function TransaksiStatistik() {
   const [filterNeedType, setFilterNeedType] = useState("all");
 
   // Filter data
-  const { statisticalTransactions } = useLoaderData();
-  const filteredData = statisticalTransactions.filter((visit) => {
-    const { statusText } = statisticalTransactions.reduce((acc, visit) => {
+  const { consultationStatistic } = useLoaderData();
+  const filteredData = consultationStatistic.filter((visit) => {
+    const { statusText } = consultationStatistic.reduce((acc, visit) => {
       const parts = visit.status?.split(": ") || [];
       acc[visit.status] = { statusText: parts[0] || "", rating: parts[1] || "0" };
       return acc;
@@ -74,7 +74,7 @@ export default function TransaksiStatistik() {
           break;
         case "xlsx":
           setIsExportingToXlsx(true);
-          exportToExcel(exportData, "Laporan Transaksi Statistik.xlsx", "Transaksi Statistik");
+          exportToExcel(exportData, "Laporan Konsultasi Statistik.xlsx", "Konsultasi Statistik");
           break;
         case "pdf":
           setIsExportingToPdf(true);
@@ -103,21 +103,21 @@ export default function TransaksiStatistik() {
   };
 
   // Statistik
-  const totalVisits = statisticalTransactions.length;
-  const completedVisits = statisticalTransactions.filter((v) => v.status?.toLowerCase().includes("selesai")).length;
-  const canceledVisits = statisticalTransactions.filter((v) => v.status?.toLowerCase().includes("batal")).length;
+  const totalVisits = consultationStatistic.length;
+  const completedVisits = consultationStatistic.filter((v) => v.status?.toLowerCase().includes("selesai")).length;
+  const canceledVisits = consultationStatistic.filter((v) => v.status?.toLowerCase().includes("batal")).length;
 
   // Get unique operators and need types
-  const uniqueOperators = [...new Set(statisticalTransactions.map((v) => v.main_operator).filter(Boolean))];
-  const uniqueNeedTypes = [...new Set(statisticalTransactions.map((v) => v.need_type).filter(Boolean))].sort((a, b) =>
+  const uniqueOperators = [...new Set(consultationStatistic.map((v) => v.main_operator).filter(Boolean))];
+  const uniqueNeedTypes = [...new Set(consultationStatistic.map((v) => v.need_type).filter(Boolean))].sort((a, b) =>
     a.localeCompare(b)
   );
 
   return (
     <div className="mx-auto space-y-6">
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Data Transaksi Statistik</h1>
-        <p className="text-muted-foreground">Kelola dan pantau data transaksi statistik pelanggan</p>
+        <h1 className="text-3xl font-bold tracking-tight">Data Transaksi Konsultasi Statistik</h1>
+        <p className="text-muted-foreground">Kelola dan pantau data transaksi konsultasi statistik pelanggan</p>
       </div>
 
       {/* Statistik Cards */}
@@ -161,8 +161,8 @@ export default function TransaksiStatistik() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Daftar Transaksi Statistik</CardTitle>
-          <CardDescription>Data transaksi statistik pelanggan</CardDescription>
+          <CardTitle>Daftar Transaksi Konsultasi Statistik</CardTitle>
+          <CardDescription>Data transaksi konsultasi statistik pelanggan</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Tab Filter Keperluan */}
