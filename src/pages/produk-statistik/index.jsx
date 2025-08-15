@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLoaderData } from "react-router";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { List, Search, CheckCircle, XOctagon } from "lucide-react";
@@ -169,16 +170,19 @@ export default function ProdukStatistik() {
           <div className="overflow-auto">
             <h3 className="mb-3 text-sm font-medium">Jenis Keperluan</h3>
             <Tabs value={filterNeedType} onValueChange={setFilterNeedType}>
-              <TabsList className="min-w-full">
-                <TabsTrigger value="all" className="text-xs whitespace-nowrap uppercase">
-                  Semua
-                </TabsTrigger>
-                {uniqueNeedTypes.map((type) => (
-                  <TabsTrigger key={type} value={type} className="text-xs whitespace-nowrap uppercase">
-                    {type}
+              <ScrollArea>
+                <TabsList className="mb-3 w-full">
+                  <TabsTrigger value="all" className="text-xs whitespace-nowrap uppercase">
+                    Semua
                   </TabsTrigger>
-                ))}
-              </TabsList>
+                  {uniqueNeedTypes.map((type) => (
+                    <TabsTrigger key={type} value={type} className="text-xs whitespace-nowrap uppercase">
+                      {type}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+                <ScrollBar orientation="horizontal" className="[&>div]:bg-muted-foreground" />
+              </ScrollArea>
             </Tabs>
           </div>
 

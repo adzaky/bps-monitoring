@@ -13,7 +13,7 @@ export function DataTable({ columns, data }) {
   });
 
   const Pagination = ({ table }) => (
-    <div className="flex items-center justify-between px-2">
+    <div className="flex flex-wrap items-center justify-between gap-2 px-2">
       <Select
         value={`${table.getState().pagination.pageSize}`}
         onValueChange={(value) => {
@@ -31,10 +31,10 @@ export function DataTable({ columns, data }) {
           ))}
         </SelectContent>
       </Select>
-      <div className="text-muted-foreground ml-2 flex-1 text-sm">
+      <div className="text-muted-foreground ml-2 flex-1 text-sm text-nowrap">
         Menampilkan {table.getRowModel().rows.length} dari {table.getFilteredRowModel().rows.length} baris data.
       </div>
-      <div className="flex items-center space-x-6 lg:space-x-8">
+      <div className="col-span-2 flex items-center space-x-6 lg:space-x-8">
         <div className="flex w-[100px] items-center justify-center text-sm font-medium">
           Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
         </div>
