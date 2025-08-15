@@ -12,6 +12,7 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/s
 import { AppSidebar } from "./AppSidebar";
 import { Navigate, Outlet } from "react-router";
 import { useLoaderData } from "react-router";
+import Notification from "./Notification";
 
 export default function AppLayout() {
   const { isAuthenticated } = useLoaderData();
@@ -46,6 +47,7 @@ export default function AppLayout() {
               )}
             </BreadcrumbList>
           </Breadcrumb>
+          <Notification />
         </header>
         <div className="space-y-4 p-4">
           <Outlet />
