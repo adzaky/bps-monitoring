@@ -33,17 +33,22 @@ const SIDEBAR_NAV = [
     title: "Produk Layanan",
     items: [
       {
-        label: "Transaksi Statistik",
-        url: "/transaksi-statistik",
-        icon: BarChart2,
-      },
-      {
-        label: "Layanan Perpustakaan",
+        label: "Pelayanan Perpustakaan",
         url: "/layanan-perpustakaan",
         icon: Library,
       },
       {
-        label: "Rekomendasi Statistik",
+        label: "Konsultasi Statistik",
+        url: "/konsultasi-statistik",
+        icon: BarChart2,
+      },
+      {
+        label: "Penjualan Produk Statistik Berbayar",
+        url: "/statistik-berbayar",
+        icon: BarChart2,
+      },
+      {
+        label: "Pelayanan Rekomendasi Kegiatan Statistik",
         url: "/rekomendasi-statistik",
         icon: Award,
       },
@@ -110,11 +115,11 @@ export function AppSidebar({ ...props }) {
                     <SidebarMenuButton
                       asChild
                       isActive={pathname === item.url}
-                      className="hover:bg-slate-500 hover:text-white data-[active=true]:bg-slate-600 data-[active=true]:text-white"
+                      className="h-auto hover:bg-slate-500 hover:text-white data-[active=true]:bg-slate-600 data-[active=true]:text-white"
                     >
                       <NavLink to={item.url}>
-                        <item.icon className="size-4" />
-                        <span>{item.label}</span>
+                        <item.icon className="size-4 shrink-0" />
+                        <div className="leading-normal text-pretty">{item.label}</div>
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
