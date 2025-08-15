@@ -170,11 +170,11 @@ export default function ProdukStatistik() {
             <h3 className="mb-3 text-sm font-medium">Jenis Keperluan</h3>
             <Tabs value={filterNeedType} onValueChange={setFilterNeedType}>
               <TabsList className="min-w-full">
-                <TabsTrigger value="all" className="text-xs whitespace-nowrap">
+                <TabsTrigger value="all" className="text-xs whitespace-nowrap uppercase">
                   Semua
                 </TabsTrigger>
                 {uniqueNeedTypes.map((type) => (
-                  <TabsTrigger key={type} value={type} className="text-xs whitespace-nowrap">
+                  <TabsTrigger key={type} value={type} className="text-xs whitespace-nowrap uppercase">
                     {type}
                   </TabsTrigger>
                 ))}
