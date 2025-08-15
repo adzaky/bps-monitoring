@@ -41,7 +41,7 @@ export default function App() {
           },
         },
         {
-          path: "transaksi-statistik",
+          path: "konsultasi-statistik",
           Component: TransaksiStatistik,
           loader: async () => {
             const { data: statisticalTransactions } = await api.silastikService.getStatisticalTransactions();
