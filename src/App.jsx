@@ -7,9 +7,10 @@ import Dashboard from "./pages/dashboard";
 import Login from "./pages/login";
 import LayananPerpustakaan from "./pages/layanan-perpustakaan";
 import RekomendasiStatistik from "./pages/rekomendasi-statistik";
-import TransaksiStatistik from "./pages/transaksi-statistik";
+import KonsultasiStatistik from "./pages/konsultasi-statistik";
 import EkstraksiData from "./pages/ekstraksi-data";
 import RekapData from "./pages/rekap-data";
+import ProdukStatistik from "./pages/produk-statistik";
 
 export default function App() {
   const getSession = async () => {
@@ -42,10 +43,18 @@ export default function App() {
         },
         {
           path: "konsultasi-statistik",
-          Component: TransaksiStatistik,
+          Component: KonsultasiStatistik,
           loader: async () => {
-            const { data: statisticalTransactions } = await api.silastikService.getStatisticalTransactions();
-            return { statisticalTransactions };
+            const { data: consultationStatistic } = await api.silastikService.getConsultationStatistic();
+            return { consultationStatistic };
+          },
+        },
+        {
+          path: "produk-statistik",
+          Component: ProdukStatistik,
+          loader: async () => {
+            const { data: productStatistic } = await api.silastikService.getProductStatistic();
+            return { productStatistic };
           },
         },
         {

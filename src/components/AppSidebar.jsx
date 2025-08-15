@@ -45,7 +45,7 @@ const SIDEBAR_NAV = [
       },
       {
         label: "Penjualan Produk Statistik Berbayar",
-        url: "/statistik-berbayar",
+        url: "/produk-statistik",
         icon: ChartArea,
       },
       {

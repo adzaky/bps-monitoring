@@ -15,5 +15,11 @@ export const api = {
     getStatisticalTransactions: async () => {
       return await supabase.from("silastik_transaction").select();
     },
+    getConsultationStatistic: async () => {
+      return await supabase.from("silastik_transaction").select().ilike("need_type", "%Konsultasi%");
+    },
+    getProductStatistic: async () => {
+      return await supabase.from("silastik_transaction").select().ilike("need_type", "%Permintaan Data%");
+    },
   },
 };
