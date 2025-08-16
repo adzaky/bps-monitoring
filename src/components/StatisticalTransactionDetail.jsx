@@ -140,12 +140,12 @@ export default function StatisticalTransactionDetail({ transaction, isOpen, onCl
     };
   };
 
-  const { phone, gender } = parsePhoneGender(transaction.detail.customer_details);
-  const { age, education } = parseAgeEducation(transaction.detail.customer_details);
+  const { phone, gender } = parsePhoneGender(transaction.detail?.customer_details);
+  const { age, education } = parseAgeEducation(transaction.detail?.customer_details);
   const { statusText, rating } = parseStatus(transaction.status);
 
   // Determine service type
-  const isOnlineService = !!transaction.detail.online_service_details;
+  const isOnlineService = !!transaction.detail?.online_service_details;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -226,7 +226,7 @@ export default function StatisticalTransactionDetail({ transaction, isOpen, onCl
                 <User className="h-8 w-8 text-gray-400" />
                 <div className="flex-1">
                   <Label className="text-muted-foreground text-sm font-medium">Nama Lengkap</Label>
-                  <p className="text-lg font-semibold">{transaction.detail.customer_details.name}</p>
+                  <p className="text-lg font-semibold">{transaction.detail?.customer_details.name}</p>
                 </div>
               </div>
 
@@ -235,7 +235,7 @@ export default function StatisticalTransactionDetail({ transaction, isOpen, onCl
                   <Mail className="h-6 w-6 text-blue-500" />
                   <div className="flex-1">
                     <Label className="text-muted-foreground text-sm font-medium">Email</Label>
-                    <p className="font-medium text-blue-600">{transaction.detail.customer_details.email}</p>
+                    <p className="font-medium text-blue-600">{transaction.detail?.customer_details.email}</p>
                   </div>
                 </div>
 
@@ -283,20 +283,20 @@ export default function StatisticalTransactionDetail({ transaction, isOpen, onCl
                     <Building className="text-muted-foreground h-4 w-4" />
                     <p className="font-medium">
                       {isOnlineService
-                        ? transaction.detail.customer_details.customer_segmentation || "Tidak tersedia"
-                        : transaction.detail.customer_details.unit || "Tidak tersedia"}
+                        ? transaction.detail?.customer_details.customer_segmentation || "Tidak tersedia"
+                        : transaction.detail?.customer_details.unit || "Tidak tersedia"}
                     </p>
                   </div>
                 </div>
-                {transaction.detail.customer_details.average_rating && (
+                {transaction.detail?.customer_details.average_rating && (
                   <div className="space-y-2">
                     <Label className="text-muted-foreground text-sm font-medium">Rating Rata-rata</Label>
                     <div className="flex items-center gap-2">
                       <span className="text-lg font-bold text-yellow-600">
                         ⭐{" "}
-                        {transaction.detail.customer_details.average_rating.includes("Belum diset")
+                        {transaction.detail?.customer_details.average_rating.includes("Belum diset")
                           ? "-"
-                          : transaction.detail.customer_details.average_rating}
+                          : transaction.detail?.customer_details.average_rating}
                       </span>
                     </div>
                   </div>
@@ -327,20 +327,20 @@ export default function StatisticalTransactionDetail({ transaction, isOpen, onCl
                   <div className="flex-1">
                     <Label className="text-muted-foreground text-sm font-medium">Tanggal Selesai</Label>
                     <p className="font-medium">
-                      {transaction.detail.completion_date
-                        ? formatDate.toDayDateID(transaction.detail.completion_date)
+                      {transaction.detail?.completion_date
+                        ? formatDate.toDayDateID(transaction.detail?.completion_date)
                         : "Belum Selesai"}
                     </p>
                   </div>
                 </div>
 
-                {isOnlineService && transaction.detail.online_service_details?.request_deadline && (
+                {isOnlineService && transaction.detail?.online_service_details?.request_deadline && (
                   <div className="flex items-center gap-3 rounded-lg border border-orange-200 bg-orange-50 p-3">
                     <Calendar className="h-6 w-6 text-orange-500" />
                     <div className="flex-1">
                       <Label className="text-muted-foreground text-sm font-medium">Batas Waktu</Label>
                       <p className="font-medium text-orange-600">
-                        {transaction.detail.online_service_details.request_deadline}
+                        {transaction.detail?.online_service_details.request_deadline}
                       </p>
                     </div>
                   </div>
@@ -355,7 +355,7 @@ export default function StatisticalTransactionDetail({ transaction, isOpen, onCl
                 </div>
 
                 {/* Durasi Penyelesaian */}
-                {transaction.detail.completion_date && (
+                {transaction.detail?.completion_date && (
                   <div className="flex items-center gap-3 rounded-lg bg-green-50 p-3 md:col-span-2">
                     <Timer className="h-6 w-6 text-green-500" />
                     <div className="flex-1">
@@ -364,7 +364,7 @@ export default function StatisticalTransactionDetail({ transaction, isOpen, onCl
                         {(() => {
                           try {
                             const requestDate = formatDate.toDayDateID(transaction.request_date);
-                            const completionDate = formatDate.toDayDateID(transaction.detail.completion_date);
+                            const completionDate = formatDate.toDayDateID(transaction.detail?.completion_date);
                             const diffTime = Math.abs(completionDate.getTime() - requestDate.getTime());
                             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                             return diffDays === 1 ? "Selesai dalam 1 hari" : `Selesai dalam ${diffDays} hari`;
@@ -399,15 +399,15 @@ export default function StatisticalTransactionDetail({ transaction, isOpen, onCl
                     <div className="space-y-2">
                       <Label className="text-muted-foreground text-sm font-medium">Topik</Label>
                       <p className="font-medium">
-                        {transaction.detail.online_service_details?.topic || "Tidak tersedia"}
+                        {transaction.detail?.online_service_details?.topic || "Tidak tersedia"}
                       </p>
                     </div>
 
-                    {transaction.detail.online_service_details?.tag && (
+                    {transaction.detail?.online_service_details?.tag && (
                       <div className="space-y-2">
                         <Label className="text-muted-foreground text-sm font-medium">Tag</Label>
                         <div className="flex flex-wrap gap-1">
-                          {transaction.detail.online_service_details.tag.split(", ").map((tag, index) => (
+                          {transaction.detail?.online_service_details.tag.split(", ").map((tag, index) => (
                             <Badge key={index} variant="outline" className="bg-purple-50 text-purple-700">
                               {tag.trim()}
                             </Badge>
@@ -416,32 +416,32 @@ export default function StatisticalTransactionDetail({ transaction, isOpen, onCl
                       </div>
                     )}
 
-                    {transaction.detail.online_service_details?.consultation_coverage && (
+                    {transaction.detail?.online_service_details?.consultation_coverage && (
                       <div className="space-y-2">
                         <Label className="text-muted-foreground text-sm font-medium">Cakupan Konsultasi</Label>
                         <div className="flex items-center gap-2">
                           <MapPin className="h-4 w-4 text-green-500" />
                           <p className="font-medium text-green-600">
-                            {transaction.detail.online_service_details.consultation_coverage}
+                            {transaction.detail?.online_service_details.consultation_coverage}
                           </p>
                         </div>
                       </div>
                     )}
 
-                    {transaction.detail.online_service_details?.consultation_type && (
+                    {transaction.detail?.online_service_details?.consultation_type && (
                       <div className="space-y-2">
                         <Label className="text-muted-foreground text-sm font-medium">Tipe Konsultasi</Label>
                         <Badge variant="secondary" className="bg-indigo-100 text-indigo-800">
-                          {transaction.detail.online_service_details.consultation_type}
+                          {transaction.detail?.online_service_details.consultation_type}
                         </Badge>
                       </div>
                     )}
 
-                    {transaction.detail.online_service_details?.location_status && (
+                    {transaction.detail?.online_service_details?.location_status && (
                       <div className="space-y-2">
                         <Label className="text-muted-foreground text-sm font-medium">Status Lokasi</Label>
                         <Badge variant="outline" className="bg-teal-50 text-teal-700">
-                          {transaction.detail.online_service_details.location_status}
+                          {transaction.detail?.online_service_details.location_status}
                         </Badge>
                       </div>
                     )}
@@ -450,7 +450,7 @@ export default function StatisticalTransactionDetail({ transaction, isOpen, onCl
                   <div className="space-y-2">
                     <Label className="text-muted-foreground text-sm font-medium">Keperluan Detail</Label>
                     <div>
-                      {getNeedTypeBadge(transaction.detail.onsite_visit_detail?.need_type || transaction.need_type)}
+                      {getNeedTypeBadge(transaction.detail?.onsite_visit_detail?.need_type || transaction.need_type)}
                     </div>
                   </div>
                 )}

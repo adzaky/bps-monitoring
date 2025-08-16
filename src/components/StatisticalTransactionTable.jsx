@@ -173,8 +173,8 @@ export default function StatisticalTransactionTable({ data }) {
       header: "Pelanggan",
       cell: ({ row }) => {
         const transaction = row.original;
-        const { gender } = parsePhoneGender(transaction.detail.customer_details);
-        const { age } = parseAgeEducation(transaction.detail.customer_details);
+        const { gender } = parsePhoneGender(transaction.detail?.customer_details);
+        const { age } = parseAgeEducation(transaction.detail?.customer_details);
 
         return (
           <div className="flex items-center gap-2">
@@ -200,13 +200,13 @@ export default function StatisticalTransactionTable({ data }) {
       header: "Kontak",
       cell: ({ row }) => {
         const transaction = row.original;
-        const { phone } = parsePhoneGender(transaction.detail.customer_details);
+        const { phone } = parsePhoneGender(transaction.detail?.customer_details);
 
         return (
           <div className="space-y-1">
             <div className="flex items-center gap-1">
               <Mail className="text-muted-foreground h-3 w-3" />
-              <span className="text-xs">{transaction.detail.customer_details?.email || "-"}</span>
+              <span className="text-xs">{transaction.detail?.customer_details?.email || "-"}</span>
             </div>
             <div className="flex items-center gap-1">
               <Phone className="text-muted-foreground h-3 w-3" />
