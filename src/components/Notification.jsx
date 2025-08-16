@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { Link } from "react-router";
 import { Bell, RefreshCw, Check, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -55,14 +55,14 @@ export default function Notification() {
             <div className="text-muted-foreground px-2 py-4 text-center text-sm">Belum ada data baru.</div>
           ) : (
             changedList.map((data, index) => (
-              <NavLink key={index} to={menu[data].href}>
+              <Link key={index} to={menu[data].href}>
                 <DropdownMenuItem className="flex cursor-pointer flex-col items-start gap-1 p-3">
                   <span className="text-muted-foreground text-xs">Terdapat perubahan pada menu</span>
                   <div className="flex w-full items-center justify-between text-sm font-medium">
                     {menu[data].name} <ChevronRight size={16} />
                   </div>
                 </DropdownMenuItem>
-              </NavLink>
+              </Link>
             ))
           )}
         </div>
