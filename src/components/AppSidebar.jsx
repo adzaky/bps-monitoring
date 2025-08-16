@@ -12,7 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { NavLink } from "react-router";
+import { Link } from "react-router";
 import { Button } from "./ui/button";
 import supabase from "@/lib/supabase";
 import { useNavigate } from "react-router";
@@ -103,14 +103,14 @@ export function AppSidebar({ ...props }) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
-        <NavLink to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <img src="/logo-bps.png" alt="BPS Monitoring" width={48} height={48} />
           <span className="text-sm leading-5 font-medium text-blue-700">
             <strong className="text-base text-blue-900">Monitoring</strong>
             <br />
             Badan Pusat Statistik
           </span>
-        </NavLink>
+        </Link>
       </SidebarHeader>
       <SidebarContent>
         {SIDEBAR_NAV.map((nav) => (
@@ -125,10 +125,10 @@ export function AppSidebar({ ...props }) {
                       isActive={pathname === item.url}
                       className="h-auto transition-all duration-200 hover:bg-blue-50 hover:text-blue-700 hover:shadow-sm data-[active=true]:bg-gradient-to-r data-[active=true]:from-blue-500 data-[active=true]:to-indigo-500 data-[active=true]:text-white data-[active=true]:shadow-md dark:hover:bg-blue-950/30 dark:hover:text-blue-300"
                     >
-                      <NavLink to={item.url}>
+                      <Link to={item.url}>
                         <item.icon className="size-4 shrink-0" />
                         <div className="leading-normal text-pretty">{item.label}</div>
-                      </NavLink>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
