@@ -43,7 +43,11 @@ export default function App() {
             const { data: romantikServiceData } = await api.romantikService.getRomantikStatisticalActivities();
             const { data: statisticalTransactions } = await api.silastikService.getStatisticalTransactions();
 
-            return { statisticalTransactions, libraryServiceData, romantikServiceData };
+            return {
+              statisticalTransactions: statisticalTransactions ?? [],
+              libraryServiceData: libraryServiceData ?? [],
+              romantikServiceData: romantikServiceData ?? [],
+            };
           },
         },
         {
@@ -51,7 +55,7 @@ export default function App() {
           Component: KonsultasiStatistik,
           loader: async () => {
             const { data: consultationStatistic } = await api.silastikService.getConsultationStatistic();
-            return { consultationStatistic };
+            return { consultationStatistic: consultationStatistic ?? [] };
           },
         },
         {
@@ -59,7 +63,7 @@ export default function App() {
           Component: ProdukStatistik,
           loader: async () => {
             const { data: productStatistic } = await api.silastikService.getProductStatistic();
-            return { productStatistic };
+            return { productStatistic: productStatistic ?? [] };
           },
         },
         {
@@ -67,7 +71,7 @@ export default function App() {
           Component: LayananPerpustakaan,
           loader: async () => {
             const { data: libraryServiceData } = await api.libraryService.getLibraryServiceData();
-            return { libraryServiceData };
+            return { libraryServiceData: libraryServiceData ?? [] };
           },
         },
         {
@@ -75,7 +79,7 @@ export default function App() {
           Component: RekomendasiStatistik,
           loader: async () => {
             const { data: romantikServiceData } = await api.romantikService.getRomantikStatisticalActivities();
-            return { romantikServiceData };
+            return { romantikServiceData: romantikServiceData ?? [] };
           },
         },
         {
@@ -86,7 +90,11 @@ export default function App() {
             const { data: romantikServiceData } = await api.romantikService.getRomantikStatisticalActivities();
             const { data: statisticalTransactions } = await api.silastikService.getStatisticalTransactions();
 
-            return { statisticalTransactions, libraryServiceData, romantikServiceData };
+            return {
+              statisticalTransactions: statisticalTransactions ?? [],
+              libraryServiceData: libraryServiceData ?? [],
+              romantikServiceData: romantikServiceData ?? [],
+            };
           },
         },
         {
