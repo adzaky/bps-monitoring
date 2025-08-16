@@ -14,13 +14,36 @@ import { useNotifyData } from "@/hooks/use-notify-data";
 export default function Notification() {
   const { changedList, markAllAsSeen, reload } = useNotifyData(
     ["pst_customer", "romantik_statistical", "silastik_transaction"],
-    { pollMs: 180000 }
+    {
+      pollMs: 180000,
+      subQueries: {
+        silastik_transaction: {
+          kunjungan: (q) => q.ilike("need_type", "%Kunjungan%"),
+          permintaan_data: (q) => q.ilike("need_type", "%Permintaan Data%"),
+        },
+      },
+      classifiers: {
+        silastik_transaction: (row) => {
+          const nt = (row?.need_type || "").toLowerCase();
+          if (nt.includes("kunjungan")) return "kunjungan";
+          if (nt.includes("permintaan data")) return "permintaan_data";
+          return null;
+        },
+      },
+    }
   );
 
   const menu = {
     pst_customer: { name: "Layanan Perpustakaan", href: "/layanan-perpustakaan" },
     romantik_statistical: { name: "Rekomendasi Statistik", href: "/rekomendasi-statistik" },
-    silastik_transaction: { name: "Transaksi Statistik", href: "/transaksi-statistik" },
+    "silastik_transaction:kunjungan": {
+      name: "Konsultasi Statistik",
+      href: "/konsultasi-statistik",
+    },
+    "silastik_transaction:permintaan_data": {
+      name: "Produk Statistik",
+      href: "/produk-statistik",
+    },
   };
 
   return (
