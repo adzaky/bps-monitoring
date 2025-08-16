@@ -1,13 +1,12 @@
 import React from "react";
-import supabase from "@/lib/supabase";
-import { cn } from "@/lib/utils";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
 import { useNavigate } from "react-router";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import supabase from "@/lib/supabase";
 
-export default function LoginForm({ className }) {
+export default function LoginForm() {
   const [isLoading, setIsLoading] = React.useState(false);
 
   const navigate = useNavigate();
@@ -39,8 +38,8 @@ export default function LoginForm({ className }) {
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)}>
-      <div className="flex flex-col items-center justify-center gap-2 sm:min-w-md">
+    <div className="mx-auto max-w-md space-y-6">
+      <div className="flex flex-col items-center justify-center gap-2">
         <img src="/logo-bps.png" alt="BPS Monitoring" width={72} height={72} />
         <span className="text-center text-xl leading-5 font-medium text-blue-700">
           <strong className="text-2xl text-blue-900">Monitoring</strong>
