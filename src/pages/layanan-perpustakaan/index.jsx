@@ -226,7 +226,7 @@ export default function LibraryService() {
           </div>
 
           {/* Tabel Data */}
-          <LibraryServiceTable data={libraryServiceData} />
+          <LibraryServiceTable data={filteredData} />
         </CardContent>
       </Card>
     </div>
