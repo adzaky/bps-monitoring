@@ -1,18 +1,16 @@
 import { useState } from "react";
 import { useLoaderData } from "react-router";
+import { FileText, Import, List, Search, CheckCircle, XOctagon } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { List, Search, CheckCircle, XOctagon } from "lucide-react";
-import StatisticalTransactionTable from "@/components/StatisticalTransactionTable";
 import { postJsonToGoogleAppScript } from "@/services/sheet";
-import { toast } from "sonner";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { exportPdfFromJson, exportToExcel } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Import } from "lucide-react";
-import { FileText } from "lucide-react";
+import StatisticalTransactionTable from "@/components/StatisticalTransactionTable";
 
 export default function ProdukStatistik() {
   const [isExportingToSpreadsheet, setIsExportingToSpreadsheet] = useState(false);
@@ -25,6 +23,7 @@ export default function ProdukStatistik() {
 
   // Filter data
   const { productStatistic } = useLoaderData();
+
   const filteredData = productStatistic.filter((visit) => {
     const { statusText } = productStatistic.reduce((acc, visit) => {
       const parts = visit.status?.split(": ") || [];

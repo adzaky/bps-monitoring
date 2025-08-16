@@ -3,14 +3,12 @@ import { useLoaderData } from "react-router";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Activity, Star, CheckCircle, Award } from "lucide-react";
-import RomantikServiceTable from "@/components/RomantikServiceTable";
+import { FileText, Import, Search, Activity, Star, CheckCircle, Award } from "lucide-react";
 import { postJsonToGoogleAppScript } from "@/services/sheet";
 import { toast } from "sonner";
 import { exportPdfFromJson, exportToExcel } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Import } from "lucide-react";
-import { FileText } from "lucide-react";
+import RomantikServiceTable from "@/components/RomantikServiceTable";
 
 export default function RekomendasiStatistik() {
   const [isExportingToSpreadsheet, setIsExportingToSpreadsheet] = useState(false);
@@ -23,6 +21,7 @@ export default function RekomendasiStatistik() {
 
   // Filter data
   const { romantikServiceData } = useLoaderData();
+
   const filteredData = romantikServiceData.filter((activity) => {
     const matchesSearch =
       activity.activity_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
