@@ -1,4 +1,6 @@
 import React from "react";
+import { Navigate, Outlet } from "react-router";
+import { useLoaderData } from "react-router";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -7,11 +9,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
-import { Navigate, Outlet } from "react-router";
-import { useLoaderData } from "react-router";
 import Notification from "./Notification";
 
 export default function AppLayout() {
@@ -22,37 +23,39 @@ export default function AppLayout() {
   ) : (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/">Dashboard</BreadcrumbLink>
-              </BreadcrumbItem>
-              {window.location.pathname !== "/" && (
-                <>
-                  <BreadcrumbSeparator />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage>
-                      {window.location.pathname
-                        .split("/")
-                        .pop()
-                        .replace(/-/g, " ")
-                        .replace(/\b\w/g, (l) => l.toUpperCase())}
-                    </BreadcrumbPage>
-                  </BreadcrumbItem>
-                </>
-              )}
-            </BreadcrumbList>
-          </Breadcrumb>
-          <Notification />
-        </header>
-        <div className="space-y-4 p-4">
-          <Outlet />
-        </div>
-      </SidebarInset>
+      <React.Suspense fallback={<LoadingScreen />}>
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/">Dashboard</BreadcrumbLink>
+                </BreadcrumbItem>
+                {window.location.pathname !== "/" && (
+                  <>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                      <BreadcrumbPage>
+                        {window.location.pathname
+                          .split("/")
+                          .pop()
+                          .replace(/-/g, " ")
+                          .replace(/\b\w/g, (l) => l.toUpperCase())}
+                      </BreadcrumbPage>
+                    </BreadcrumbItem>
+                  </>
+                )}
+              </BreadcrumbList>
+            </Breadcrumb>
+            <Notification />
+          </header>
+          <div className="space-y-4 p-4">
+            <Outlet />
+          </div>
+        </SidebarInset>
+      </React.Suspense>
     </SidebarProvider>
   );
 }

@@ -1,8 +1,6 @@
 import React from "react";
 import { createBrowserRouter, redirect, RouterProvider } from "react-router";
 import AppLayout from "./components/AppLayout";
-import { LoadingScreen } from "./components/ui/loading-screen";
-import { useAppLoading } from "./hooks/use-app-loading";
 import { api } from "./services/api";
 import supabase from "./lib/supabase";
 import {
@@ -17,8 +15,6 @@ import {
 } from "./constants/menu";
 
 export default function App() {
-  const { isLoading } = useAppLoading();
-
   const getSession = async () => {
     const {
       data: { session },
@@ -115,13 +111,5 @@ export default function App() {
     },
   ]);
 
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
-
-  return (
-    <React.Suspense fallback={<LoadingScreen />}>
-      <RouterProvider router={router} />
-    </React.Suspense>
-  );
+  return <RouterProvider router={router} />;
 }
