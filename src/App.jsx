@@ -5,15 +5,16 @@ import { LoadingScreen } from "./components/ui/loading-screen";
 import { useAppLoading } from "./hooks/use-app-loading";
 import { api } from "./services/api";
 import supabase from "./lib/supabase";
-
-import Dashboard from "./pages/dashboard";
-import Login from "./pages/login";
-import LayananPerpustakaan from "./pages/layanan-perpustakaan";
-import RekomendasiStatistik from "./pages/rekomendasi-statistik";
-import KonsultasiStatistik from "./pages/konsultasi-statistik";
-import EkstraksiData from "./pages/ekstraksi-data";
-import RekapData from "./pages/rekap-data";
-import ProdukStatistik from "./pages/produk-statistik";
+import {
+  Dashboard,
+  EkstraksiData,
+  KonsultasiStatistik,
+  LayananPerpustakaan,
+  Login,
+  ProdukStatistik,
+  RekapData,
+  RekomendasiStatistik,
+} from "./constants/menu";
 
 export default function App() {
   const { isLoading } = useAppLoading();

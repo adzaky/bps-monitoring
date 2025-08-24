@@ -1,5 +1,7 @@
 import React from "react";
-
+import { Link, useNavigate } from "react-router";
+import { LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -12,70 +14,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Link } from "react-router";
-import { Button } from "./ui/button";
 import supabase from "@/lib/supabase";
-import { useNavigate } from "react-router";
-import { BarChart3, BarChart4, ChartArea, ChartBar, Import, LayoutDashboard, Library } from "lucide-react";
-import { LogOut } from "lucide-react";
-
-const SIDEBAR_NAV = [
-  {
-    title: "Dashboard",
-    items: [
-      {
-        label: "Dashboard",
-        url: "/",
-        icon: LayoutDashboard,
-      },
-    ],
-  },
-  {
-    title: "Produk Layanan",
-    items: [
-      {
-        label: "Pelayanan Perpustakaan",
-        url: "/layanan-perpustakaan",
-        icon: Library,
-      },
-      {
-        label: "Konsultasi Statistik",
-        url: "/konsultasi-statistik",
-        icon: BarChart3,
-      },
-      {
-        label: "Penjualan Produk Statistik Berbayar",
-        url: "/produk-statistik",
-        icon: ChartArea,
-      },
-      {
-        label: "Pelayanan Rekomendasi Kegiatan Statistik",
-        url: "/rekomendasi-statistik",
-        icon: ChartBar,
-      },
-    ],
-  },
-  {
-    title: "Data Rekapan",
-    items: [
-      {
-        label: "Rekap Data",
-        url: "/rekap-data",
-        icon: BarChart4,
-      },
-    ],
-  },
-  {
-    title: "Utilitas Sistem",
-    items: [
-      {
-        label: "Ekstraksi Data",
-        url: "/ekstraksi-data",
-        icon: Import,
-      },
-    ],
-  },
-];
+import { SIDEBAR_NAV } from "@/constants/menu";
 
 export function AppSidebar({ ...props }) {
   const [isLoading, setIsLoading] = React.useState(false);
