@@ -9,6 +9,14 @@ export const api = {
         .order("created_at", { ascending: false })
         .order("visit_datetime", { ascending: false });
     },
+    getLibraryServiceByType: async (type = "individu") => {
+      return await supabase
+        .from("pst_customer")
+        .select()
+        .eq("type", type)
+        .order("created_at", { ascending: false })
+        .order("visit_datetime", { ascending: false });
+    },
   },
   romantikService: {
     getRomantikStatisticalActivities: async () => {

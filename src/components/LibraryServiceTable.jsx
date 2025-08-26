@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Briefcase, BookOpen, Calendar, Eye, Mail, Phone, User } from "lucide-react";
+import { Briefcase, BookOpen, Calendar, Eye, Mail, Phone, User, Building, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import LibraryServiceDetail from "./LibraryServiceDetail";
 
-export default function LibraryServiceTable({ data }) {
+export default function LibraryServiceTable({ data, type = "individu" }) {
   const [selectedLibraryService, setSelectedLibraryService] = useState(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
 
@@ -58,7 +58,7 @@ export default function LibraryServiceTable({ data }) {
     );
   };
 
-  const columns = [
+  const individuColumns = [
     {
       accessorKey: "no",
       header: "No",
@@ -71,7 +71,7 @@ export default function LibraryServiceTable({ data }) {
         const record = row.original;
         return (
           <div className="flex items-center gap-2">
-            <User className="text-muted-foreground h-4 w-4" />
+            <User className="text-muted-foreground size-4 shrink-0" />
             <div>
               <p className="font-medium">{record.name}</p>
               <p className="text-muted-foreground text-xs">
@@ -118,7 +118,7 @@ export default function LibraryServiceTable({ data }) {
         const record = row.original;
         return (
           <div className="flex items-center gap-2">
-            <Briefcase className="text-muted-foreground h-4 w-4" />
+            <Briefcase className="text-muted-foreground size-4 shrink-0" />
             <span className="text-sm">{record.job || <span className="text-muted-foreground italic">-</span>}</span>
           </div>
         );
@@ -131,7 +131,7 @@ export default function LibraryServiceTable({ data }) {
         const record = row.original;
         return (
           <div className="flex items-center gap-2">
-            <Calendar className="text-muted-foreground h-4 w-4" />
+            <Calendar className="text-muted-foreground size-4 shrink-0" />
             <div>
               <p className="text-sm font-medium">{new Date(record.visit_datetime).toLocaleDateString("id-ID")}</p>
               <p className="text-muted-foreground text-xs">
@@ -157,7 +157,7 @@ export default function LibraryServiceTable({ data }) {
         const record = row.original;
         return (
           <div className="flex items-center gap-2">
-            <BookOpen className="text-muted-foreground h-4 w-4" />
+            <BookOpen className="text-muted-foreground size-4 shrink-0" />
             <span className="text-sm">
               {record.book_access_count === "-" ? (
                 <span className="text-muted-foreground">-</span>
@@ -176,7 +176,7 @@ export default function LibraryServiceTable({ data }) {
         const record = row.original;
         return (
           <Button variant="outline" size="sm" onClick={() => handleViewDetail(record)}>
-            <Eye className="mr-2 h-4 w-4" />
+            <Eye className="mr-2 size-4 shrink-0" />
             Detail
           </Button>
         );
@@ -184,10 +184,126 @@ export default function LibraryServiceTable({ data }) {
     },
   ];
 
+  const groupColumns = [
+    {
+      accessorKey: "no",
+      header: "No",
+      cell: ({ row }) => row.index + 1,
+    },
+    {
+      accessorKey: "visit_datetime",
+      header: "Waktu Kunjungan",
+      cell: ({ row }) => {
+        const record = row.original;
+        return (
+          <div className="flex items-center gap-2">
+            <Calendar className="text-muted-foreground size-4 shrink-0" />
+            <div>
+              <p className="text-sm font-medium">{new Date(record.visit_datetime).toLocaleDateString("id-ID")}</p>
+              <p className="text-muted-foreground text-xs">
+                {new Date(record.visit_datetime).toLocaleTimeString("id-ID", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </p>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "lead_group",
+      header: "Pemimpin Kelompok",
+      cell: ({ row }) => {
+        const record = row.original;
+        return (
+          <div className="flex items-center gap-2">
+            <User className="text-muted-foreground size-4 shrink-0" />
+            <span className="font-medium">{record.lead_group}</span>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "email",
+      header: "Email",
+      cell: ({ row }) => {
+        const record = row.original;
+        return (
+          <div className="flex items-center gap-2">
+            <Mail className="text-muted-foreground size-4 shrink-0" />
+            <span className="text-sm text-blue-600">{record.email}</span>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "group_category",
+      header: "Kategori Instansi/Organisasi",
+      cell: ({ row }) => {
+        const record = row.original;
+        return (
+          <div className="flex max-w-md items-center gap-2">
+            <Briefcase className="text-muted-foreground size-4 shrink-0" />
+            <span className="font-medium whitespace-pre-wrap">{record.group_category}</span>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "group_name",
+      header: "Nama Instansi/Organisasi",
+      cell: ({ row }) => {
+        const record = row.original;
+        return (
+          <div className="flex max-w-md items-center gap-2">
+            <Building className="text-muted-foreground size-4 shrink-0" />
+            <span className="font-medium whitespace-pre-wrap">{record.group_name}</span>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "total_people",
+      header: "Jumlah Orang",
+      cell: ({ row }) => {
+        const record = row.original;
+        return (
+          <div className="flex items-center gap-2">
+            <Users className="text-muted-foreground size-4 shrink-0" />
+            <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+              {record.total_people} orang
+            </Badge>
+          </div>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: "Aksi",
+      cell: ({ row }) => {
+        const record = row.original;
+        return (
+          <Button variant="outline" size="sm" onClick={() => handleViewDetail(record)}>
+            <Eye className="mr-2 size-4 shrink-0" />
+            Detail
+          </Button>
+        );
+      },
+    },
+  ];
+
+  const columns = type === "individu" ? individuColumns : groupColumns;
+
   return (
     <div>
       <DataTable columns={columns} data={data} />
-      <LibraryServiceDetail serviceRecord={selectedLibraryService} isOpen={isDetailOpen} onClose={handleCloseDetail} />
+      <LibraryServiceDetail
+        serviceRecord={selectedLibraryService}
+        isOpen={isDetailOpen}
+        onClose={handleCloseDetail}
+        type={type}
+      />
     </div>
   );
 }

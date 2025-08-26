@@ -3,9 +3,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Calendar, User, Mail, Phone, GraduationCap, Briefcase, BookOpen, Clock, X, UserCheck } from "lucide-react";
+import {
+  Calendar,
+  User,
+  Mail,
+  Phone,
+  GraduationCap,
+  Briefcase,
+  BookOpen,
+  Clock,
+  UserCheck,
+  Building,
+  Users,
+} from "lucide-react";
 
-export default function LibraryServiceDetail({ serviceRecord, isOpen, onClose }) {
+export default function LibraryServiceDetail({ serviceRecord, isOpen, onClose, type = "individu" }) {
   if (!serviceRecord) return null;
 
   const visitDate = new Date(serviceRecord.visit_datetime);
@@ -15,7 +27,7 @@ export default function LibraryServiceDetail({ serviceRecord, isOpen, onClose })
     return currentYear - Number.parseInt(birthYear);
   };
 
-  const age = calculateAge(serviceRecord.birthyear);
+  const age = type === "individu" ? calculateAge(serviceRecord.birthyear) : null;
 
   const getGenderBadge = (gender) => {
     return gender === "L" ? (
@@ -65,99 +77,166 @@ export default function LibraryServiceDetail({ serviceRecord, isOpen, onClose })
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5" />
-              Detail Layanan Perpustakaan
+              {type === "individu" ? <BookOpen className="h-5 w-5" /> : <Building className="h-5 w-5" />}
+              {type === "individu"
+                ? "Detail Layanan Perpustakaan - Individu"
+                : "Detail Layanan Perpustakaan - Kelompok (Group)"}
             </div>
           </DialogTitle>
-          <DialogDescription>Informasi lengkap pengunjung perpustakaan</DialogDescription>
+          <DialogDescription>
+            {type === "individu"
+              ? "Informasi lengkap pengunjung perpustakaan"
+              : "Informasi lengkap kunjungan kelompok ke perpustakaan"}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Informasi Personal */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <User className="h-5 w-5" />
-                Informasi Personal
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center gap-3 rounded-lg bg-gray-50 p-3">
-                <UserCheck className="h-8 w-8 text-gray-400" />
-                <div className="flex-1">
-                  <Label className="text-muted-foreground text-sm font-medium">Nama Lengkap</Label>
-                  <p className="text-lg font-semibold">{serviceRecord.name}</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label className="text-muted-foreground text-sm font-medium">Jenis Kelamin</Label>
-                  <div>{getGenderBadge(serviceRecord.gender)}</div>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-muted-foreground text-sm font-medium">Tahun Lahir / Usia</Label>
-                  <p className="font-medium">
-                    {serviceRecord.birthyear} <span className="text-muted-foreground">({age} tahun)</span>
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Informasi Kontak */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Mail className="h-5 w-5" />
-                Informasi Kontak
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center gap-3 rounded-lg border p-3">
-                <Mail className="h-6 w-6 text-blue-500" />
-                <div className="flex-1">
-                  <Label className="text-muted-foreground text-sm font-medium">Email</Label>
-                  <p className="font-medium text-blue-600">{serviceRecord.email}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 rounded-lg border p-3">
-                <Phone className="h-6 w-6 text-green-500" />
-                <div className="flex-1">
-                  <Label className="text-muted-foreground text-sm font-medium">Nomor Telepon</Label>
-                  <p className="font-medium">{serviceRecord.phone}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Informasi Pendidikan & Pekerjaan */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <GraduationCap className="h-5 w-5" />
-                Pendidikan & Pekerjaan
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label className="text-muted-foreground text-sm font-medium">Pendidikan Terakhir</Label>
-                  <div>{getEducationBadge(serviceRecord.education)}</div>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-muted-foreground text-sm font-medium">Pekerjaan</Label>
-                  <div className="flex items-center gap-2">
-                    <Briefcase className="text-muted-foreground h-4 w-4" />
-                    <p className="font-medium">
-                      {serviceRecord.job || <span className="text-muted-foreground italic">Tidak disebutkan</span>}
-                    </p>
+          {type === "individu" ? (
+            <>
+              {/* Informasi Personal - Individu */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <User className="h-5 w-5" />
+                    Informasi Personal
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-3 rounded-lg bg-gray-50 p-3">
+                    <UserCheck className="h-8 w-8 text-gray-400" />
+                    <div className="flex-1">
+                      <Label className="text-muted-foreground text-sm font-medium">Nama Lengkap</Label>
+                      <p className="text-lg font-semibold">{serviceRecord.name}</p>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label className="text-muted-foreground text-sm font-medium">Jenis Kelamin</Label>
+                      <div>{getGenderBadge(serviceRecord.gender)}</div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-muted-foreground text-sm font-medium">Tahun Lahir / Usia</Label>
+                      <p className="font-medium">
+                        {serviceRecord.birthyear} <span className="text-muted-foreground">({age} tahun)</span>
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Informasi Kontak - Individu */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Mail className="h-5 w-5" />
+                    Informasi Kontak
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-3 rounded-lg border p-3">
+                    <Mail className="h-6 w-6 text-blue-500" />
+                    <div className="flex-1">
+                      <Label className="text-muted-foreground text-sm font-medium">Email</Label>
+                      <p className="font-medium text-blue-600">{serviceRecord.email}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 rounded-lg border p-3">
+                    <Phone className="h-6 w-6 text-green-500" />
+                    <div className="flex-1">
+                      <Label className="text-muted-foreground text-sm font-medium">Nomor Telepon</Label>
+                      <p className="font-medium">{serviceRecord.phone}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Informasi Pendidikan & Pekerjaan - Individu */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <GraduationCap className="h-5 w-5" />
+                    Pendidikan & Pekerjaan
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label className="text-muted-foreground text-sm font-medium">Pendidikan Terakhir</Label>
+                      <div>{getEducationBadge(serviceRecord.education)}</div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-muted-foreground text-sm font-medium">Pekerjaan</Label>
+                      <div className="flex items-center gap-2">
+                        <Briefcase className="text-muted-foreground h-4 w-4" />
+                        <p className="font-medium">
+                          {serviceRecord.job || <span className="text-muted-foreground italic">Tidak disebutkan</span>}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          ) : (
+            <>
+              {/* Informasi Kelompok */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Building className="h-5 w-5" />
+                    Informasi Kelompok (Group)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-3 rounded-lg bg-gray-50 p-3">
+                    <Building className="h-8 w-8 text-gray-400" />
+                    <div className="flex-1">
+                      <Label className="text-muted-foreground text-sm font-medium">Nama Kelompok (Group)</Label>
+                      <p className="text-lg font-semibold">{serviceRecord.group_name}</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label className="text-muted-foreground text-sm font-medium">Pemimpin Kelompok (Group)</Label>
+                      <div className="flex items-center gap-2">
+                        <User className="text-muted-foreground h-4 w-4" />
+                        <p className="font-medium">{serviceRecord.lead_group}</p>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-muted-foreground text-sm font-medium">Kategori Kelompok (Group)</Label>
+                      <div className="flex items-center gap-2">
+                        <Briefcase className="text-muted-foreground size-4 shrink-0" />
+                        <span className="font-medium whitespace-pre-wrap">{serviceRecord.group_category}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label className="text-muted-foreground text-sm font-medium">Jumlah Orang</Label>
+                      <div className="flex items-center gap-2">
+                        <Users className="text-muted-foreground h-4 w-4" />
+                        <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                          {serviceRecord.total_people} orang
+                        </Badge>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-muted-foreground text-sm font-medium">Email Kontak</Label>
+                      <div className="flex items-center gap-2">
+                        <Mail className="text-muted-foreground h-4 w-4" />
+                        <p className="font-medium text-blue-600">{serviceRecord.email}</p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          )}
 
           {/* Informasi Kunjungan */}
           <Card>
@@ -186,25 +265,27 @@ export default function LibraryServiceDetail({ serviceRecord, isOpen, onClose })
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label className="text-muted-foreground text-sm font-medium">Media Layanan</Label>
-                  <div>{getServiceMediaBadge(serviceRecord.service_media)}</div>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-muted-foreground text-sm font-medium">Akses Buku</Label>
-                  <div className="flex items-center gap-2">
-                    <BookOpen className="text-muted-foreground h-4 w-4" />
-                    <p className="font-medium">
-                      {serviceRecord.book_access_count === "-" ? (
-                        <span className="text-muted-foreground">Tidak ada akses</span>
-                      ) : (
-                        <span className="text-green-600">{serviceRecord.book_access_count}</span>
-                      )}
-                    </p>
+              {type === "individu" ? (
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label className="text-muted-foreground text-sm font-medium">Media Layanan</Label>
+                    <div>{getServiceMediaBadge(serviceRecord.service_media)}</div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-muted-foreground text-sm font-medium">Akses Buku</Label>
+                    <div className="flex items-center gap-2">
+                      <BookOpen className="text-muted-foreground h-4 w-4" />
+                      <p className="font-medium">
+                        {serviceRecord.book_access_count === "-" ? (
+                          <span className="text-muted-foreground">Tidak ada akses</span>
+                        ) : (
+                          <span className="text-green-600">{serviceRecord.book_access_count}</span>
+                        )}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : null}
             </CardContent>
           </Card>
 
@@ -213,13 +294,30 @@ export default function LibraryServiceDetail({ serviceRecord, isOpen, onClose })
             <CardContent className="pt-6">
               <div className="space-y-2 text-center">
                 <div className="flex justify-center gap-2">
-                  {getServiceMediaBadge(serviceRecord.service_media)}
-                  {getEducationBadge(serviceRecord.education)}
+                  {type === "individu" ? (
+                    <>
+                      {getServiceMediaBadge(serviceRecord.service_media)}
+                      {getEducationBadge(serviceRecord.education)}
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-2">
+                        <Briefcase className="text-muted-foreground size-4 shrink-0" />
+                        <span className="font-medium whitespace-pre-wrap">{serviceRecord.group_category}</span>
+                      </div>
+                      <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                        <Users className="mr-1 h-3 w-3" />
+                        {serviceRecord.total_people} orang
+                      </Badge>
+                    </>
+                  )}
                 </div>
                 <p className="text-muted-foreground text-sm">
-                  {serviceRecord.service_media === "Tercetak"
-                    ? "Menggunakan layanan buku fisik/tercetak"
-                    : "Menggunakan layanan perpustakaan digital"}
+                  {type === "individu"
+                    ? serviceRecord.service_media === "Tercetak"
+                      ? "Menggunakan layanan buku fisik/tercetak"
+                      : "Menggunakan layanan perpustakaan digital"
+                    : `Kunjungan kelompok ${serviceRecord.group_category.toLowerCase()} dengan ${serviceRecord.total_people} orang`}
                 </p>
               </div>
             </CardContent>

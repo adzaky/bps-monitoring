@@ -70,9 +70,9 @@ export function useRecapData(statisticalTransactions, libraryServiceData, romant
       return {
         no: counter++,
         id_transaksi: `BPS-7200-PST-${generateId(record)}`,
-        nama_pengguna: record.name,
+        nama_pengguna: record.name || record.lead_group,
         jenis_layanan: jenisLayanan,
-        keterangan: record.service_media === "Digilib" ? "Digital" : "Tercetak",
+        keterangan: record.service_media === "Digilib" || record.type === "group" ? "Digital" : "Tercetak",
         tanggal_permintaan: formattedRequestDate,
         tanggal_selesai: formattedCompletionDate,
         capaian: calculateCapaian(jenisLayanan, formattedRequestDate, formattedCompletionDate),
