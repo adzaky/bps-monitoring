@@ -129,7 +129,7 @@ export default function Dashboard() {
       switch (type) {
         case "spreadsheet":
           setIsExportingToSpreadsheet(true);
-          await postJsonToGoogleAppScript(exportData).then((res) =>
+          await postJsonToGoogleAppScript(exportData, title).then((res) =>
             toast(
               <div className="grid gap-1">
                 <span className="font-semibold">Data berhasil diekspor ke Google Sheets!</span>

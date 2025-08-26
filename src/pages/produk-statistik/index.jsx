@@ -61,7 +61,7 @@ export default function ProdukStatistik() {
       switch (type) {
         case "spreadsheet":
           setIsExportingToSpreadsheet(true);
-          await postJsonToGoogleAppScript(exportData).then((res) =>
+          await postJsonToGoogleAppScript(exportData, "Laporan Produk Statistik").then((res) =>
             toast(
               <div className="grid gap-1">
                 <span className="font-semibold">Data berhasil diekspor ke Google Sheets!</span>
@@ -74,11 +74,11 @@ export default function ProdukStatistik() {
           break;
         case "xlsx":
           setIsExportingToXlsx(true);
-          exportToExcel(exportData, "Laporan Konsultasi Statistik.xlsx", "Konsultasi Statistik");
+          exportToExcel(exportData, "Laporan Produk Statistik.xlsx", "Produk Statistik");
           break;
         case "pdf":
           setIsExportingToPdf(true);
-          exportPdfFromJson(exportData, "Laporan Transaksi Statistik", "Laporan Transaksi Statistik.pdf", [
+          exportPdfFromJson(exportData, "Laporan Produk Statistik", "Laporan Produk Statistik.pdf", [
             "No",
             "Nama Pengguna",
             "ID Transaksi",

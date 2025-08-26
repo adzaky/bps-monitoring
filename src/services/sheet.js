@@ -1,9 +1,9 @@
 import supabase from "@/lib/supabase";
 
-export async function postJsonToGoogleAppScript(body) {
+export async function postJsonToGoogleAppScript(body, title) {
   try {
     const { data, error } = await supabase.functions.invoke("create-sheet-recap-data", {
-      body: { title: "Rekap Transaksi Layanan BPS", data: body },
+      body: { title: title, data: body },
     });
 
     if (error) throw error;

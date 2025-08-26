@@ -59,7 +59,7 @@ export default function RekomendasiStatistik() {
       switch (type) {
         case "spreadsheet":
           setIsExportingToSpreadsheet(true);
-          await postJsonToGoogleAppScript(exportData).then((res) =>
+          await postJsonToGoogleAppScript(exportData, "Laporan Rekomendasi Statistik").then((res) =>
             toast(
               <div className="grid gap-1">
                 <span className="font-semibold">Data berhasil diekspor ke Google Sheets!</span>
