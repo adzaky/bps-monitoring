@@ -26,7 +26,7 @@ export default function AppLayout() {
       <AppSidebar />
       <React.Suspense fallback={<LoadingScreen />}>
         <SidebarInset>
-          <header className="bg-sidebar sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between gap-4 border-b border-blue-200 px-4 shadow-sm">
+          <header className="bg-sidebar sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between gap-4 px-4 shadow-sm">
             <div className="flex items-center gap-3">
               <SidebarTrigger className="-ml-1 transition-colors hover:bg-blue-50 hover:text-blue-900" />
               <Separator orientation="vertical" className="h-6 bg-blue-300 data-[orientation=vertical]:h-6" />
