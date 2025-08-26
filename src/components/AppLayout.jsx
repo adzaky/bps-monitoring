@@ -51,9 +51,12 @@ export default function AppLayout() {
             </Breadcrumb>
             <Notification />
           </header>
-          <div className="space-y-4 p-4">
+          <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <Outlet />
-          </div>
+          </main>
+          <footer className="text-muted-foreground border-t p-4 text-center text-sm">
+            © {new Date().getFullYear()} BPS Sulawesi Tengah. All rights reserved.
+          </footer>
         </SidebarInset>
       </React.Suspense>
     </SidebarProvider>
