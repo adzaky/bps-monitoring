@@ -68,7 +68,9 @@ export default function AppLayout() {
               <p className="text-sm hover:text-blue-700">
                 © {new Date().getFullYear()} BPS Sulawesi Tengah. All rights reserved.
               </p>
-              <p className="text-xs hover:text-blue-600/80">Sistem Monitoring BPS</p>
+              <p className="text-xs hover:text-blue-600/80">
+                Sistem Monitoring BPS <strong>v{import.meta.env.VITE_APP_VERSION}</strong>
+              </p>
             </div>
           </footer>
         </SidebarInset>
