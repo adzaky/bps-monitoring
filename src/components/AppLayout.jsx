@@ -26,17 +26,14 @@ export default function AppLayout() {
       <AppSidebar />
       <React.Suspense fallback={<LoadingScreen />}>
         <SidebarInset>
-          <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between gap-4 border-b border-blue-200 px-4 shadow-sm backdrop-blur">
+          <header className="bg-sidebar sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between gap-4 border-b border-blue-200 px-4 shadow-sm">
             <div className="flex items-center gap-3">
-              <SidebarTrigger className="-ml-1 text-blue-700 transition-colors hover:bg-blue-50 hover:text-blue-900" />
+              <SidebarTrigger className="-ml-1 transition-colors hover:bg-blue-50 hover:text-blue-900" />
               <Separator orientation="vertical" className="h-6 bg-blue-300 data-[orientation=vertical]:h-6" />
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem>
-                    <BreadcrumbLink
-                      href="/"
-                      className="font-medium text-blue-600 transition-colors hover:text-blue-700"
-                    >
+                    <BreadcrumbLink href="/" className="font-medium transition-colors hover:text-blue-700">
                       Dashboard
                     </BreadcrumbLink>
                   </BreadcrumbItem>
@@ -44,7 +41,7 @@ export default function AppLayout() {
                     <>
                       <BreadcrumbSeparator />
                       <BreadcrumbItem>
-                        <BreadcrumbPage className="font-medium text-blue-800">
+                        <BreadcrumbPage className="font-medium hover:text-blue-900">
                           {window.location.pathname
                             .split("/")
                             .pop()

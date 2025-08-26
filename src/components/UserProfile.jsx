@@ -72,7 +72,7 @@ export default function UserProfile() {
           <div className="text-primary-foreground flex h-8 w-8 items-center justify-center rounded-full bg-blue-900 text-sm font-medium">
             <User />
           </div>
-          <span className="text-primary hidden text-sm font-medium sm:inline-block">
+          <span className="text-primary hidden text-sm font-medium hover:text-blue-700 sm:inline-block">
             Selamat Datang, <strong>{displayName}</strong>
           </span>
         </Button>
