@@ -63,12 +63,12 @@ export default function AppLayout() {
           <main className="space-y-4 p-4">
             <Outlet />
           </main>
-          <footer className="bg-muted/30 mt-auto border-t border-blue-200 px-6 py-4">
+          <footer className="mt-4 border-t px-6 py-4">
             <div className="flex flex-col items-center justify-center gap-2 text-center sm:flex-row sm:justify-between">
-              <p className="text-sm text-blue-700">
+              <p className="text-sm hover:text-blue-700">
                 © {new Date().getFullYear()} BPS Sulawesi Tengah. All rights reserved.
               </p>
-              <p className="text-xs text-blue-600/80">Sistem Monitoring BPS</p>
+              <p className="text-xs hover:text-blue-600/80">Sistem Monitoring BPS</p>
             </div>
           </footer>
         </SidebarInset>
