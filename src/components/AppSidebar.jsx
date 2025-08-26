@@ -31,7 +31,6 @@ export function AppSidebar({ ...props }) {
 
       if (error) throw error;
 
-      localStorage.removeItem("bps_user");
       navigate("/login");
     } catch (err) {
       console.error("Failed Logout", err);
