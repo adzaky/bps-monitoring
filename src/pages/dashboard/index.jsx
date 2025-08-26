@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useLoaderData } from "react-router";
-import { FileText, Import } from "lucide-react";
-import { CartesianGrid, Area, AreaChart, XAxis } from "recharts";
+import { CheckCircle, FileText, Import, Percent, User, XCircle } from "lucide-react";
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -206,20 +206,7 @@ export default function Dashboard() {
             <h3 className="text-sm font-medium">
               {selectedServiceType === "all" ? "Total Transaksi" : `Total ${selectedServiceType}`}
             </h3>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              className="text-muted-foreground h-4 w-4"
-            >
-              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="m22 21-3-3" />
-            </svg>
+            <User className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{summaryMetrics.total}</div>
@@ -234,18 +221,7 @@ export default function Dashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <h3 className="text-sm font-medium">Sesuai Target</h3>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              className="text-muted-foreground h-4 w-4"
-            >
-              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-            </svg>
+            <CheckCircle className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{summaryMetrics.sesuaiTarget}</div>
@@ -256,18 +232,7 @@ export default function Dashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <h3 className="text-sm font-medium">Tidak Sesuai Target</h3>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              className="text-muted-foreground h-4 w-4"
-            >
-              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-            </svg>
+            <XCircle className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">{summaryMetrics.tidakSesuaiTarget}</div>
@@ -278,18 +243,7 @@ export default function Dashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <h3 className="text-sm font-medium">Persentase Capaian</h3>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              className="text-muted-foreground h-4 w-4"
-            >
-              <path d="M12 2v20m8-10H4" />
-            </svg>
+            <Percent className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{summaryMetrics.persentaseSesuaiTarget}%</div>
@@ -325,159 +279,301 @@ export default function Dashboard() {
             </ScrollArea>
 
             <TabsContent value="targetMetPercentage" className="mt-4">
-              <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
-                <AreaChart
-                  accessibilityLayer
-                  data={chartData}
-                  margin={{
-                    left: 12,
-                    right: 12,
-                  }}
-                >
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="date"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    minTickGap={32}
-                    tickFormatter={(value) => {
-                      const date = new Date(value);
-                      return date.toLocaleDateString("id-ID", {
-                        month: "long",
-                        year: "numeric",
-                      });
-                    }}
-                  />
-                  <ChartTooltip
-                    content={
-                      <ChartTooltipContent
-                        className="w-[200px]"
-                        nameKey="targetMetPercentage"
-                        labelFormatter={(value) => {
-                          return new Date(value).toLocaleDateString("id-ID", {
-                            month: "long",
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
+                    <AreaChart
+                      accessibilityLayer
+                      data={chartData}
+                      margin={{
+                        top: 12,
+                      }}
+                    >
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey="date"
+                        tickMargin={8}
+                        minTickGap={32}
+                        tickFormatter={(value) => {
+                          const date = new Date(value);
+                          return date.toLocaleDateString("id-ID", {
+                            month: "short",
                             year: "numeric",
                           });
                         }}
-                        formatter={(value) => [`${value}% `, "Sesuai Target"]}
                       />
-                    }
-                  />
-                  <Area
-                    dataKey="targetMetPercentage"
-                    type="monotone"
-                    stroke={chartConfig.targetMetPercentage.color}
-                    fill={chartConfig.targetMetPercentage.color}
-                    fillOpacity={0.4}
-                    strokeWidth={2}
-                  />
-                </AreaChart>
-              </ChartContainer>
+                      <YAxis tickMargin={8} tickFormatter={(value) => `${value}%`} />
+                      <ChartTooltip
+                        content={
+                          <ChartTooltipContent
+                            className="w-[200px]"
+                            nameKey="targetMetPercentage"
+                            labelFormatter={(value) => {
+                              return new Date(value).toLocaleDateString("id-ID", {
+                                month: "long",
+                                year: "numeric",
+                              });
+                            }}
+                            formatter={(value) => [`${value}% `, "Sesuai Target"]}
+                          />
+                        }
+                      />
+                      <Area
+                        dataKey="targetMetPercentage"
+                        type="monotone"
+                        stroke={chartConfig.targetMetPercentage.color}
+                        fill={chartConfig.targetMetPercentage.color}
+                        fillOpacity={0.4}
+                        strokeWidth={2}
+                      />
+                    </AreaChart>
+                  </ChartContainer>
+                </div>
+                <div>
+                  <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
+                    <BarChart
+                      accessibilityLayer
+                      data={chartData}
+                      margin={{
+                        top: 12,
+                      }}
+                    >
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey="date"
+                        tickMargin={8}
+                        minTickGap={32}
+                        tickFormatter={(value) => {
+                          const date = new Date(value);
+                          return date.toLocaleDateString("id-ID", {
+                            month: "short",
+                            year: "numeric",
+                          });
+                        }}
+                      />
+                      <YAxis tickMargin={8} tickFormatter={(value) => `${value}%`} />
+                      <ChartTooltip
+                        content={
+                          <ChartTooltipContent
+                            className="w-[200px]"
+                            nameKey="targetMetPercentage"
+                            labelFormatter={(value) => {
+                              return new Date(value).toLocaleDateString("id-ID", {
+                                month: "long",
+                                year: "numeric",
+                              });
+                            }}
+                            formatter={(value) => [`${value}% `, "Sesuai Target"]}
+                          />
+                        }
+                      />
+                      <Bar
+                        dataKey="targetMetPercentage"
+                        fill={chartConfig.targetMetPercentage.color}
+                        fillOpacity={0.8}
+                        radius={[4, 4, 0, 0]}
+                      />
+                    </BarChart>
+                  </ChartContainer>
+                </div>
+              </div>
             </TabsContent>
 
             <TabsContent value="targetMet" className="mt-4">
-              <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
-                <AreaChart
-                  accessibilityLayer
-                  data={chartData}
-                  margin={{
-                    left: 12,
-                    right: 12,
-                  }}
-                >
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="date"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    minTickGap={32}
-                    tickFormatter={(value) => {
-                      const date = new Date(value);
-                      return date.toLocaleDateString("id-ID", {
-                        month: "long",
-                        year: "numeric",
-                      });
-                    }}
-                  />
-                  <ChartTooltip
-                    content={
-                      <ChartTooltipContent
-                        className="w-[200px]"
-                        nameKey="targetMet"
-                        labelFormatter={(value) => {
-                          return new Date(value).toLocaleDateString("id-ID", {
-                            month: "long",
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
+                    <AreaChart
+                      accessibilityLayer
+                      data={chartData}
+                      margin={{
+                        top: 12,
+                      }}
+                    >
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey="date"
+                        tickMargin={8}
+                        minTickGap={32}
+                        tickFormatter={(value) => {
+                          const date = new Date(value);
+                          return date.toLocaleDateString("id-ID", {
+                            month: "short",
                             year: "numeric",
                           });
                         }}
-                        formatter={(value) => [`${value} Transaksi `, "Sesuai Target"]}
                       />
-                    }
-                  />
-                  <Area
-                    dataKey="targetMet"
-                    type="monotone"
-                    stroke={chartConfig.targetMet.color}
-                    fill={chartConfig.targetMet.color}
-                    fillOpacity={0.4}
-                    strokeWidth={2}
-                  />
-                </AreaChart>
-              </ChartContainer>
+                      <YAxis tickMargin={8} />
+                      <ChartTooltip
+                        content={
+                          <ChartTooltipContent
+                            className="w-[200px]"
+                            nameKey="targetMet"
+                            labelFormatter={(value) => {
+                              return new Date(value).toLocaleDateString("id-ID", {
+                                month: "long",
+                                year: "numeric",
+                              });
+                            }}
+                            formatter={(value) => [`${value} Transaksi `, "Sesuai Target"]}
+                          />
+                        }
+                      />
+                      <Area
+                        dataKey="targetMet"
+                        type="monotone"
+                        stroke={chartConfig.targetMet.color}
+                        fill={chartConfig.targetMet.color}
+                        fillOpacity={0.4}
+                        strokeWidth={2}
+                      />
+                    </AreaChart>
+                  </ChartContainer>
+                </div>
+                <div>
+                  <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
+                    <BarChart
+                      accessibilityLayer
+                      data={chartData}
+                      margin={{
+                        top: 12,
+                      }}
+                    >
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey="date"
+                        tickMargin={8}
+                        minTickGap={32}
+                        tickFormatter={(value) => {
+                          const date = new Date(value);
+                          return date.toLocaleDateString("id-ID", {
+                            month: "short",
+                            year: "numeric",
+                          });
+                        }}
+                      />
+                      <YAxis tickMargin={8} />
+                      <ChartTooltip
+                        content={
+                          <ChartTooltipContent
+                            className="w-[200px]"
+                            nameKey="targetMet"
+                            labelFormatter={(value) => {
+                              return new Date(value).toLocaleDateString("id-ID", {
+                                month: "long",
+                                year: "numeric",
+                              });
+                            }}
+                            formatter={(value) => [`${value} Transaksi `, "Sesuai Target"]}
+                          />
+                        }
+                      />
+                      <Bar
+                        dataKey="targetMet"
+                        fill={chartConfig.targetMet.color}
+                        fillOpacity={0.8}
+                        radius={[4, 4, 0, 0]}
+                      />
+                    </BarChart>
+                  </ChartContainer>
+                </div>
+              </div>
             </TabsContent>
 
             <TabsContent value="total" className="mt-4">
-              <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
-                <AreaChart
-                  accessibilityLayer
-                  data={chartData}
-                  margin={{
-                    left: 12,
-                    right: 12,
-                  }}
-                >
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="date"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    minTickGap={32}
-                    tickFormatter={(value) => {
-                      const date = new Date(value);
-                      return date.toLocaleDateString("id-ID", {
-                        month: "long",
-                        year: "numeric",
-                      });
-                    }}
-                  />
-                  <ChartTooltip
-                    content={
-                      <ChartTooltipContent
-                        className="w-[200px]"
-                        nameKey="total"
-                        labelFormatter={(value) => {
-                          return new Date(value).toLocaleDateString("id-ID", {
-                            month: "long",
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
+                    <AreaChart
+                      accessibilityLayer
+                      data={chartData}
+                      margin={{
+                        top: 12,
+                      }}
+                    >
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey="date"
+                        tickMargin={8}
+                        minTickGap={32}
+                        tickFormatter={(value) => {
+                          const date = new Date(value);
+                          return date.toLocaleDateString("id-ID", {
+                            month: "short",
                             year: "numeric",
                           });
                         }}
-                        formatter={(value) => [`${value} Transaksi `, "Total"]}
                       />
-                    }
-                  />
-                  <Area
-                    dataKey="total"
-                    type="monotone"
-                    stroke={chartConfig.total.color}
-                    fill={chartConfig.total.color}
-                    fillOpacity={0.4}
-                    strokeWidth={2}
-                  />
-                </AreaChart>
-              </ChartContainer>
+                      <YAxis tickMargin={8} />
+                      <ChartTooltip
+                        content={
+                          <ChartTooltipContent
+                            className="w-[200px]"
+                            nameKey="total"
+                            labelFormatter={(value) => {
+                              return new Date(value).toLocaleDateString("id-ID", {
+                                month: "long",
+                                year: "numeric",
+                              });
+                            }}
+                            formatter={(value) => [`${value} Transaksi `, "Total"]}
+                          />
+                        }
+                      />
+                      <Area
+                        dataKey="total"
+                        type="monotone"
+                        stroke={chartConfig.total.color}
+                        fill={chartConfig.total.color}
+                        fillOpacity={0.4}
+                        strokeWidth={2}
+                      />
+                    </AreaChart>
+                  </ChartContainer>
+                </div>
+                <div>
+                  <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
+                    <BarChart
+                      accessibilityLayer
+                      data={chartData}
+                      margin={{
+                        top: 12,
+                      }}
+                    >
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey="date"
+                        tickMargin={8}
+                        minTickGap={32}
+                        tickFormatter={(value) => {
+                          const date = new Date(value);
+                          return date.toLocaleDateString("id-ID", {
+                            month: "short",
+                            year: "numeric",
+                          });
+                        }}
+                      />
+                      <YAxis tickMargin={8} />
+                      <ChartTooltip
+                        content={
+                          <ChartTooltipContent
+                            className="w-[200px]"
+                            nameKey="total"
+                            labelFormatter={(value) => {
+                              return new Date(value).toLocaleDateString("id-ID", {
+                                month: "long",
+                                year: "numeric",
+                              });
+                            }}
+                            formatter={(value) => [`${value} Transaksi `, "Total"]}
+                          />
+                        }
+                      />
+                      <Bar dataKey="total" fill={chartConfig.total.color} fillOpacity={0.8} radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ChartContainer>
+                </div>
+              </div>
             </TabsContent>
           </Tabs>
         </CardContent>
