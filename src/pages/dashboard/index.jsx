@@ -81,13 +81,34 @@ export default function Dashboard() {
     });
 
     // Convert to array and calculate percentages
-    return Object.values(monthlyData)
+    const sortedData = Object.values(monthlyData)
       .sort((a, b) => new Date(a.date) - new Date(b.date))
       .map((item) => ({
         ...item,
         targetMetPercentage: item.total > 0 ? Math.round((item.targetMet / item.total) * 100) : 0,
         targetNotMetPercentage: item.total > 0 ? Math.round((item.targetNotMet / item.total) * 100) : 0,
       }));
+
+    // Calculate delta values (month-over-month changes)
+    return sortedData.map((item, index) => {
+      if (index === 0) {
+        // First month has no delta
+        return {
+          ...item,
+          targetMetDelta: 0,
+          targetMetPercentageDelta: 0,
+          totalDelta: 0,
+        };
+      }
+
+      const prevItem = sortedData[index - 1];
+      return {
+        ...item,
+        targetMetDelta: item.targetMet - prevItem.targetMet,
+        targetMetPercentageDelta: item.targetMetPercentage - prevItem.targetMetPercentage,
+        totalDelta: item.total - prevItem.total,
+      };
+    });
   }, [filteredData]);
 
   const chartConfig = {
@@ -110,6 +131,18 @@ export default function Dashboard() {
     total: {
       label: "Total Transaksi",
       color: "#90CDF4", // teal
+    },
+    targetMetPercentageDelta: {
+      label: "Perubahan Persentase (%)",
+      color: "#FF9500", // orange
+    },
+    targetMetDelta: {
+      label: "Perubahan Jumlah",
+      color: "#FF9500", // orange
+    },
+    totalDelta: {
+      label: "Perubahan Total",
+      color: "#FF9500", // orange
     },
   };
 
@@ -281,6 +314,7 @@ export default function Dashboard() {
             <TabsContent value="targetMetPercentage" className="mt-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
+                  <h4 className="text-muted-foreground mb-2 text-sm font-medium">Nilai Aktual</h4>
                   <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
                     <AreaChart
                       accessibilityLayer
@@ -330,6 +364,7 @@ export default function Dashboard() {
                   </ChartContainer>
                 </div>
                 <div>
+                  <h4 className="text-muted-foreground mb-2 text-sm font-medium">Perubahan Bulan ke Bulan</h4>
                   <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
                     <BarChart
                       accessibilityLayer
@@ -356,20 +391,23 @@ export default function Dashboard() {
                         content={
                           <ChartTooltipContent
                             className="w-[200px]"
-                            nameKey="targetMetPercentage"
+                            nameKey="targetMetPercentageDelta"
                             labelFormatter={(value) => {
                               return new Date(value).toLocaleDateString("id-ID", {
                                 month: "long",
                                 year: "numeric",
                               });
                             }}
-                            formatter={(value) => [`${value}% `, "Sesuai Target"]}
+                            formatter={(value) => {
+                              const sign = value > 0 ? "+" : "";
+                              return [`${sign}${value}%`, " Perubahan"];
+                            }}
                           />
                         }
                       />
                       <Bar
-                        dataKey="targetMetPercentage"
-                        fill={chartConfig.targetMetPercentage.color}
+                        dataKey="targetMetPercentageDelta"
+                        fill={chartConfig.targetMetPercentageDelta.color}
                         fillOpacity={0.8}
                         radius={[4, 4, 0, 0]}
                       />
@@ -382,6 +420,7 @@ export default function Dashboard() {
             <TabsContent value="targetMet" className="mt-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
+                  <h4 className="text-muted-foreground mb-2 text-sm font-medium">Nilai Aktual</h4>
                   <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
                     <AreaChart
                       accessibilityLayer
@@ -431,6 +470,7 @@ export default function Dashboard() {
                   </ChartContainer>
                 </div>
                 <div>
+                  <h4 className="text-muted-foreground mb-2 text-sm font-medium">Perubahan Bulan ke Bulan</h4>
                   <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
                     <BarChart
                       accessibilityLayer
@@ -457,20 +497,23 @@ export default function Dashboard() {
                         content={
                           <ChartTooltipContent
                             className="w-[200px]"
-                            nameKey="targetMet"
+                            nameKey="targetMetDelta"
                             labelFormatter={(value) => {
                               return new Date(value).toLocaleDateString("id-ID", {
                                 month: "long",
                                 year: "numeric",
                               });
                             }}
-                            formatter={(value) => [`${value} Transaksi `, "Sesuai Target"]}
+                            formatter={(value) => {
+                              const sign = value > 0 ? "+" : "";
+                              return [`${sign}${value}`, " Perubahan"];
+                            }}
                           />
                         }
                       />
                       <Bar
-                        dataKey="targetMet"
-                        fill={chartConfig.targetMet.color}
+                        dataKey="targetMetDelta"
+                        fill={chartConfig.targetMetDelta.color}
                         fillOpacity={0.8}
                         radius={[4, 4, 0, 0]}
                       />
@@ -483,6 +526,7 @@ export default function Dashboard() {
             <TabsContent value="total" className="mt-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
+                  <h4 className="text-muted-foreground mb-2 text-sm font-medium">Nilai Aktual</h4>
                   <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
                     <AreaChart
                       accessibilityLayer
@@ -532,6 +576,7 @@ export default function Dashboard() {
                   </ChartContainer>
                 </div>
                 <div>
+                  <h4 className="text-muted-foreground mb-2 text-sm font-medium">Perubahan Bulan ke Bulan</h4>
                   <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
                     <BarChart
                       accessibilityLayer
@@ -558,18 +603,26 @@ export default function Dashboard() {
                         content={
                           <ChartTooltipContent
                             className="w-[200px]"
-                            nameKey="total"
+                            nameKey="totalDelta"
                             labelFormatter={(value) => {
                               return new Date(value).toLocaleDateString("id-ID", {
                                 month: "long",
                                 year: "numeric",
                               });
                             }}
-                            formatter={(value) => [`${value} Transaksi `, "Total"]}
+                            formatter={(value) => {
+                              const sign = value > 0 ? "+" : "";
+                              return [`${sign}${value}`, " Perubahan"];
+                            }}
                           />
                         }
                       />
-                      <Bar dataKey="total" fill={chartConfig.total.color} fillOpacity={0.8} radius={[4, 4, 0, 0]} />
+                      <Bar
+                        dataKey="totalDelta"
+                        fill={chartConfig.totalDelta.color}
+                        fillOpacity={0.8}
+                        radius={[4, 4, 0, 0]}
+                      />
                     </BarChart>
                   </ChartContainer>
                 </div>
