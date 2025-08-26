@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useLoaderData } from "react-router";
 import { CheckCircle, FileText, Import, Percent, User, XCircle } from "lucide-react";
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -405,6 +405,7 @@ export default function Dashboard() {
                           />
                         }
                       />
+                      <ReferenceLine y={0} stroke="var(--muted-foreground)" />
                       <Bar
                         dataKey="targetMetPercentageDelta"
                         fill={chartConfig.targetMetPercentageDelta.color}
@@ -511,6 +512,7 @@ export default function Dashboard() {
                           />
                         }
                       />
+                      <ReferenceLine y={0} stroke="var(--muted-foreground)" />
                       <Bar
                         dataKey="targetMetDelta"
                         fill={chartConfig.targetMetDelta.color}
@@ -617,6 +619,7 @@ export default function Dashboard() {
                           />
                         }
                       />
+                      <ReferenceLine y={0} stroke="var(--muted-foreground)" />
                       <Bar
                         dataKey="totalDelta"
                         fill={chartConfig.totalDelta.color}
