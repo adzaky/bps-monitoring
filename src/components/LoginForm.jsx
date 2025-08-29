@@ -19,7 +19,7 @@ export default function LoginForm() {
       const { error } = await authClient.signIn.email({
         email: email,
         password: password,
-        callbackURL: window.location.origin,
+        callbackURL: "/",
       });
 
       if (error) throw error;
