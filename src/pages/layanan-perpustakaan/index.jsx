@@ -3,10 +3,11 @@ import { BookOpen, FileText, GraduationCap, Import, Search, Users, Building } fr
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Error } from "@/components/ui/error";
 import { Input } from "@/components/ui/input";
+import { Loading } from "@/components/ui/loading";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LoadingScreen } from "@/components/ui/loading-screen";
 import { exportPdfFromJson, exportToExcel } from "@/lib/utils";
 import LibraryServiceTable from "@/components/LibraryServiceTable";
 import { useLibraryServiceData, useSheetRecapData } from "@/hooks/use-queries";
@@ -20,19 +21,23 @@ export default function LibraryService() {
   const [filterEducation, setFilterEducation] = useState("all");
   const [filterType, setFilterType] = useState("individu");
 
-  const { data: libraryServiceData, isLoading, error } = useLibraryServiceData();
+  const {
+    data: libraryServiceData,
+    isPending: isPendingLibraryServiceData,
+    error: errorLibraryServiceData,
+  } = useLibraryServiceData();
   const { mutateAsync: mutateSheetRecap } = useSheetRecapData();
 
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
-
-  if (error) {
+  if (isPendingLibraryServiceData) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <p className="text-red-500">Error loading library service data: {error.message}</p>
+      <div className="flex w-full items-center justify-center bg-white py-96">
+        <Loading />
       </div>
     );
+  }
+
+  if (errorLibraryServiceData) {
+    return <Error error={errorLibraryServiceData} type="database" size="lg" showRetry={false} />;
   }
 
   const currentData = (libraryServiceData || []).filter((record) => record.type === filterType);

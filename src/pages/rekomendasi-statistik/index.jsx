@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Error } from "@/components/ui/error";
 import { FileText, Import, Search, Activity, Star, CheckCircle, Award } from "lucide-react";
-import { LoadingScreen } from "@/components/ui/loading-screen";
+import { Input } from "@/components/ui/input";
+import { Loading } from "@/components/ui/loading";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { exportPdfFromJson, exportToExcel } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -20,19 +21,23 @@ export default function RekomendasiStatistik() {
   const [filterRecommendationStatus, setFilterRecommendationStatus] = useState("all");
 
   // Filter data
-  const { data: romantikServiceData, isLoading, error } = useRomantikStatisticalActivities();
+  const {
+    data: romantikServiceData,
+    isPending: isPendingRomantikService,
+    error: errorRomantikService,
+  } = useRomantikStatisticalActivities();
   const { mutateAsync: mutateSheetRecap } = useSheetRecapData();
 
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
-
-  if (error) {
+  if (isPendingRomantikService) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <p className="text-red-500">Error loading romantik service data: {error.message}</p>
+      <div className="flex w-full items-center justify-center bg-white py-96">
+        <Loading />
       </div>
     );
+  }
+
+  if (errorRomantikService) {
+    return <Error error={errorRomantikService} type="database" size="lg" showRetry={false} />;
   }
 
   const filteredData = (romantikServiceData || []).filter((activity) => {

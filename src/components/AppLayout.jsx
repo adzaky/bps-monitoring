@@ -8,7 +8,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { LoadingScreen } from "@/components/ui/loading-screen";
+import { Loading } from "@/components/ui/loading";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuthSession } from "@/hooks/use-queries";
@@ -19,7 +19,11 @@ export default function AppLayout() {
   const { isAuthenticated, isPending } = useAuthSession();
 
   if (isPending) {
-    return <LoadingScreen />;
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white">
+        <Loading />
+      </div>
+    );
   }
 
   if (!isAuthenticated) {

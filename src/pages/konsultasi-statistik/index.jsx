@@ -3,10 +3,11 @@ import { FileText, Import, List, Search, CheckCircle, XOctagon } from "lucide-re
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Error } from "@/components/ui/error";
 import { Input } from "@/components/ui/input";
+import { Loading } from "@/components/ui/loading";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LoadingScreen } from "@/components/ui/loading-screen";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { exportPdfFromJson, exportToExcel } from "@/lib/utils";
 import StatisticalTransactionTable from "@/components/StatisticalTransactionTable";
@@ -22,19 +23,23 @@ export default function KonsultasiStatistik() {
   const [filterNeedType, setFilterNeedType] = useState("all");
 
   // Filter data
-  const { data: consultationStatistic, isLoading, error } = useConsultationStatistic();
+  const {
+    data: consultationStatistic,
+    isPending: isPendingConsultationStatistic,
+    error: errorConsultationStatistic,
+  } = useConsultationStatistic();
   const { mutateAsync: mutateSheetRecap } = useSheetRecapData();
 
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
-
-  if (error) {
+  if (isPendingConsultationStatistic) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <p className="text-red-500">Error loading consultation statistics: {error.message}</p>
+      <div className="flex w-full items-center justify-center bg-white py-96">
+        <Loading />
       </div>
     );
+  }
+
+  if (errorConsultationStatistic) {
+    return <Error error={errorConsultationStatistic} type="database" size="lg" showRetry={false} />;
   }
 
   const filteredData = (consultationStatistic || []).filter((visit) => {

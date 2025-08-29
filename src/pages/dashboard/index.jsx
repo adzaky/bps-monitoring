@@ -5,11 +5,12 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Error } from "@/components/ui/error";
+import { Loading } from "@/components/ui/loading";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LoadingScreen } from "@/components/ui/loading-screen";
 import { useDashboardData, useSheetRecapData } from "@/hooks/use-queries";
 import { useRecapData } from "@/hooks/use-recap-data";
 import { exportPdfFromJson, exportToExcel } from "@/lib/utils";
@@ -21,7 +22,13 @@ export default function Dashboard() {
   const [activeChart, setActiveChart] = useState("targetMetPercentage");
   const [selectedServiceType, setSelectedServiceType] = useState("all");
 
-  const { statisticalTransactions, libraryServiceData, romantikServiceData, isLoading, error } = useDashboardData();
+  const {
+    statisticalTransactions,
+    libraryServiceData,
+    romantikServiceData,
+    isPending: isPendingDashboardData,
+    error: errorDashboardData,
+  } = useDashboardData();
   const { data } = useRecapData(statisticalTransactions, libraryServiceData, romantikServiceData);
   const { mutateAsync: mutateSheetRecap } = useSheetRecapData();
 
@@ -203,16 +210,16 @@ export default function Dashboard() {
     }
   };
 
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
-
-  if (error) {
+  if (isPendingDashboardData) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <p className="text-red-500">Error loading dashboard data: {error.message}</p>
+      <div className="flex w-full items-center justify-center bg-white py-96">
+        <Loading />
       </div>
     );
+  }
+
+  if (errorDashboardData) {
+    return <Error error={errorDashboardData} type="database" size="lg" showRetry={false} />;
   }
 
   return (

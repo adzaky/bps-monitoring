@@ -99,7 +99,7 @@ export const useDashboardData = () => {
     libraryServiceData: libraryService.data ?? [],
     romantikServiceData: romantikService.data ?? [],
     statisticalTransactions: statisticalTransactions.data ?? [],
-    isLoading: libraryService.isLoading || romantikService.isLoading || statisticalTransactions.isLoading,
+    isPending: libraryService.isPending || romantikService.isPending || statisticalTransactions.isPending,
     error: libraryService.error || romantikService.error || statisticalTransactions.error,
   };
 };
