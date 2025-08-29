@@ -1,8 +1,6 @@
 import React from "react";
-import { createBrowserRouter, redirect, RouterProvider } from "react-router";
+import { createBrowserRouter, RouterProvider } from "react-router";
 import AppLayout from "./components/AppLayout";
-import { api } from "./services/api";
-import supabase from "./lib/supabase";
 import {
   Dashboard,
   EkstraksiData,
@@ -15,84 +13,34 @@ import {
 } from "./constants/menu";
 
 export default function App() {
-  const getSession = async () => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    return !!session;
-  };
-
   const router = createBrowserRouter([
     {
       path: "/",
       Component: AppLayout,
-      loader: async () => {
-        const isAuthenticated = await getSession();
-
-        return { isAuthenticated };
-      },
       children: [
         {
           index: true,
           Component: Dashboard,
-          loader: async () => {
-            const { data: libraryServiceData } = await api.libraryService.getLibraryServiceData();
-            const { data: romantikServiceData } = await api.romantikService.getRomantikStatisticalActivities();
-            const { data: statisticalTransactions } = await api.silastikService.getStatisticalTransactions();
-
-            return {
-              statisticalTransactions: statisticalTransactions ?? [],
-              libraryServiceData: libraryServiceData ?? [],
-              romantikServiceData: romantikServiceData ?? [],
-            };
-          },
         },
         {
           path: "konsultasi-statistik",
           Component: KonsultasiStatistik,
-          loader: async () => {
-            const { data: consultationStatistic } = await api.silastikService.getConsultationStatistic();
-            return { consultationStatistic: consultationStatistic ?? [] };
-          },
         },
         {
           path: "produk-statistik",
           Component: ProdukStatistik,
-          loader: async () => {
-            const { data: productStatistic } = await api.silastikService.getProductStatistic();
-            return { productStatistic: productStatistic ?? [] };
-          },
         },
         {
           path: "layanan-perpustakaan",
           Component: LayananPerpustakaan,
-          loader: async () => {
-            const { data: libraryServiceData } = await api.libraryService.getLibraryServiceData();
-            return { libraryServiceData: libraryServiceData ?? [] };
-          },
         },
         {
           path: "rekomendasi-statistik",
           Component: RekomendasiStatistik,
-          loader: async () => {
-            const { data: romantikServiceData } = await api.romantikService.getRomantikStatisticalActivities();
-            return { romantikServiceData: romantikServiceData ?? [] };
-          },
         },
         {
           path: "rekap-data",
           Component: RekapData,
-          loader: async () => {
-            const { data: libraryServiceData } = await api.libraryService.getLibraryServiceData();
-            const { data: romantikServiceData } = await api.romantikService.getRomantikStatisticalActivities();
-            const { data: statisticalTransactions } = await api.silastikService.getStatisticalTransactions();
-
-            return {
-              statisticalTransactions: statisticalTransactions ?? [],
-              libraryServiceData: libraryServiceData ?? [],
-              romantikServiceData: romantikServiceData ?? [],
-            };
-          },
         },
         {
           path: "ekstraksi-data",
@@ -103,11 +51,6 @@ export default function App() {
     {
       path: "/login",
       Component: Login,
-      loader: async () => {
-        const isAuthenticated = await getSession();
-
-        return isAuthenticated ? redirect("/") : null;
-      },
     },
   ]);
 

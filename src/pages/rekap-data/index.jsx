@@ -1,6 +1,5 @@
 import { useState } from "react";
 import dayjs from "dayjs";
-import { useLoaderData } from "react-router";
 import { FileText, Import, Search, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -9,9 +8,10 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LoadingScreen } from "@/components/ui/loading-screen";
+import { useDashboardData, useSheetRecapData } from "@/hooks/use-queries";
 import { useRecapData } from "@/hooks/use-recap-data";
 import { exportPdfFromJson, exportRecapData } from "@/lib/utils";
-import { postJsonToGoogleAppScript } from "@/services/sheet";
 import RecapDataTable from "@/components/RecapDataTable";
 
 export default function RekapData() {
@@ -29,8 +29,21 @@ export default function RekapData() {
     petugas: "",
   });
 
-  const { statisticalTransactions, libraryServiceData, romantikServiceData } = useLoaderData();
+  const { statisticalTransactions, libraryServiceData, romantikServiceData, isLoading, error } = useDashboardData();
   const { data } = useRecapData(statisticalTransactions, libraryServiceData, romantikServiceData);
+  const { mutateAsync: mutateSheetRecap } = useSheetRecapData();
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <p className="text-red-500">Error loading recap data: {error.message}</p>
+      </div>
+    );
+  }
 
   const handleExportData = async (type) => {
     const exportData = filteredData.map((item, index) => ({
@@ -42,12 +55,12 @@ export default function RekapData() {
       switch (type) {
         case "spreadsheet":
           setIsExportingToSpreadsheet(true);
-          await postJsonToGoogleAppScript(exportData, "Rekap Transaksi Layanan BPS").then((res) =>
+          await mutateSheetRecap({ data: exportData, title: "Rekap Transaksi Layanan BPS" }).then((res) =>
             toast(
               <div className="grid gap-1">
                 <span className="font-semibold">Data berhasil diekspor ke Google Sheets!</span>
-                <a href={res.url} target="_blank" className="text-sm text-blue-600 underline">
-                  {res.url}
+                <a href={res.data.url} target="_blank" className="text-sm text-blue-600 underline">
+                  {res.data.url}
                 </a>
               </div>
             )

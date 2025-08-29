@@ -1,15 +1,12 @@
 import React from "react";
-import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import supabase from "@/lib/supabase";
+import { authClient } from "@/lib/auth";
 
 export default function LoginForm() {
   const [isLoading, setIsLoading] = React.useState(false);
-
-  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,17 +16,13 @@ export default function LoginForm() {
       const email = e.target.email.value;
       const password = e.target.password.value;
 
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await authClient.signIn.email({
         email: email,
         password: password,
+        callbackURL: window.location.origin,
       });
 
       if (error) throw error;
-
-      const user = data.user;
-      if (user) {
-        navigate("/");
-      }
     } catch (err) {
       console.error("Failed Login", err);
     } finally {

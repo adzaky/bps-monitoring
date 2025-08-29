@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { useLoaderData } from "react-router";
 import { CheckCircle, FileText, Import, Percent, User, XCircle } from "lucide-react";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
 import { toast } from "sonner";
@@ -10,9 +9,10 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LoadingScreen } from "@/components/ui/loading-screen";
+import { useDashboardData, useSheetRecapData } from "@/hooks/use-queries";
 import { useRecapData } from "@/hooks/use-recap-data";
 import { exportPdfFromJson, exportToExcel } from "@/lib/utils";
-import { postJsonToGoogleAppScript } from "@/services/sheet";
 
 export default function Dashboard() {
   const [isExportingToSpreadsheet, setIsExportingToSpreadsheet] = useState(false);
@@ -20,8 +20,10 @@ export default function Dashboard() {
   const [isExportingToPdf, setIsExportingToPdf] = useState(false);
   const [activeChart, setActiveChart] = useState("targetMetPercentage");
   const [selectedServiceType, setSelectedServiceType] = useState("all");
-  const { statisticalTransactions, libraryServiceData, romantikServiceData } = useLoaderData();
+
+  const { statisticalTransactions, libraryServiceData, romantikServiceData, isLoading, error } = useDashboardData();
   const { data } = useRecapData(statisticalTransactions, libraryServiceData, romantikServiceData);
+  const { mutateAsync: mutateSheetRecap } = useSheetRecapData();
 
   // Get unique service types
   const serviceTypes = useMemo(() => {
@@ -162,12 +164,12 @@ export default function Dashboard() {
       switch (type) {
         case "spreadsheet":
           setIsExportingToSpreadsheet(true);
-          await postJsonToGoogleAppScript(exportData, title).then((res) =>
+          await mutateSheetRecap({ data: exportData, title }).then((res) =>
             toast(
               <div className="grid gap-1">
                 <span className="font-semibold">Data berhasil diekspor ke Google Sheets!</span>
-                <a href={res.url} target="_blank" className="text-sm text-blue-600 underline">
-                  {res.url}
+                <a href={res.data.url} target="_blank" className="text-sm text-blue-600 underline">
+                  {res.data.url}
                 </a>
               </div>
             )
@@ -200,6 +202,18 @@ export default function Dashboard() {
       setIsExportingToPdf(false);
     }
   };
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <p className="text-red-500">Error loading dashboard data: {error.message}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto w-full space-y-6">

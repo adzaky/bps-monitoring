@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router";
 import { User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,46 +10,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import supabase from "@/lib/supabase";
+import { useAuthLogout, useAuthUser } from "@/hooks/use-queries";
 
 export default function UserProfile() {
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        const {
-          data: { user },
-          error,
-        } = await supabase.auth.getUser();
-        if (error) throw error;
-        setUser(user);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    getUser();
-  }, []);
+  const { user, isPending } = useAuthUser();
+  const { logout } = useAuthLogout({ onSuccess: () => navigate("/login") });
 
   const handleLogout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-
-      if (error) throw error;
-
-      navigate("/login");
-    } catch (err) {
-      console.error("Failed Logout", err);
-    }
+    await logout();
   };
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="flex items-center gap-2">
         <div className="bg-muted h-8 w-8 animate-pulse rounded-full"></div>

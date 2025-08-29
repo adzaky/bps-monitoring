@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useLoaderData } from "react-router";
 import { FileText, Import, List, Search, CheckCircle, XOctagon } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -7,10 +6,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { postJsonToGoogleAppScript } from "@/services/sheet";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { exportPdfFromJson, exportToExcel } from "@/lib/utils";
 import StatisticalTransactionTable from "@/components/StatisticalTransactionTable";
+import { useProductStatistic, useSheetRecapData } from "@/hooks/use-queries";
 
 export default function ProdukStatistik() {
   const [isExportingToSpreadsheet, setIsExportingToSpreadsheet] = useState(false);
@@ -22,10 +22,23 @@ export default function ProdukStatistik() {
   const [filterNeedType, setFilterNeedType] = useState("all");
 
   // Filter data
-  const { productStatistic } = useLoaderData();
+  const { data: productStatistic, isLoading, error } = useProductStatistic();
+  const { mutateAsync: mutateSheetRecap } = useSheetRecapData();
 
-  const filteredData = productStatistic.filter((visit) => {
-    const { statusText } = productStatistic.reduce((acc, visit) => {
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <p className="text-red-500">Error loading product statistics: {error.message}</p>
+      </div>
+    );
+  }
+
+  const filteredData = (productStatistic || []).filter((visit) => {
+    const { statusText } = (productStatistic || []).reduce((acc, visit) => {
       const parts = visit.status?.split(": ") || [];
       acc[visit.status] = { statusText: parts[0] || "", rating: parts[1] || "0" };
       return acc;
@@ -61,12 +74,12 @@ export default function ProdukStatistik() {
       switch (type) {
         case "spreadsheet":
           setIsExportingToSpreadsheet(true);
-          await postJsonToGoogleAppScript(exportData, "Laporan Produk Statistik").then((res) =>
+          await mutateSheetRecap({ data: exportData, title: "Laporan Produk Statistik" }).then((res) =>
             toast(
               <div className="grid gap-1">
                 <span className="font-semibold">Data berhasil diekspor ke Google Sheets!</span>
-                <a href={res.url} target="_blank" className="text-sm text-blue-600 underline">
-                  {res.url}
+                <a href={res.data.url} target="_blank" className="text-sm text-blue-600 underline">
+                  {res.data.url}
                 </a>
               </div>
             )

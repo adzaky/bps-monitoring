@@ -1,55 +1,43 @@
-import supabase from "../lib/supabase";
+import apiClient from "../lib/axios";
 
 export const api = {
   libraryService: {
     getLibraryServiceData: async () => {
-      return await supabase
-        .from("pst_customer")
-        .select()
-        .order("created_at", { ascending: false })
-        .order("visit_datetime", { ascending: false });
+      const response = await apiClient.get("/library-service");
+      return { data: response.data, error: null };
     },
     getLibraryServiceByType: async (type = "individu") => {
-      return await supabase
-        .from("pst_customer")
-        .select()
-        .eq("type", type)
-        .order("created_at", { ascending: false })
-        .order("visit_datetime", { ascending: false });
+      const response = await apiClient.get(`/library-service?type=${type}`);
+      return { data: response.data, error: null };
     },
   },
   romantikService: {
     getRomantikStatisticalActivities: async () => {
-      return await supabase
-        .from("romantik_statistical")
-        .select()
-        .order("created_at", { ascending: false })
-        .order("submission_date", { ascending: false });
+      const response = await apiClient.get("/romantik-service");
+      return { data: response.data, error: null };
     },
   },
   silastikService: {
     getStatisticalTransactions: async () => {
-      return await supabase
-        .from("silastik_transaction")
-        .select()
-        .order("created_at", { ascending: false })
-        .order("request_date", { ascending: false });
+      const response = await apiClient.get("/silastik-service");
+      return { data: response.data, error: null };
     },
     getConsultationStatistic: async () => {
-      return await supabase
-        .from("silastik_transaction")
-        .select()
-        .ilike("need_type", "%Konsultasi%")
-        .order("created_at", { ascending: false })
-        .order("request_date", { ascending: false });
+      const response = await apiClient.get("/silastik-service?need_type=Konsultasi");
+      return { data: response.data, error: null };
     },
     getProductStatistic: async () => {
-      return await supabase
-        .from("silastik_transaction")
-        .select()
-        .ilike("need_type", "%Permintaan Data%")
-        .order("created_at", { ascending: false })
-        .order("request_date", { ascending: false });
+      const response = await apiClient.get("/silastik-service?need_type=Permintaan Data");
+      return { data: response.data, error: null };
+    },
+  },
+  sheetService: {
+    createRecapData: async ({ data, title }) => {
+      const response = await apiClient.post("/create-sheet/recap-data", {
+        title: title,
+        data: data,
+      });
+      return { data: response.data, error: null };
     },
   },
 };

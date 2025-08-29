@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useLoaderData } from "react-router";
 import { BookOpen, FileText, GraduationCap, Import, Search, Users, Building } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -7,9 +6,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 import { exportPdfFromJson, exportToExcel } from "@/lib/utils";
-import { postJsonToGoogleAppScript } from "@/services/sheet";
 import LibraryServiceTable from "@/components/LibraryServiceTable";
+import { useLibraryServiceData, useSheetRecapData } from "@/hooks/use-queries";
 
 export default function LibraryService() {
   const [isExportingToSpreadsheet, setIsExportingToSpreadsheet] = useState(false);
@@ -20,9 +20,22 @@ export default function LibraryService() {
   const [filterEducation, setFilterEducation] = useState("all");
   const [filterType, setFilterType] = useState("individu");
 
-  const { libraryServiceData } = useLoaderData();
+  const { data: libraryServiceData, isLoading, error } = useLibraryServiceData();
+  const { mutateAsync: mutateSheetRecap } = useSheetRecapData();
 
-  const currentData = libraryServiceData.filter((record) => record.type === filterType);
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <p className="text-red-500">Error loading library service data: {error.message}</p>
+      </div>
+    );
+  }
+
+  const currentData = (libraryServiceData || []).filter((record) => record.type === filterType);
 
   const filteredData = currentData
     .filter((record) => {
@@ -102,12 +115,12 @@ export default function LibraryService() {
       switch (type) {
         case "spreadsheet":
           setIsExportingToSpreadsheet(true);
-          await postJsonToGoogleAppScript(exportData, exportTitle).then((res) =>
+          await mutateSheetRecap({ data: exportData, title: exportTitle }).then((res) =>
             toast(
               <div className="grid gap-1">
                 <span className="font-semibold">Data berhasil diekspor ke Google Sheets!</span>
-                <a href={res.url} target="_blank" className="text-sm text-blue-600 underline">
-                  {res.url}
+                <a href={res.data.url} target="_blank" className="text-sm text-blue-600 underline">
+                  {res.data.url}
                 </a>
               </div>
             )

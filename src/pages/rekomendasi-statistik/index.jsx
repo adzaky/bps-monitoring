@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { useLoaderData } from "react-router";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FileText, Import, Search, Activity, Star, CheckCircle, Award } from "lucide-react";
-import { postJsonToGoogleAppScript } from "@/services/sheet";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 import { toast } from "sonner";
 import { exportPdfFromJson, exportToExcel } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import RomantikServiceTable from "@/components/RomantikServiceTable";
+import { useRomantikStatisticalActivities, useSheetRecapData } from "@/hooks/use-queries";
 
 export default function RekomendasiStatistik() {
   const [isExportingToSpreadsheet, setIsExportingToSpreadsheet] = useState(false);
@@ -20,9 +20,22 @@ export default function RekomendasiStatistik() {
   const [filterRecommendationStatus, setFilterRecommendationStatus] = useState("all");
 
   // Filter data
-  const { romantikServiceData } = useLoaderData();
+  const { data: romantikServiceData, isLoading, error } = useRomantikStatisticalActivities();
+  const { mutateAsync: mutateSheetRecap } = useSheetRecapData();
 
-  const filteredData = romantikServiceData.filter((activity) => {
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <p className="text-red-500">Error loading romantik service data: {error.message}</p>
+      </div>
+    );
+  }
+
+  const filteredData = (romantikServiceData || []).filter((activity) => {
     const matchesSearch =
       activity.activity_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       activity.organizer.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -59,12 +72,12 @@ export default function RekomendasiStatistik() {
       switch (type) {
         case "spreadsheet":
           setIsExportingToSpreadsheet(true);
-          await postJsonToGoogleAppScript(exportData, "Laporan Rekomendasi Statistik").then((res) =>
+          await mutateSheetRecap({ data: exportData, title: "Laporan Rekomendasi Statistik" }).then((res) =>
             toast(
               <div className="grid gap-1">
                 <span className="font-semibold">Data berhasil diekspor ke Google Sheets!</span>
-                <a href={res.url} target="_blank" className="text-sm text-blue-600 underline">
-                  {res.url}
+                <a href={res.data.url} target="_blank" className="text-sm text-blue-600 underline">
+                  {res.data.url}
                 </a>
               </div>
             )

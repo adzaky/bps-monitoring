@@ -14,29 +14,19 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import supabase from "@/lib/supabase";
 import { SIDEBAR_NAV } from "@/constants/menu";
+import { useAuthLogout } from "@/hooks/use-queries";
 
 export function AppSidebar({ ...props }) {
-  const [isLoading, setIsLoading] = React.useState(false);
-
   const navigate = useNavigate();
   const { pathname } = window.location;
+  const { logout } = useAuthLogout({ onSuccess: () => navigate("/login") });
+
+  const [isPending, setIsPending] = React.useState(false);
 
   const handleLogout = async () => {
-    setIsLoading(true);
-
-    try {
-      const { error } = await supabase.auth.signOut();
-
-      if (error) throw error;
-
-      navigate("/login");
-    } catch (err) {
-      console.error("Failed Logout", err);
-    } finally {
-      setIsLoading(false);
-    }
+    setIsPending(true);
+    await logout();
   };
 
   return (
@@ -80,11 +70,10 @@ export function AppSidebar({ ...props }) {
         <Button
           variant="destructive"
           onClick={handleLogout}
-          disabled={isLoading}
           className="cursor-pointer rounded-xl bg-gradient-to-r from-red-500 to-red-600 font-medium shadow-sm transition-all duration-200 hover:from-red-600 hover:to-red-700 hover:shadow-md disabled:opacity-50"
         >
           <LogOut className="mr-1 size-4" />
-          {!isLoading ? "Keluar" : "Loading..."}
+          {!isPending ? "Keluar" : "Loading..."}
         </Button>
       </SidebarFooter>
     </Sidebar>
