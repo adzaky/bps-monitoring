@@ -7,7 +7,7 @@ export const api = {
       return { data: response.data, error: null };
     },
     getLibraryServiceByType: async (type = "individu") => {
-      const response = await apiClient.get(`/library-service?type=${type}`);
+      const response = await apiClient.get(`/library-service/${type}`);
       return { data: response.data, error: null };
     },
   },
@@ -23,11 +23,11 @@ export const api = {
       return { data: response.data, error: null };
     },
     getConsultationStatistic: async () => {
-      const response = await apiClient.get("/silastik-service?need_type=Konsultasi");
+      const response = await apiClient.get("/silastik-service/konsultasi");
       return { data: response.data, error: null };
     },
     getProductStatistic: async () => {
-      const response = await apiClient.get("/silastik-service?need_type=Permintaan Data");
+      const response = await apiClient.get("/silastik-service/permintaan");
       return { data: response.data, error: null };
     },
   },
