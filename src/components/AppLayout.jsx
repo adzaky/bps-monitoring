@@ -32,9 +32,9 @@ export default function AppLayout() {
 
   return (
     <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="bg-sidebar sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between gap-4 px-4 shadow-sm">
+      <AppSidebar className="z-40" />
+      <SidebarInset className="overflow-hidden">
+        <header className="bg-sidebar sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between gap-4 px-4 shadow-sm">
           <div className="flex items-center gap-3">
             <SidebarTrigger className="-ml-1 transition-colors hover:bg-blue-50 hover:text-blue-900" />
             <Separator orientation="vertical" className="h-6 bg-blue-300 data-[orientation=vertical]:h-6" />
