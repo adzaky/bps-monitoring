@@ -1,6 +1,9 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import AppLayout from "./components/AppLayout";
+import { LoadingScreen } from "./components/ui/loading-screen";
+import { isAuthenticated } from "./lib/auth";
+
 import {
   Dashboard,
   EkstraksiData,
@@ -17,6 +20,10 @@ export default function App() {
     {
       path: "/",
       Component: AppLayout,
+      HydrateFallback: LoadingScreen,
+      loader: () => {
+        return { isAuthenticated: isAuthenticated() };
+      },
       children: [
         {
           index: true,
@@ -51,6 +58,10 @@ export default function App() {
     {
       path: "/login",
       Component: Login,
+      HydrateFallback: LoadingScreen,
+      loader: () => {
+        return { isAuthenticated: isAuthenticated() };
+      },
     },
   ]);
 

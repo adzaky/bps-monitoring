@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate, Outlet } from "react-router";
+import { Navigate, Outlet, useLoaderData } from "react-router";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,24 +8,14 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Loading } from "@/components/ui/loading";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { useAuthSession } from "@/hooks/use-queries";
 import { AppSidebar } from "./AppSidebar";
 import UserProfile from "./UserProfile";
 
 export default function AppLayout() {
-  const { isAuthenticated, isPending } = useAuthSession();
-
-  if (isPending) {
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white">
-        <Loading />
-      </div>
-    );
-  }
-
+  const { isAuthenticated } = useLoaderData();
+  
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }

@@ -1,5 +1,4 @@
 import React from "react";
-import { useNavigate } from "react-router";
 import { User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,32 +9,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useAuthLogout, useAuthUser } from "@/hooks/use-queries";
+import { useAuthSignOut, useAuthUser } from "@/hooks/use-queries";
 
 export default function UserProfile() {
-  const navigate = useNavigate();
-  const { user, isPending } = useAuthUser();
-  const { logout } = useAuthLogout({ onSuccess: () => navigate("/login") });
+  const { data: user, isLoading } = useAuthUser();
+  const { mutateAsync: signOut } = useAuthSignOut();
 
   const handleLogout = async () => {
-    await logout();
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
-  if (isPending) {
+  if (isLoading) {
     return (
       <div className="flex items-center gap-2">
-        <div className="bg-muted h-8 w-8 animate-pulse rounded-full"></div>
-        <div className="bg-muted h-4 w-20 animate-pulse rounded"></div>
+        <div className="bg-muted h-8 w-8 animate-pulse rounded-full" />
+        <div className="bg-muted h-4 w-20 animate-pulse rounded" />
       </div>
     );
   }
-
-  if (!user) return null;
-
-  const capitalize = (str) => str.replace(/\b\w/g, (char) => char.toUpperCase());
-
-  const displayNameRaw = user.user_metadata?.full_name || user.email?.split("@")[0] || "User";
-  const displayName = capitalize(displayNameRaw);
 
   return (
     <DropdownMenu>
@@ -45,14 +40,14 @@ export default function UserProfile() {
             <User />
           </div>
           <span className="text-primary hidden text-sm font-medium hover:text-blue-700 sm:inline-block">
-            Selamat Datang, <strong>{displayName}</strong>
+            Selamat Datang, <strong>{user?.name}</strong>
           </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="flex flex-col">
-          <span className="font-medium">{displayName}</span>
-          <span className="text-muted-foreground text-xs">{user.email}</span>
+          <span className="font-medium">{user?.name}</span>
+          <span className="text-muted-foreground text-xs">{user?.email}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>

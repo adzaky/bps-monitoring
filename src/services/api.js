@@ -1,43 +1,51 @@
 import apiClient from "../lib/axios";
 
 export const api = {
-  libraryService: {
-    getLibraryServiceData: async () => {
-      const response = await apiClient.get("/library-service");
-      return { data: response.data, error: null };
+  authService: {
+    signIn: ({ email, password }) => {
+      return apiClient.post("/auth/sign-in", {
+        email,
+        password,
+      });
     },
-    getLibraryServiceByType: async (type = "individu") => {
-      const response = await apiClient.get(`/library-service/${type}`);
-      return { data: response.data, error: null };
+    createUser: ({ name, email, password }) => {
+      return apiClient.post("/auth/user", {
+        name,
+        email,
+        password,
+      });
+    },
+  },
+  libraryService: {
+    getLibraryServiceData: () => {
+      return apiClient.get("/library-service");
+    },
+    getLibraryServiceByType: (type = "individu") => {
+      return apiClient.get(`/library-service/${type}`);
     },
   },
   romantikService: {
-    getRomantikStatisticalActivities: async () => {
-      const response = await apiClient.get("/romantik-service");
-      return { data: response.data, error: null };
+    getRomantikStatisticalActivities: () => {
+      return apiClient.get("/romantik-service");
     },
   },
   silastikService: {
-    getStatisticalTransactions: async () => {
-      const response = await apiClient.get("/silastik-service");
-      return { data: response.data, error: null };
+    getStatisticalTransactions: () => {
+      return apiClient.get("/silastik-service");
     },
-    getConsultationStatistic: async () => {
-      const response = await apiClient.get("/silastik-service/konsultasi");
-      return { data: response.data, error: null };
+    getConsultationStatistic: () => {
+      return apiClient.get("/silastik-service/konsultasi");
     },
-    getProductStatistic: async () => {
-      const response = await apiClient.get("/silastik-service/permintaan");
-      return { data: response.data, error: null };
+    getProductStatistic: () => {
+      return apiClient.get("/silastik-service/permintaan");
     },
   },
   sheetService: {
-    createRecapData: async ({ data, title }) => {
-      const response = await apiClient.post("/create-sheet/recap-data", {
+    createRecapData: ({ data, title }) => {
+      return apiClient.post("/create-sheet/recap-data", {
         title: title,
         data: data,
       });
-      return { data: response.data, error: null };
     },
   },
 };

@@ -1,19 +1,9 @@
 import React from "react";
-import { Navigate } from "react-router";
-import { useAuthSession } from "@/hooks/use-queries";
-import { Loading } from "@/components/ui/loading";
+import { Navigate, useLoaderData } from "react-router";
 import LoginForm from "@/components/LoginForm";
 
 export default function Login() {
-  const { isAuthenticated, isPending } = useAuthSession();
-
-  if (isPending) {
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white">
-        <Loading />
-      </div>
-    );
-  }
+  const { isAuthenticated } = useLoaderData();
 
   if (isAuthenticated) {
     return <Navigate to="/" replace />;

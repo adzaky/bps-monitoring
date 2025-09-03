@@ -1,21 +1,26 @@
-import { authClient } from "@/lib/auth";
+import { useNavigate } from "react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { api } from "../services/api";
+import { getAuthUser, signOut } from "../lib/auth";
 
 // Library Service Queries
 export const useLibraryServiceData = () => {
   return useQuery({
     queryKey: ["libraryService"],
-    queryFn: api.libraryService.getLibraryServiceData,
-    select: (data) => data.data ?? [],
+    queryFn: async () => {
+      const res = await api.libraryService.getLibraryServiceData();
+      return res.data;
+    },
   });
 };
 
 export const useLibraryServiceByType = (type = "individu") => {
   return useQuery({
     queryKey: ["libraryService", type],
-    queryFn: () => api.libraryService.getLibraryServiceByType(type),
-    select: (data) => data.data ?? [],
+    queryFn: async () => {
+      const res = await api.libraryService.getLibraryServiceByType(type);
+      return res.data;
+    },
   });
 };
 
@@ -23,8 +28,10 @@ export const useLibraryServiceByType = (type = "individu") => {
 export const useRomantikStatisticalActivities = () => {
   return useQuery({
     queryKey: ["romantikService"],
-    queryFn: api.romantikService.getRomantikStatisticalActivities,
-    select: (data) => data.data ?? [],
+    queryFn: async () => {
+      const res = await api.romantikService.getRomantikStatisticalActivities();
+      return res.data;
+    },
   });
 };
 
@@ -32,24 +39,30 @@ export const useRomantikStatisticalActivities = () => {
 export const useStatisticalTransactions = () => {
   return useQuery({
     queryKey: ["silastikService", "transactions"],
-    queryFn: api.silastikService.getStatisticalTransactions,
-    select: (data) => data.data ?? [],
+    queryFn: async () => {
+      const res = await api.silastikService.getStatisticalTransactions();
+      return res.data;
+    },
   });
 };
 
 export const useConsultationStatistic = () => {
   return useQuery({
     queryKey: ["silastikService", "consultation"],
-    queryFn: api.silastikService.getConsultationStatistic,
-    select: (data) => data.data ?? [],
+    queryFn: async () => {
+      const res = await api.silastikService.getConsultationStatistic();
+      return res.data;
+    },
   });
 };
 
 export const useProductStatistic = () => {
   return useQuery({
     queryKey: ["silastikService", "product"],
-    queryFn: api.silastikService.getProductStatistic,
-    select: (data) => data.data ?? [],
+    queryFn: async () => {
+      const res = await api.silastikService.getProductStatistic();
+      return res.data;
+    },
   });
 };
 
@@ -61,32 +74,34 @@ export const useSheetRecapData = () => {
 };
 
 // Auth Queries
+export const useAuthSignIn = () => {
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: ({ email, password }) => api.authService.signIn({ email, password }),
+    onSuccess: ({ data }) => {
+      localStorage.setItem(import.meta.env.VITE_ACCESS_TOKEN_NAME, data.token);
+      navigate("/", { replace: true });
+    },
+  });
+};
+
+export const useAuthSignOut = () => {
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: () => signOut(),
+    onSuccess: () => {
+      navigate("/login", { replace: true });
+    },
+  });
+};
+
 export const useAuthUser = () => {
-  const { data, isPending } = authClient.useSession();
-
-  const user = data?.user;
-
-  return { user, isPending };
-};
-
-export const useAuthSession = () => {
-  const { data, isPending } = authClient.useSession();
-
-  const session = data?.session;
-  const isExpired = session ? new Date(session.expiresAt) < new Date() : true;
-  const isAuthenticated = session && !isExpired;
-
-  return { session, isPending, isAuthenticated };
-};
-
-export const useAuthLogout = () => {
-  const logout = async (fetchOptions = {}) => {
-    await authClient.signOut({
-      fetchOptions,
-    });
-  };
-
-  return { logout };
+  return useQuery({
+    queryKey: ["authUser"],
+    queryFn: () => getAuthUser(),
+  });
 };
 
 // Combined Dashboard Data

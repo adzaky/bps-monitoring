@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation } from "react-router";
 import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,18 +15,18 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { SIDEBAR_NAV } from "@/constants/menu";
-import { useAuthLogout } from "@/hooks/use-queries";
+import { useAuthSignOut } from "@/hooks/use-queries";
 
 export function AppSidebar({ ...props }) {
-  const navigate = useNavigate();
-  const { pathname } = window.location;
-  const { logout } = useAuthLogout({ onSuccess: () => navigate("/login") });
-
-  const [isPending, setIsPending] = React.useState(false);
+  const { pathname } = useLocation();
+  const { mutateAsync: signOut, isPending } = useAuthSignOut();
 
   const handleLogout = async () => {
-    setIsPending(true);
-    await logout();
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (

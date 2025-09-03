@@ -3,30 +3,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { authClient } from "@/lib/auth";
+import { useAuthSignIn } from "@/hooks/use-queries";
 
 export default function LoginForm() {
-  const [isLoading, setIsLoading] = React.useState(false);
+  const { mutateAsync: signIn, isPending } = useAuthSignIn();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
 
     try {
       const email = e.target.email.value;
       const password = e.target.password.value;
 
-      const { error } = await authClient.signIn.email({
-        email: email,
-        password: password,
-        callbackURL: "/",
-      });
+      const { error } = await signIn({ email, password });
 
       if (error) throw error;
     } catch (err) {
       console.error("Failed Login", err);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -77,7 +70,7 @@ export default function LoginForm() {
                 type="submit"
                 className="cursor-pointer bg-gradient-to-r from-blue-600 to-blue-700 py-3 font-semibold text-white shadow-lg shadow-blue-500/25 transition-all duration-200 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl hover:shadow-blue-500/30"
               >
-                {!isLoading ? "Masuk" : "Loading..."}
+                {!isPending ? "Masuk" : "Loading..."}
               </Button>
             </div>
           </form>
