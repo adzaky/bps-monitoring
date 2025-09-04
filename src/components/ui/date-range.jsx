@@ -7,7 +7,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar1 } from "lucide-react";
 
-export function DateRangePicker({ className, data, onSetData, placeholder = "Pick a date" }) {
+export function DateRangePicker({ className, value, onChange, placeholder = "Pick a date" }) {
   return (
     <div className={cn("grid gap-2", className)}>
       <Popover>
@@ -15,16 +15,16 @@ export function DateRangePicker({ className, data, onSetData, placeholder = "Pic
           <Button
             id="date"
             variant={"outline"}
-            className={cn("w-full justify-start text-left font-normal", !data && "text-muted-foreground")}
+            className={cn("w-full justify-start text-left font-normal", !value && "text-muted-foreground")}
           >
             <Calendar1 className="mr-2 h-4 w-4" />
-            {data?.from ? (
-              data.to ? (
+            {value?.from ? (
+              value.to ? (
                 <>
-                  {format(data.from, "LLL dd, y")} - {format(data.to, "LLL dd, y")}
+                  {format(value.from, "LLL dd, y")} - {format(value.to, "LLL dd, y")}
                 </>
               ) : (
-                format(data.from, "LLL dd, y")
+                format(value.from, "LLL dd, y")
               )
             ) : (
               <span>{placeholder}</span>
@@ -35,9 +35,9 @@ export function DateRangePicker({ className, data, onSetData, placeholder = "Pic
           <Calendar
             initialFocus
             mode="range"
-            defaultMonth={data?.from}
-            selected={data}
-            onSelect={onSetData}
+            defaultMonth={value?.from}
+            selected={value}
+            onSelect={onChange}
             numberOfMonths={2}
           />
         </PopoverContent>

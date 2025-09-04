@@ -244,8 +244,8 @@ export default function RekapData() {
               <DateRangePicker
                 className="w-80"
                 placeholder="Pilih Rentang Tanggal"
-                data={dateRange}
-                onSetData={setDateRange}
+                value={dateRange}
+                onChange={setDateRange}
               />
             </div>
 
