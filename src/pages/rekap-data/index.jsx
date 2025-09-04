@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import dayjs from "dayjs";
 import { FileText, Import, Search, X } from "lucide-react";
 import { toast } from "sonner";
@@ -39,6 +39,69 @@ export default function RekapData() {
   } = useDashboardData();
   const { data } = useRecapData(statisticalTransactions, libraryServiceData, romantikServiceData);
   const { mutateAsync: mutateSheetRecap } = useSheetRecapData();
+
+  // Optimized filtering with useMemo
+  const filteredData = useMemo(() => {
+    if (!data) return [];
+
+    return data.filter((item) => {
+      const searchColumns = [
+        "id_transaksi",
+        "nama_pengguna",
+        "jenis_layanan",
+        "keterangan",
+        "tanggal_permintaan",
+        "tanggal_selesai",
+        "capaian",
+        "petugas",
+      ];
+
+      const matchesSearch =
+        !searchTerm ||
+        searchColumns.some((column) => {
+          const value = item[column]?.toString().toLowerCase() || "";
+          return value.includes(searchTerm.toLowerCase());
+        });
+
+      // Date range filter
+      const matchesDateRange = (() => {
+        if (!dateRange?.from || !dateRange?.to || !item.tanggal_permintaan) {
+          return true;
+        }
+        const itemDate = dayjs(item.tanggal_permintaan, "DD/MM/YYYY").toDate();
+        const fromDate = new Date(dateRange.from);
+        const toDate = new Date(dateRange.to);
+
+        // Set time to start/end of day for proper comparison
+        fromDate.setHours(0, 0, 0, 0);
+        toDate.setHours(23, 59, 59, 999);
+
+        return itemDate >= fromDate && itemDate <= toDate;
+      })();
+
+      // Specific filters
+      const matchesFilters = Object.keys(filters).every((key) => {
+        if (!filters[key]) return true;
+        return item[key] === filters[key];
+      });
+
+      return matchesSearch && matchesDateRange && matchesFilters;
+    });
+  }, [data, searchTerm, dateRange, filters]);
+
+  // Optimized unique values calculation with useMemo
+  const getUniqueValues = useMemo(() => {
+    if (!data) return () => [];
+
+    const cache = {};
+    return (columnKey) => {
+      if (!cache[columnKey]) {
+        const values = data.map((item) => item[columnKey]).filter(Boolean);
+        cache[columnKey] = [...new Set(values)].sort();
+      }
+      return cache[columnKey];
+    };
+  }, [data]);
 
   if (isPendingDashboardData) {
     return (
@@ -124,12 +187,6 @@ export default function RekapData() {
     }
   };
 
-  // Get unique values for select filters
-  const getUniqueValues = (columnKey) => {
-    const values = data.map((item) => item[columnKey]).filter(Boolean);
-    return [...new Set(values)].sort();
-  };
-
   const clearAllFilters = () => {
     setSearchTerm("");
     setDateRange({
@@ -149,51 +206,6 @@ export default function RekapData() {
       [columnKey]: value,
     }));
   };
-
-  // Filter and search data
-  const filteredData = data.filter((item) => {
-    // Global search across all columns (except 'no')
-    const searchColumns = [
-      "id_transaksi",
-      "nama_pengguna",
-      "jenis_layanan",
-      "keterangan",
-      "tanggal_permintaan",
-      "tanggal_selesai",
-      "capaian",
-      "petugas",
-    ];
-    const matchesSearch =
-      !searchTerm ||
-      searchColumns.some((column) => {
-        const value = item[column]?.toString().toLowerCase() || "";
-        return value.includes(searchTerm.toLowerCase());
-      });
-
-    // Date range filter
-    const matchesDateRange = (() => {
-      if (!dateRange?.from || !dateRange?.to || !item.tanggal_permintaan) {
-        return true;
-      }
-      const itemDate = dayjs(item.tanggal_permintaan, "DD/MM/YYYY").toDate();
-      const fromDate = new Date(dateRange.from);
-      const toDate = new Date(dateRange.to);
-
-      // Set time to start/end of day for proper comparison
-      fromDate.setHours(0, 0, 0, 0);
-      toDate.setHours(23, 59, 59, 999);
-
-      return itemDate >= fromDate && itemDate <= toDate;
-    })();
-
-    // Specific filters
-    const matchesFilters = Object.keys(filters).every((key) => {
-      if (!filters[key]) return true;
-      return item[key] === filters[key];
-    });
-
-    return matchesSearch && matchesDateRange && matchesFilters;
-  });
 
   return (
     <div className="mx-auto w-full space-y-6">
