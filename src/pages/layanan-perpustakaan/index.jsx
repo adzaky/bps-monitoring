@@ -96,8 +96,7 @@ export default function LibraryService() {
       }
     });
 
-    const exportTitle =
-      filterType === "individu" ? "Laporan Layanan Perpustakaan - Individu" : "Laporan Layanan Perpustakaan - Kelompok";
+    const exportTitle = "Laporan Layanan Perpustakaan";
 
     const exportHeaders =
       filterType === "individu"

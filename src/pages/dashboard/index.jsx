@@ -165,7 +165,7 @@ export default function Dashboard() {
       targetMetPercentage: item.targetMetPercentage,
     }));
 
-    const title = `Kepatuhan Target Bulanan - ${selectedServiceType === "all" ? "Semua Layanan" : selectedServiceType}`;
+    const title = "Kepatuhan Target Bulanan";
 
     try {
       switch (type) {
