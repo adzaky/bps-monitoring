@@ -66,6 +66,17 @@ export const useProductStatistic = () => {
   });
 };
 
+// Latest Data Queries
+export const useLatestData = (date) => {
+  return useQuery({
+    queryKey: ["latestData", date],
+    queryFn: async () => {
+      const res = await api.latestDataService.getLatestData(date);
+      return res.data;
+    },
+  });
+};
+
 // Recap Data Queries
 export const useRecapData = () => {
   return useQuery({

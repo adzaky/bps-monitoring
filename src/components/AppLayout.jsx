@@ -12,10 +12,11 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import UserProfile from "./UserProfile";
+import Notification from "./Notification";
 
 export default function AppLayout() {
   const { isAuthenticated } = useLoaderData();
-  
+
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
@@ -53,6 +54,7 @@ export default function AppLayout() {
             </Breadcrumb>
           </div>
           <div className="flex items-center gap-3">
+            <Notification />
             <UserProfile />
           </div>
         </header>

@@ -40,6 +40,13 @@ export const api = {
       return apiClient.get("/silastik-service/permintaan");
     },
   },
+  latestDataService: {
+    getLatestData: (date) => {
+      return apiClient.get("/latest-data", {
+        params: { date },
+      });
+    },
+  },
   recapDataService: {
     getRecapData: () => {
       return apiClient.get("/recap-data");
