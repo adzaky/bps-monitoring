@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDashboardData, useSheetRecapData } from "@/hooks/use-queries";
 import { useRecapData } from "@/hooks/use-recap-data";
-import { exportPdfFromJson, exportRecapData } from "@/lib/utils";
+import { exportPdfFromJson, exportRecapData, generateLKMonitoringAoA } from "@/lib/utils";
 import RecapDataTable from "@/components/RecapDataTable";
 
 export default function RekapData() {
@@ -21,8 +21,8 @@ export default function RekapData() {
   const [isExportingToPdf, setIsExportingToPdf] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [dateRange, setDateRange] = useState({
-    from: new Date(new Date().getFullYear(), 0, 1),
-    to: new Date(),
+    from: undefined,
+    to: undefined,
   });
   const [filters, setFilters] = useState({
     jenis_layanan: "",
@@ -58,20 +58,41 @@ export default function RekapData() {
       no: index + 1,
     }));
 
+    const handleExportLKMonitoring = async () => {
+      try {
+        const monitoringDataArray = generateLKMonitoringAoA(exportData, 2025);
+
+        const [recapData, monitorData] = await Promise.all([
+          mutateSheetRecap({
+            data: exportData,
+            title: "Rekap Transaksi Layanan BPS",
+          }),
+          mutateSheetRecap({
+            data: monitoringDataArray,
+            title: "LK Monitoring",
+          }),
+        ]);
+
+        const res = { recapData, monitorData };
+
+        toast.success(
+          <div className="grid gap-1">
+            <span className="font-semibold">Data berhasil diekspor ke Google Sheets!</span>
+            <a href={res.monitorData.data.url} target="_blank" className="text-sm text-blue-600 underline">
+              {res.monitorData.data.url}
+            </a>
+          </div>
+        );
+      } catch (error) {
+        console.error("Export gagal:", error);
+      }
+    };
+
     try {
       switch (type) {
         case "spreadsheet":
           setIsExportingToSpreadsheet(true);
-          await mutateSheetRecap({ data: exportData, title: "Rekap Transaksi Layanan BPS" }).then((res) =>
-            toast(
-              <div className="grid gap-1">
-                <span className="font-semibold">Data berhasil diekspor ke Google Sheets!</span>
-                <a href={res.data.url} target="_blank" className="text-sm text-blue-600 underline">
-                  {res.data.url}
-                </a>
-              </div>
-            )
-          );
+          await handleExportLKMonitoring();
           break;
         case "xlsx":
           setIsExportingToXlsx(true);
@@ -112,18 +133,14 @@ export default function RekapData() {
   const clearAllFilters = () => {
     setSearchTerm("");
     setDateRange({
-      from: new Date(new Date().getFullYear(), 0, 1),
-      to: new Date(),
+      from: undefined,
+      to: undefined,
     });
     setFilters({
       jenis_layanan: "",
       capaian: "",
       petugas: "",
     });
-  };
-
-  const handleDateRangeChange = (range) => {
-    setDateRange(range);
   };
 
   const handleFilterChange = (columnKey, value) => {
@@ -224,7 +241,12 @@ export default function RekapData() {
             {/* Date Range Filter */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Tanggal Permintaan</label>
-              <DateRangePicker className="w-80" onChange={handleDateRangeChange} placeholder="Pilih Rentang Tanggal" />
+              <DateRangePicker
+                className="w-80"
+                placeholder="Pilih Rentang Tanggal"
+                data={dateRange}
+                onSetData={setDateRange}
+              />
             </div>
 
             {/* Capaian Filter */}
