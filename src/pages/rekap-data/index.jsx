@@ -10,8 +10,7 @@ import { Loading } from "@/components/ui/loading";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useDashboardData, useSheetRecapData } from "@/hooks/use-queries";
-import { useRecapData } from "@/hooks/use-recap-data";
+import { useRecapData, useSheetRecapData } from "@/hooks/use-queries";
 import { exportPdfFromJson, exportRecapData, generateLKMonitoringAoA } from "@/lib/utils";
 import RecapDataTable from "@/components/RecapDataTable";
 
@@ -29,22 +28,14 @@ export default function RekapData() {
     capaian: "",
     petugas: "",
   });
-
-  const {
-    statisticalTransactions,
-    libraryServiceData,
-    romantikServiceData,
-    isPending: isPendingDashboardData,
-    error: errorDashboardData,
-  } = useDashboardData();
-  const { data } = useRecapData(statisticalTransactions, libraryServiceData, romantikServiceData);
+  const { data: recapData, isPending: isPendingRecapData, error: errorRecapData } = useRecapData();
   const { mutateAsync: mutateSheetRecap } = useSheetRecapData();
 
   // Optimized filtering with useMemo
   const filteredData = useMemo(() => {
-    if (!data) return [];
+    if (!recapData) return [];
 
-    return data.filter((item) => {
+    return recapData.filter((item) => {
       const searchColumns = [
         "id_transaksi",
         "nama_pengguna",
@@ -87,23 +78,23 @@ export default function RekapData() {
 
       return matchesSearch && matchesDateRange && matchesFilters;
     });
-  }, [data, searchTerm, dateRange, filters]);
+  }, [recapData, searchTerm, dateRange, filters]);
 
   // Optimized unique values calculation with useMemo
   const getUniqueValues = useMemo(() => {
-    if (!data) return () => [];
+    if (!recapData) return () => [];
 
     const cache = {};
     return (columnKey) => {
       if (!cache[columnKey]) {
-        const values = data.map((item) => item[columnKey]).filter(Boolean);
+        const values = recapData.map((item) => item[columnKey]).filter(Boolean);
         cache[columnKey] = [...new Set(values)].sort();
       }
       return cache[columnKey];
     };
-  }, [data]);
+  }, [recapData]);
 
-  if (isPendingDashboardData) {
+  if (isPendingRecapData) {
     return (
       <div className="flex w-full items-center justify-center bg-white py-96">
         <Loading />
@@ -111,8 +102,8 @@ export default function RekapData() {
     );
   }
 
-  if (errorDashboardData) {
-    return <Error error={errorDashboardData} type="database" size="lg" showRetry={false} />;
+  if (errorRecapData) {
+    return <Error error={errorRecapData} type="database" size="lg" showRetry={false} />;
   }
 
   const handleExportData = async (type) => {

@@ -11,8 +11,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useDashboardData, useSheetRecapData } from "@/hooks/use-queries";
-import { useRecapData } from "@/hooks/use-recap-data";
+import { useRecapData, useSheetRecapData } from "@/hooks/use-queries";
 import { exportPdfFromJson, exportToExcel } from "@/lib/utils";
 
 export default function Dashboard() {
@@ -22,28 +21,21 @@ export default function Dashboard() {
   const [activeChart, setActiveChart] = useState("targetMetPercentage");
   const [selectedServiceType, setSelectedServiceType] = useState("all");
 
-  const {
-    statisticalTransactions,
-    libraryServiceData,
-    romantikServiceData,
-    isPending: isPendingDashboardData,
-    error: errorDashboardData,
-  } = useDashboardData();
-  const { data } = useRecapData(statisticalTransactions, libraryServiceData, romantikServiceData);
+  const { data: recapData, isPending: isPendingRecapData, error: errorRecapData } = useRecapData();
   const { mutateAsync: mutateSheetRecap } = useSheetRecapData();
 
   // Get unique service types
   const serviceTypes = useMemo(() => {
-    if (!data || data.length === 0) return [];
-    const types = [...new Set(data.map((item) => item.jenis_layanan))];
+    if (!recapData || recapData.length === 0) return [];
+    const types = [...new Set(recapData.map((item) => item.jenis_layanan))];
     return types.filter(Boolean).sort();
-  }, [data]);
+  }, [recapData]);
 
   // Filter data based on selected service type
   const filteredData = useMemo(() => {
-    if (!data || selectedServiceType === "all") return data || [];
-    return data.filter((item) => item.jenis_layanan === selectedServiceType);
-  }, [data, selectedServiceType]);
+    if (!recapData || selectedServiceType === "all") return recapData || [];
+    return recapData.filter((item) => item.jenis_layanan === selectedServiceType);
+  }, [recapData, selectedServiceType]);
 
   // Calculate summary metrics
   const summaryMetrics = useMemo(() => {
@@ -210,7 +202,7 @@ export default function Dashboard() {
     }
   };
 
-  if (isPendingDashboardData) {
+  if (isPendingRecapData) {
     return (
       <div className="flex w-full items-center justify-center bg-white py-96">
         <Loading />
@@ -218,8 +210,8 @@ export default function Dashboard() {
     );
   }
 
-  if (errorDashboardData) {
-    return <Error error={errorDashboardData} type="database" size="lg" showRetry={false} />;
+  if (errorRecapData) {
+    return <Error error={errorRecapData} type="database" size="lg" showRetry={false} />;
   }
 
   return (

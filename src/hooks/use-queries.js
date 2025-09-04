@@ -66,6 +66,17 @@ export const useProductStatistic = () => {
   });
 };
 
+// Recap Data Queries
+export const useRecapData = () => {
+  return useQuery({
+    queryKey: ["recapData"],
+    queryFn: async () => {
+      const res = await api.recapDataService.getRecapData();
+      return res.data;
+    },
+  });
+};
+
 // Sheet Service Queries
 export const useSheetRecapData = () => {
   return useMutation({

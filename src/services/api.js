@@ -40,6 +40,11 @@ export const api = {
       return apiClient.get("/silastik-service/permintaan");
     },
   },
+  recapDataService: {
+    getRecapData: () => {
+      return apiClient.get("/recap-data");
+    },
+  },
   sheetService: {
     createRecapData: ({ data, title }) => {
       return apiClient.post("/create-sheet/recap-data", {
